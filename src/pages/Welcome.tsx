@@ -44,10 +44,12 @@ const Welcome: React.FC = () => {
   return (
     <PageContainer
     extra={[
+      // TODO 这里需要一个新页面
       <Button key="1" type="primary">
         <PlusCircleTwoTone />创建模型
       </Button>,
     ]}>
+      {/* TODO 这个Divider 太丑了 */}
         <Divider></Divider>
       <div
         style={{
@@ -66,6 +68,7 @@ const Welcome: React.FC = () => {
           }}
         >
           {
+            //TODO 这里还缺少点击触发的事件
             projectInfos.map((item, idx) => (
               <InfoCard
                 title={item.title}
