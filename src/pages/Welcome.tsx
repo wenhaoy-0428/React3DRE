@@ -1,6 +1,6 @@
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
-import { Card, theme } from 'antd';
+import { Card, Divider, theme } from 'antd';
 import React from 'react';
 import { getProjectsInfo } from '@/services/ant-design-pro/api'
 import { Button } from 'antd';
@@ -48,6 +48,7 @@ const Welcome: React.FC = () => {
         <PlusCircleTwoTone />创建模型
       </Button>,
     ]}>
+        <Divider></Divider>
       <div
         style={{
           backgroundPosition: '100% -30%',
