@@ -3,14 +3,14 @@
 // DO NOT CHANGE IT MANUALLY!
 import React, { useEffect, useState } from 'react';
 import { ApplyPluginsType } from 'umi';
-import { renderClient, RenderClientOpts } from '/home/david/develop/3DRe/front/3dre/node_modules/@umijs/renderer-react';
+import { renderClient, RenderClientOpts } from 'E:/Fudan/React3DRE/node_modules/@umijs/renderer-react';
 import { createHistory } from './core/history';
 import { createPluginManager } from './core/plugin';
 import { getRoutes } from './core/route';
 import type { Location } from 'history';
 
-import '/home/david/develop/3DRe/front/3dre/src/global.less';
-import '/home/david/develop/3DRe/front/3dre/src/global.tsx';
+import 'E:/Fudan/React3DRE/src/global.less';
+import 'E:/Fudan/React3DRE/src/global.tsx';
 const publicPath = '/';
 const runtimePublicPath = false;
 

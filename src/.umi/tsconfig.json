@@ -27,7 +27,7 @@
         "src/.umi/*"
       ],
       "@umijs/max": [
-        "/home/david/develop/3DRe/front/3dre/node_modules/umi"
+        "E:\\Fudan\\React3DRE\\node_modules\\umi"
       ],
       "@umijs/max/typings": [
         "src/.umi/typings"

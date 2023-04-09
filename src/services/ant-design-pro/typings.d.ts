@@ -98,4 +98,11 @@ declare namespace API {
     description?: string;
     type?: NoticeIconItemType;
   };
+  type ProjectsAttribute = {
+    id?: string;
+    avatar?: string; 
+    title?: string;
+    datetime?: string;
+    state?: string;
+  }
 }
