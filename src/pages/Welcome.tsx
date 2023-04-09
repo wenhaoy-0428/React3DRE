@@ -2,87 +2,108 @@ import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Card, theme } from 'antd';
 import React from 'react';
-
+import{getProjectsInfo} from '@/services/ant-design-pro/api'
+import { Button} from 'antd';
+import { Col, Row } from 'antd';
 /**
  * 每个单独的卡片，为了复用样式抽成了组件
  * @param param0
  * @returns
  */
-const InfoCard: React.FC<{
-  title: string;
-  index: number;
-  desc: string;
-  href: string;
-}> = ({ title, href, index, desc }) => {
+
+{/* <Card
+hoverable
+style={{ width: 240 }}
+cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
+>
+<Meta title="Europe Street beat" description="www.instagram.com" />
+</Card> */}
+const { Meta } = Card;
+const InfoCard: React.FC<API.ProjectsAttribute> = ({ title,avatar }) => {
   const { useToken } = theme;
 
   const { token } = useToken();
-
-  return (
-    <div
-      style={{
-        backgroundColor: token.colorBgContainer,
-        boxShadow: token.boxShadow,
-        borderRadius: '8px',
-        fontSize: '14px',
-        color: token.colorTextSecondary,
-        lineHeight: '22px',
-        padding: '16px 19px',
-        minWidth: '220px',
-        flex: 1,
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          gap: '4px',
-          alignItems: 'center',
-        }}
-      >
-        <div
-          style={{
-            width: 48,
-            height: 48,
-            lineHeight: '22px',
-            backgroundSize: '100%',
-            textAlign: 'center',
-            padding: '8px 16px 16px 12px',
-            color: '#FFF',
-            fontWeight: 'bold',
-            backgroundImage:
-              "url('https://gw.alipayobjects.com/zos/bmw-prod/daaf8d50-8e6d-4251-905d-676a24ddfa12.svg')",
-          }}
-        >
-          {index}
-        </div>
-        <div
-          style={{
-            fontSize: '16px',
-            color: token.colorText,
-            paddingBottom: 8,
-          }}
-        >
-          {title}
-        </div>
-      </div>
-      <div
-        style={{
-          fontSize: '14px',
-          color: token.colorTextSecondary,
-          textAlign: 'justify',
-          lineHeight: '22px',
-          marginBottom: 8,
-        }}
-      >
-        {desc}
-      </div>
-      <a href={href} target="_blank" rel="noreferrer">
-        了解更多 {'>'}
-      </a>
-    </div>
-  );
+return(
+  <Card
+hoverable
+style={{ width: 240 }}
+cover={<img alt="example" src={avatar} />}
+>
+<Meta title={title}  />
+</Card>
+)
+  // return (
+  //   <div
+  //     style={{
+  //       backgroundColor: token.colorBgContainer,
+  //       boxShadow: token.boxShadow,
+  //       borderRadius: '8px',
+  //       fontSize: '14px',
+  //       color: token.colorTextSecondary,
+  //       lineHeight: '22px',
+  //       padding: '16px 19px',
+  //       minWidth: '220px',
+  //       flex: 1,
+  //     }}
+  //   >
+  //     <div
+  //       style={{
+  //         display: 'flex',
+  //         gap: '4px',
+  //         alignItems: 'center',
+  //       }}
+  //     >
+  //       <div
+  //         style={{
+  //           width: 48,
+  //           height: 48,
+  //           lineHeight: '22px',
+  //           backgroundSize: '100%',
+  //           textAlign: 'center',
+  //           padding: '8px 16px 16px 12px',
+  //           color: '#FFF',
+  //           fontWeight: 'bold',
+  //           backgroundImage:
+  //             "url('https://gw.alipayobjects.com/zos/bmw-prod/daaf8d50-8e6d-4251-905d-676a24ddfa12.svg')",
+  //         }}
+  //       >
+  //         {index}
+  //       </div>
+  //       <div
+  //         style={{
+  //           fontSize: '16px',
+  //           color: token.colorText,
+  //           paddingBottom: 8,
+  //         }}
+  //       >
+  //         {title}
+  //       </div>
+  //     </div>
+  //     <div
+  //       style={{
+  //         fontSize: '14px',
+  //         color: token.colorTextSecondary,
+  //         textAlign: 'justify',
+  //         lineHeight: '22px',
+  //         marginBottom: 8,
+  //       }}
+  //     >
+  //       {desc}
+  //     </div>
+  //     <Button type="primary" size='small' href={href} target="_blank" rel="noreferrer">
+  //     开始重建
+  //         </Button>
+  //     {/* <a href={href} target="_blank" rel="noreferrer">
+  //       了解更多 {'>'}
+  //     </a> */}
+  //   </div>
+  // );
 };
-
+let projectInfos;
+getProjectsInfo().then((res)=>
+{
+  projectInfos=res.data;
+},null);
 const Welcome: React.FC = () => {
   const { token } = theme.useToken();
   const { initialState } = useModel('@@initialState');
@@ -136,7 +157,7 @@ const Welcome: React.FC = () => {
               gap: 16,
             }}
           >
-            <InfoCard
+            {/* <InfoCard
               index={1}
               href="https://umijs.org/docs/introduce/introduce"
               title="了解 umi"
@@ -153,7 +174,14 @@ const Welcome: React.FC = () => {
               title="了解 Pro Components"
               href="https://procomponents.ant.design"
               desc="ProComponents 是一个基于 Ant Design 做了更高抽象的模板组件，以 一个组件就是一个页面为开发理念，为中后台开发带来更好的体验。"
-            />
+            /> */}
+            {
+            projectInfos.map((item,idx)=>(
+                          <InfoCard
+                          title={item.title}
+                          avatar={item.avatar}
+                        />  
+                        ))}
           </div>
         </div>
       </Card>
