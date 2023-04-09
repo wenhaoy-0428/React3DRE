@@ -99,7 +99,7 @@ cover={<img alt="example" src={avatar} />}
   //   </div>
   // );
 };
-let projectInfos;
+let projectInfos: any[];
 getProjectsInfo().then((res)=>
 {
   projectInfos=res.data;
