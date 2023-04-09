@@ -24,8 +24,8 @@ export default [
   },
   {
     path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
+    name: 'workspace',
+    icon: 'HomeTwoTone',
     component: './Welcome',
   },
   {
