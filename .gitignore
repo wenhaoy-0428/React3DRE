@@ -50,5 +50,6 @@ sketch
 # Ignore all local history of files
 .history
 .ionide
-
+node_modules
+src/.umi
 # End of https://www.toptal.com/developers/gitignore/api/linux,visualstudiocode,react
