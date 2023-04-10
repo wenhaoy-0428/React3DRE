@@ -60,4 +60,9 @@ export default [
     layout: false,
     component: './404',
   },
+
+  {
+    path: '/create_model',
+    component: './CreateModel/Create_model',
+  },
 ];
