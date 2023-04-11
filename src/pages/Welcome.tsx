@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
  * @returns
  */
 
+// TODO 和服务器同步状态的一段代码
 const { Meta } = Card;
 const InfoCard: React.FC<API.ProjectsAttribute> = ({ title, avatar }) => {
   // const { useToken } = theme;
