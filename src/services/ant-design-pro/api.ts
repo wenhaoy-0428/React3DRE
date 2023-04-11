@@ -84,7 +84,6 @@ export async function removeRule(options?: { [key: string]: any }) {
   });
 }
 
-
 /** 新建规则 POST /api/getProjects */
 export async function getProjectsInfo(options?: { [key: string]: any }) {
   return request<API.RuleListItem>('/api/getProjects', {

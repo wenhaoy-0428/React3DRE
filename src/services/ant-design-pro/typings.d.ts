@@ -100,9 +100,9 @@ declare namespace API {
   };
   type ProjectsAttribute = {
     id?: string;
-    avatar?: string; 
+    avatar?: string;
     title?: string;
     datetime?: string;
     state?: string;
-  }
+  };
 }

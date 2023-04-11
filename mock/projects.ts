@@ -59,7 +59,7 @@ const getProjects = (req: Request, res: Response) => {
         title: '三教',
         datetime: '2017-08-07',
         state: 'success',
-      }
+      },
     ],
   });
 };
