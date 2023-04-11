@@ -27,8 +27,11 @@ const InfoCard: React.FC<API.ProjectsAttribute> = ({ title, avatar }) => {
       style={{ width: 240 }}
       cover={<img alt="example" src={avatar} />}
       actions={[
+        // TODO 需要判断是否已经重建完成来决定该图标状态
         <PlayCircleOutlined key="start" />,
+        // TODO 新开一个页面
         <EditOutlined key="edit" />,
+        // TOOD 一个下拉菜单
         <EllipsisOutlined key="ellipsis" />,
       ]}
     >
@@ -72,12 +75,9 @@ const Welcome: React.FC = () => {
             gap: 16,
           }}
         >
-          {
-            //TODO 这里还缺少点击触发的事件
-            projectInfos.map((item, key) => (
-              <InfoCard key={key} title={item.title} avatar={item.avatar} />
-            ))
-          }
+          {projectInfos.map((item, key) => (
+            <InfoCard key={key} title={item.title} avatar={item.avatar} />
+          ))}
         </div>
       </div>
     </PageContainer>
