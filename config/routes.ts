@@ -23,9 +23,9 @@ export default [
     ],
   },
   {
-    path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
+    path: '/workspace',
+    name: 'workspace',
+    icon: 'HomeOutlined',
     component: './Welcome',
   },
   {
@@ -53,7 +53,7 @@ export default [
   },
   {
     path: '/',
-    redirect: '/welcome',
+    redirect: '/workspace',
   },
   {
     path: '*',
