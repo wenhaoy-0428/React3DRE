@@ -9,6 +9,7 @@ import {
   PlayCircleOutlined,
   PlusCircleTwoTone,
 } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 /**
  * 每个单独的卡片，为了复用样式抽成了组件
  * @param param0
@@ -45,10 +46,11 @@ const Welcome: React.FC = () => {
   return (
     <PageContainer
       extra={[
-        // TODO 这里需要一个新页面
         <Button key="1" type="primary">
-          <PlusCircleTwoTone />
-          创建模型
+          <Link to="/create_model">
+            <PlusCircleTwoTone />
+            创建模型
+          </Link>
         </Button>,
       ]}
     >
