@@ -65,4 +65,8 @@ export default [
     path: '/create_model',
     component: './CreateModel/Create_model',
   },
+  {
+    path: '/show_model',
+    component: './ShowModel/ShowModel',
+  },
 ];
