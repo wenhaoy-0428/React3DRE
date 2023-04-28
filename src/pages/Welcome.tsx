@@ -51,7 +51,7 @@ const Welcome: React.FC = () => {
     <PageContainer
       extra={[
         <Button key="1" type="primary">
-          <Link to="/create_model">
+          <Link to="/upload">
             <PlusCircleTwoTone />
             创建模型
           </Link>

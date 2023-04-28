@@ -66,6 +66,10 @@ export default [
     component: './CreateModel/Create_model',
   },
   {
+    path: '/upload',
+    component: './CreateModel/upload',
+  },
+  {
     path: '/show_model',
     component: './ShowModel/ShowModel',
   },
