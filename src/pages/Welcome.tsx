@@ -1,7 +1,7 @@
 import { getProjectsInfo } from '@/services/ant-design-pro/api';
 import { PageContainer , ModalForm, ProFormText, ProFormUploadButton} from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
-import { SyncOutlined, CheckSquareTwoTone } from '@ant-design/icons';
+import { SyncOutlined, CheckSquareTwoTone, UploadOutlined } from '@ant-design/icons';
 import { Button, Avatar, Card, Divider, Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
 import React, { useRef, useState, useEffect} from 'react';
@@ -62,8 +62,8 @@ const items: MenuProps['items'] =[
   },
 ]
 
-function GetStatusIcon(status) {
-  if(status){
+function GetStateIcon(state) {
+  if(state){
     return <CheckSquareTwoTone/>
   }else {
     return <SyncOutlined rotate={180}/>
@@ -74,6 +74,29 @@ function GetStatusIcon(status) {
 const AvatarConvert = ({imageData}) => {
   const dataUrl = `data:image/png;base64,${imageData}`;
   return <img src={ dataUrl } alt='Base64 Image' width="260" height="160"/>
+}
+
+function ProjectsCard( props) {
+  console.log(props.state)
+  console.log(props.state == 2)
+  if(props.state ==  0) {
+    return <p>1</p>
+  }else if(props.state == 1) {
+    return <Meta
+              avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>} 
+              title={props.title} 
+              description = 'processing data and training'
+            />
+  }else if(props.state == 2) {
+    return  <Meta
+              avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>} 
+              title={props.title} 
+              description = 'training ends'
+            />
+  }else{
+    return <p>"something went error"</p>
+  }
+  
 }
 
 const Welcome: React.FC = () => {
@@ -197,12 +220,7 @@ const Welcome: React.FC = () => {
                 </Dropdown>,
               ]}
             >
-              <Meta
-                avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>} 
-                title={item.title} 
-                
-              />
-              <GetStatusIcon status={item.status}/>
+              <ProjectsCard title={item.title} state={item.state} />
           </Card>
           ))}
         </div>

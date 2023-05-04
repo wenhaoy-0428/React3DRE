@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Upload, message, DatePicker, Divider } from 'antd';
-import { RcFile, UploadChangeParam } from 'antd/lib/upload';
+import { RcFile, UploadFile, UploadChangeParam } from 'antd/lib/upload';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { UploadOutlined } from '@ant-design/icons';
@@ -25,6 +25,22 @@ const MyForm: React.FC = () => {
   const handleImageChange =  ( info: UploadChangeParam ) => {
     setImageFile(info.fileList);
   };
+
+  const onPreview = async (file : UploadFile) => {
+    let src = file.url as string;
+    if (!src){
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj as RcFile);
+        reader.onload = () => resolve(reader.result as string);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
+
+  }
   
 
   const onFinish = (values) => {
@@ -98,15 +114,19 @@ const MyForm: React.FC = () => {
       </Form.Item>
 
       <Form.Item label="上传封面">
-        <Upload 
-          accept='image/*'
-          maxCount={1}
-          fileList={avatarFile ? [avatarFile]: []}
-          onChange={handleAvatarChange}
-          name='avatar'
-          >
-          <Button icon={<UploadOutlined/>}>上传文件</Button>
-        </Upload>
+        <ImgCrop rotationSlider aspect={13/8}>
+          <Upload 
+            accept='image/*'
+            listType='picture-card'
+            maxCount={1}
+            fileList={avatarFile ? [avatarFile]: []}
+            onChange={handleAvatarChange}
+            name='avatar'
+            onPreview={onPreview}
+            >
+            {'上传'}
+          </Upload>
+        </ImgCrop>
       </Form.Item>
 
       <Form.Item label="上传图片">
