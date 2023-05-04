@@ -99,10 +99,13 @@ declare namespace API {
     type?: NoticeIconItemType;
   };
   type ProjectsAttribute = {
-    id?: string;
+    id?: int;
     avatar?: string;
     title?: string;
-    datetime?: string;
-    state?: string;
+    datetime?: String;
+    state?: int;
   };
+  // type ProjectsResult = {
+    
+  // }
 }
