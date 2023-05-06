@@ -1,7 +1,7 @@
 import { getProjectsInfo } from '@/services/ant-design-pro/api';
 import { PageContainer , ModalForm, ProFormText, ProFormUploadButton} from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
-import { SyncOutlined, CheckSquareTwoTone, UploadOutlined } from '@ant-design/icons';
+import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone } from '@ant-design/icons';
 import { Button, Avatar, Card, Divider, Dropdown, message } from 'antd';
 import type { MenuProps } from 'antd';
 import React, { useRef, useState, useEffect} from 'react';
@@ -23,6 +23,8 @@ import { Link } from 'react-router-dom';
 
 // TODO 和服务器同步状态的一段代码
 const { Meta } = Card;
+
+const [ messageApi, contextHolder] = message.useMessage();
 
 const waitTime = (time:number = 100) => {
   return new Promise((resolve) => {
@@ -98,6 +100,36 @@ function ProjectsCard( props) {
   }
   
 }
+function handleRender (title) {
+  axios.post('http:10.177.35.76:8080/api/startRender',title)
+    .then((response)=>{
+        console.log('Render request submission response:', response);
+        messageApi.open({
+          type:'success',
+          content: '渲染请求提交成功',
+        });
+      })
+      .catch((error)=>{
+        console.error('Form submission error:', error);
+        messageApi.open({
+          type:'error',
+          content: '渲染请求失败',
+        });
+
+      })
+}
+
+function RenderButton( props ) {
+  if(props.state == 2) {
+    return <Button type='link'  onClick={handleRender(props.title)} block>
+              <PlayCircleTwoTone key = "start" twoToneColor="#52c41a" />
+           </Button>
+  }else {
+    <Button type='link'  disabled block>
+      <PlayCircleTwoTone key = "start" twoToneColor="#eb2f96"/>
+    </Button>
+  }
+}
 
 const Welcome: React.FC = () => {
   // const { token } = theme.useToken();
@@ -162,7 +194,8 @@ const Welcome: React.FC = () => {
               
               actions={[
                 // TODO 需要判断是否已经重建完成来决定该图标状态
-                <PlayCircleOutlined key = "start" />,
+                <RenderButton title={item.title} state={item.state} />,
+                
                 // TODO 新开一个页面
                 <ModalForm
                   
