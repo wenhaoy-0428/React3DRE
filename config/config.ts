@@ -148,8 +148,8 @@ export default defineConfig({
       projectName: 'swagger',
     },
   ],
-  mfsu: {
-    strategy: 'normal',
-  },
+  // mfsu: {
+  //   strategy: 'normal',
+  // },
   requestRecord: {},
 });
