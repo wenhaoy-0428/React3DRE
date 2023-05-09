@@ -24,7 +24,7 @@ import { Link } from 'react-router-dom';
 // TODO 和服务器同步状态的一段代码
 const { Meta } = Card;
 
-const [ messageApi, contextHolder] = message.useMessage();
+
 
 const waitTime = (time:number = 100) => {
   return new Promise((resolve) => {
@@ -100,28 +100,30 @@ function ProjectsCard( props) {
   }
   
 }
-function handleRender (title) {
-  axios.post('http:10.177.35.76:8080/api/startRender',title)
-    .then((response)=>{
-        console.log('Render request submission response:', response);
-        messageApi.open({
-          type:'success',
-          content: '渲染请求提交成功',
-        });
-      })
-      .catch((error)=>{
-        console.error('Form submission error:', error);
-        messageApi.open({
-          type:'error',
-          content: '渲染请求失败',
-        });
 
-      })
-}
 
 function RenderButton( props ) {
+  const [ messageApi, contextHolder] = message.useMessage();
+  function handleRender (title) {
+    axios.post('http:10.177.35.76:8080/api/startRender',title)
+      .then((response)=>{
+          console.log('Render request submission response:', response);
+          messageApi.open({
+            type:'success',
+            content: '渲染请求提交成功',
+          });
+        })
+        .catch((error)=>{
+          console.error('Form submission error:', error);
+          messageApi.open({
+            type:'error',
+            content: '渲染请求失败',
+          });
+  
+        })
+  }
   if(props.state == 2) {
-    return <Button type='link'  onClick={handleRender(props.title)} block>
+    return <Button type='link'  onClick={()=>handleRender(props.title)} block>
               <PlayCircleTwoTone key = "start" twoToneColor="#52c41a" />
            </Button>
   }else {
