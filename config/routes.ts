@@ -71,10 +71,12 @@ export default [
   },
   {
     path: '/show_model',
+    
     component: './ShowModel/ShowModel',
   },
   {
-    path: '/viser',
-    component: './Viser'
+    path: 'test',
+    component: './Test/test'
   }
+  
 ];
