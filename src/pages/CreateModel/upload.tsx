@@ -56,13 +56,19 @@ const MyForm: React.FC = () => {
       formData.append('imageFiles', file.originFileObj);
     });
 
+    // 处理成功响应
+    function handleResponse(response) {
+      console.log('Form submission response:', response);
+      setAvatarFile(null);
+      setImageFile([]);
+      message.success('表单提交成功')
+    }
+
     //后端接口
-    axios.post('http://10.177.35.76:8080/api/startTrain',formData)
-      .then((response) => {
-        console.log('Form submission response:', response);
-        setAvatarFile(null);
-        setImageFile([]);
-        // 处理成功响应
+    axios.post('http://10.177.35.76:8081/api/startTrain',formData)
+      .then((handleResponse) => {
+        
+        
       })
       .catch((error) => {
         console.error('Form submission error:', error);
