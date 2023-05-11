@@ -326,7 +326,8 @@ export default function ViewerWindow(props) {
         z-index="1"
         hidden
       />
-      <div className="canvas-container-main" ref={myRef} style={{height:'70vh'}}>
+      {/* viewer窗口高度固定 */}
+      <div className="canvas-container-main" ref={myRef} style={{height:'70vh'}}> 
         <div className="ViewerWindow-camera-toggle">
           {/*<CameraToggle />*/}
         </div>

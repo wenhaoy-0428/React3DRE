@@ -551,9 +551,9 @@ export default function CameraPanel(props) {
   ]);
 
   // redux store state
-  // const export_path = useSelector(
-  //   (state) => state.file_path_info.export_path_name,
-  // );
+  const export_path = useSelector(
+    (state) => state.file_path_info.export_path_name,
+  );
 
   const viser_websocket = useContext(ViserWebSocketContext);
   const throttled_time_message_sender =
@@ -1112,11 +1112,11 @@ export default function CameraPanel(props) {
 
     const camera_path_object = get_camera_path();
 
-    // sendWebsocketMessage(viser_websocket, {
-    //   type: 'CameraPathPayloadMessage',
-    //   camera_path_filename: export_path,
-    //   camera_path: camera_path_object,
-    // });
+    sendWebsocketMessage(viser_websocket, {
+      type: 'CameraPathPayloadMessage',
+      camera_path_filename: export_path,
+      camera_path: camera_path_object,
+    });
     sendWebsocketMessage(viser_websocket, { type: 'SaveCheckpointMessage' });
   };
 
