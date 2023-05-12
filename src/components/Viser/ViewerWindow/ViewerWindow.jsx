@@ -110,6 +110,9 @@ export default function ViewerWindow(props) {
 
   const myRef = useRef(null);
   const viser_websocket = useContext(ViserWebSocketContext);
+
+  
+
   const field_of_view = useSelector(
     (state) => state.renderingState.field_of_view,
   );
@@ -133,11 +136,21 @@ export default function ViewerWindow(props) {
   sceneTree.metadata.camera = sceneTree.find_object(['Cameras', camera_choice]);
 
   const get_window_width = () => {
-    const width = myRef.current.clientWidth;
-    return width - (width % 2);
+    const width = 0;
+    if(myRef.current.clientWidth !== null) {
+      const width = myRef.current.clientWidth;
+      return width - (width % 2);
+    }else {
+      return width;
+    }
+    
+    
+    
+    
   };
 
   const get_window_height = () => {
+    //console.log(myRef.current.clientHeight)
     return myRef.current.clientHeight;
   };
 
@@ -163,6 +176,8 @@ export default function ViewerWindow(props) {
   };
 
   useEffect(() => {
+    
+
     const handleNewDimensions = () => {
       setDimensions({
         height: get_window_height(),
@@ -174,6 +189,11 @@ export default function ViewerWindow(props) {
       height: get_window_height(),
       width: get_window_width(),
     });
+
+    const stopRender=()=>{
+      win
+    }
+
     render();
 
     window.addEventListener('resize', handleNewDimensions);
@@ -327,9 +347,9 @@ export default function ViewerWindow(props) {
         hidden
       />
       {/* viewer窗口高度固定 */}
-      <div className="canvas-container-main" ref={myRef} style={{height:'70vh'}}> 
+      <div className="canvas-container-main" ref={myRef} style={{height:'70vh'}} > 
         <div className="ViewerWindow-camera-toggle">
-          {/*<CameraToggle />*/}
+          {/* {<CameraToggle />} */}
         </div>
       </div>
       <div className="ViewerWindow-buttons" style={{ display: 'none' }}>
