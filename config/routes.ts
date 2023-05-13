@@ -28,29 +28,29 @@ export default [
     icon: 'HomeOutlined',
     component: './Welcome',
   },
-  {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
-    routes: [
-      {
-        path: '/admin',
-        redirect: '/admin/sub-page',
-      },
-      {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        component: './Admin',
-      },
-    ],
-  },
-  {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './TableList',
-  },
+  // {
+  //   path: '/admin',
+  //   name: 'admin',
+  //   icon: 'crown',
+  //   access: 'canAdmin',
+  //   routes: [
+  //     {
+  //       path: '/admin',
+  //       redirect: '/admin/sub-page',
+  //     },
+  //     {
+  //       path: '/admin/sub-page',
+  //       name: 'sub-page',
+  //       component: './Admin',
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'list.table-list',
+  //   icon: 'table',
+  //   path: '/list',
+  //   component: './TableList',
+  // },
   {
     path: '/',
     redirect: '/workspace',
@@ -71,12 +71,11 @@ export default [
   },
   {
     path: '/show_model',
-    
+
     component: './ShowModel/ShowModel',
   },
   {
     path: 'test',
-    component: './Test/test'
-  }
-  
+    component: './Test/test',
+  },
 ];
