@@ -6,6 +6,7 @@ import { App, Spin, Button, Avatar, Card, Divider, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import React, { useRef, useState, useEffect} from 'react';
 import axios from 'axios';
+import { Empty } from 'antd';
 // import { Col, Row } from 'antd';
 import {
   EditOutlined,
@@ -116,7 +117,7 @@ const Welcome: React.FC = () => {
   const restFormRef = useRef<ProFormInstance>();
   const formRef = useRef<ProFormInstance>();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-
+  const [EmptyMessage, setEmptyMessage] = useState(false);
   const { message, modal, notification } = App.useApp();
 
   const [data, setData] = useState([]);
@@ -135,7 +136,17 @@ const Welcome: React.FC = () => {
             gap: 16,
           }}
         >
-          
+      {EmptyMessage?<Empty
+    image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+    imageStyle={{ height: 60 }}
+    description={
+      <span>
+        Customize <a href="#API">Description</a>
+      </span>
+    }
+  >
+    <Button type="primary">Create Now</Button>
+  </Empty>:null}
           {data.map((item) => (
             
             <Card
@@ -268,12 +279,20 @@ const Welcome: React.FC = () => {
         
     }
   }
+  //将这段IP地址改成Host/api/getAllProjects
 
   useEffect(() => {
     axios.get('http://10.177.35.76:8081/api/getAllProjects').then(response =>
       {
         console.log(response.data.projects)
+        //如果是空的话，就不要setData了
+        if(response.data.projects.length == 0) {
+          //加入antd的空页面
+          setEmptyMessage(true);
+          return;
+        }else{
         setData(response.data.projects);
+        }
         console.log(data)
         console.log("success")
       })
