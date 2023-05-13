@@ -12,7 +12,7 @@ const { TextArea } = Input;
 const MyForm: React.FC = () => {
   const [form] = Form.useForm();
   const [avatarFile, setAvatarFile] = useState<RcFile | null>(null);
-  const [ImageFile, setImageFile] = useState<RcFile[]>([]);
+  const [ImageFile, setImageFile] = useState([]);
 
   const handleAvatarChange = ( info: UploadChangeParam ) => {
     if (info.fileList.length === 1) {
@@ -22,8 +22,8 @@ const MyForm: React.FC = () => {
     }
     
   };
-  const handleImageChange =  ( info: UploadChangeParam ) => {
-    setImageFile(info.fileList);
+  const handleImageChange =  ( {imageFile} ) => {
+    setImageFile(imageFile);
   };
 
   const onPreview = async (file : UploadFile) => {
@@ -51,10 +51,12 @@ const MyForm: React.FC = () => {
     formData.append('title', values.name);
     formData.append('datetime', form.getFieldValue('date').format('YYYY-MM-DD'));
     formData.append('avatar', (avatarFile as RcFile).originFileObj)
-    //console.log(avatarFile.originFileObj)
-    ImageFile.forEach((file) => {
-      formData.append('imageFiles', file.originFileObj);
-    });
+    
+    // ImageFile.forEach((file) => {
+    //   formData.append('imageFiles', file.originFileObj);
+    // });
+
+    
 
     // 处理成功响应
     function handleResponse(response) {
@@ -67,7 +69,33 @@ const MyForm: React.FC = () => {
     //后端接口
     axios.post('http://10.177.35.76:8081/api/startTrain',formData)
       .then((handleResponse) => {
-        
+        const chunkSize = 30;
+        const chunks = [];
+        for (let i = 0; i < ImageFile.length; i += chunkSize) {
+          chunks.push(ImageFile.slice(i, i + chunkSize));
+        }
+        const uploadChunk = (chunkIndex = 0) => {
+          if(chunkIndex >= chunks.length) {
+            message.success('上传成功');
+            setImageFile([]);
+            return;
+          }
+          const formData = new FormData();
+          chunks[chunkIndex].forEach(file => {
+            formData.append('imageFiles', file);
+          })
+          axios.post('http://10.177.35.76:8081/api/startTrain',formData)
+          .then((response) => {
+            uploadChunk(chunkIndex + 1)
+            
+          })
+          .catch((error) => {
+            console.error( error);
+            message.error('上传失败')
+            
+          });
+        }
+        uploadChunk();
         
       })
       .catch((error) => {
@@ -135,23 +163,34 @@ const MyForm: React.FC = () => {
         </ImgCrop>
       </Form.Item>
 
-      <Form.Item label="上传图片">
+      {/* <Form.Item label="上传图片">
         <Upload 
           accept='image/*'
           fileList={ImageFile}
+          //showUploadList={false}
           onChange={handleImageChange}
           name='imageFiles'
-          multiple = {true}
+          multiple = {false}
+          beforeUpload={()=>false}
+          
           directory
           //onPreview={handlePreview}
           >
           
           <Button icon={<UploadOutlined/>}>上传文件</Button>
         </Upload>
+      </Form.Item> */}
+
+      {/* {input速度快} */}
+      <Form.Item label="上传图片">
+      <Input type='file' multiple
+             onChange={e => handleImageChange({imageFile: [...e.target.files]})}
+        >
+      </Input>
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" >
           提交
         </Button>
       </Form.Item>
