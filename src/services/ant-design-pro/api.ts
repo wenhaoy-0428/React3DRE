@@ -1,7 +1,7 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from '@umijs/max';
-
+const host="http://10.177.35.76:8081";
 /** 获取当前的用户 GET /api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
@@ -88,6 +88,23 @@ export async function removeRule(options?: { [key: string]: any }) {
 export async function getProjectsInfo(options?: { [key: string]: any }) {
   return request<API.RuleListItem>('/api/getProjects', {
     method: 'GET',
+    ...(options || {}),
+  });
+}
+
+
+// 获取项目列表
+export async function getAllProjects(options?: { [key: string]: any }) {
+  return request<{
+    projects: API.Projects;
+  }>(host+'/api/getAllProjects', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+export async function viewer(options?: { [key: string]: any }) {
+  return request<API.RuleListItem>(host+'/api/viewer', {
+    method: 'POST',
     ...(options || {}),
   });
 }

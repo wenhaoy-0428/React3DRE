@@ -1,4 +1,4 @@
-import { getProjectsInfo } from '@/services/ant-design-pro/api';
+import { getAllProjects } from '@/services/ant-design-pro/api';
 import { PageContainer, ModalForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone } from '@ant-design/icons';
@@ -80,8 +80,8 @@ const AvatarConvert = ({ imageData }) => {
 }
 
 function ProjectsCard(props) {
-  console.log(props.state)
-  console.log(props.state == 2)
+  // console.log(props.state)
+  // console.log(props.state == 2)
   if (props.state == 0) {
     return <Meta
       avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
@@ -120,7 +120,7 @@ const Welcome: React.FC = () => {
   const [EmptyMessage, setEmptyMessage] = useState(false);
   const { message, modal, notification } = App.useApp();
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Array<API.ProjectsAttribute>>([]);
 
   //Antd Spin
   const [loading, setLoading] = useState(false);
@@ -295,16 +295,17 @@ const Welcome: React.FC = () => {
   //将这段IP地址改成Host/api/getAllProjects
 
   useEffect(() => {
-    axios.get('http://10.177.35.76:8081/api/getAllProjects').then(response => {
-      console.log('1');
-      console.log(response.data.projects);
+    const projects_info =  getAllProjects();
+    // console.log(projects_info);
+    getAllProjects().then(response => {
+      console.log(response.projects);
       //如果是空的话，就不要setData了
-      if (response.data.projects.length == 0) {
+      if (response.projects.length == 0) {
         //加入antd的空页面
         setEmptyMessage(true);
         return;
       } else {
-        setData(response.data.projects);
+        setData(response.projects);
       }
       console.log(data);
       console.log("success");
