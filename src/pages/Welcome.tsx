@@ -2,7 +2,7 @@ import { getProjectsInfo } from '@/services/ant-design-pro/api';
 import { PageContainer , ModalForm, ProFormText, ProFormUploadButton} from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone } from '@ant-design/icons';
-import { App, Spin, Button, Avatar, Card, Divider, Dropdown } from 'antd';
+import { App, Spin, Button, Avatar, Card, Divider, Dropdown, Row, Col } from 'antd';
 import type { MenuProps } from 'antd';
 import React, { useRef, useState, useEffect} from 'react';
 import axios from 'axios';
@@ -134,25 +134,36 @@ const Welcome: React.FC = () => {
             display: 'flex',
             flexWrap: 'wrap',
             gap: 16,
+            // height:'70vh',
+            
           }}
         >
-      {EmptyMessage?<Empty
+
+      {EmptyMessage?    <Row style={{width:'100%'}}>   <Col span={8}></Col> <Col span={8}><Empty
     image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
     imageStyle={{ height: 60 }}
     description={
       <span>
-        Customize <a href="#API">Description</a>
+        您还没有上传模型，请创建一个吧:\(￣▽￣)/
       </span>
     }
   >
-    <Button type="primary">Create Now</Button>
-  </Empty>:null}
+    <Button key="1" type="primary">
+          <Link to="/upload">
+            <PlusCircleTwoTone />
+            创建模型
+          </Link>
+        </Button>
+  </Empty>
+  </Col>
+  </Row>:null}
           {data.map((item) => (
             
             <Card
               key={ item.id }
               hoverable
-              style={{ width: 240 }}
+              style={{ width: 240
+              ,height: 'auto'}}
               cover={<AvatarConvert imageData={item.avatar}/>}
               
               actions={[
@@ -284,7 +295,8 @@ const Welcome: React.FC = () => {
   useEffect(() => {
     axios.get('http://10.177.35.76:8081/api/getAllProjects').then(response =>
       {
-        console.log(response.data.projects)
+        console.log('1');
+        console.log(response.data.projects);
         //如果是空的话，就不要setData了
         if(response.data.projects.length == 0) {
           //加入antd的空页面
@@ -293,8 +305,8 @@ const Welcome: React.FC = () => {
         }else{
         setData(response.data.projects);
         }
-        console.log(data)
-        console.log("success")
+        console.log(data);
+        console.log("success");
       })
       .catch(error => {
         console.error(error)
@@ -317,6 +329,8 @@ const Welcome: React.FC = () => {
           </Link>
         </Button>,
       ]}
+      style={{
+    height: '80vh'}}
     >
       {/* TODO 这个Divider 太丑了 */}
       <Divider></Divider>
