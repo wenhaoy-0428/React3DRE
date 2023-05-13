@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Upload, message, DatePicker, Divider } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Button, Upload, message, DatePicker, Divider, Progress } from 'antd';
 import { RcFile, UploadFile, UploadChangeParam } from 'antd/lib/upload';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -13,6 +13,8 @@ const MyForm: React.FC = () => {
   const [form] = Form.useForm();
   const [avatarFile, setAvatarFile] = useState<RcFile | null>(null);
   const [ImageFile, setImageFile] = useState([]);
+
+  const [percent, setPercent] = useState(Number);
 
   const handleAvatarChange = ( info: UploadChangeParam ) => {
     if (info.fileList.length === 1) {
@@ -80,6 +82,11 @@ const MyForm: React.FC = () => {
             setImageFile([]);
             return;
           }
+          let newPercent = (chunkIndex+1) / chunks.length
+          if (newPercent > 1) {
+            newPercent = 1;
+          }
+          setPercent(newPercent) 
           const formData = new FormData();
           formData.append('title', values.name)
           chunks[chunkIndex].forEach(file => {
@@ -105,6 +112,8 @@ const MyForm: React.FC = () => {
         // 处理错误响应
       });
   };
+
+  
 
   
   const uploadAvatarProps = {
@@ -189,6 +198,12 @@ const MyForm: React.FC = () => {
         >
       </Input>
       </Form.Item>
+      <Progress
+        percent={Math.round((percent) * 100)}
+        status = {ImageFile.length > 0 ? 'active':'normal'}
+        />
+
+      
 
       <Form.Item>
         <Button type="primary" htmlType="submit" >
