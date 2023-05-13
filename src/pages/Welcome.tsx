@@ -295,8 +295,6 @@ const Welcome: React.FC = () => {
   //将这段IP地址改成Host/api/getAllProjects
 
   useEffect(() => {
-    const projects_info =  getAllProjects();
-    // console.log(projects_info);
     getAllProjects().then(response => {
       console.log(response.projects);
       //如果是空的话，就不要setData了
