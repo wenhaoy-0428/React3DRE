@@ -67,7 +67,7 @@ const MyForm: React.FC = () => {
     }
 
     //后端接口
-    axios.post('http://10.177.35.76:8081/api/startTrain',formData)
+    axios.post('http://10.177.35.76:8081/api/createProject',formData)
       .then((handleResponse) => {
         const chunkSize = 30;
         const chunks = [];
@@ -81,10 +81,11 @@ const MyForm: React.FC = () => {
             return;
           }
           const formData = new FormData();
+          formData.append('title', values.name)
           chunks[chunkIndex].forEach(file => {
             formData.append('imageFiles', file);
           })
-          axios.post('http://10.177.35.76:8081/api/startTrain',formData)
+          axios.post('http://10.177.35.76:8081/api/uploadImgs',formData)
           .then((response) => {
             uploadChunk(chunkIndex + 1)
             
