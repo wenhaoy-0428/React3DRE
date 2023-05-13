@@ -136,22 +136,23 @@ export default function ViewerWindow(props) {
   sceneTree.metadata.camera = sceneTree.find_object(['Cameras', camera_choice]);
 
   const get_window_width = () => {
-    const width = 0;
-    if(myRef.current.clientWidth !== null) {
-      const width = myRef.current.clientWidth;
-      return width - (width % 2);
-    }else {
-      return width;
+    let width = 0;
+    //这个地方错误的原因是刷新页面的时候myref绑定的dom已经没了,所以报错,因此判断是否存在
+    if (myRef && myRef.current && myRef.current.clientWidth) {
+      width = myRef.current.clientWidth;
+      width -= width % 2;
     }
-    
-    
-    
-    
+    return width;
   };
 
   const get_window_height = () => {
     //console.log(myRef.current.clientHeight)
-    return myRef.current.clientHeight;
+    let height = 0;
+    if (myRef&& myRef.current && myRef.current.clientHeight)
+    {
+      height=myRef.current.clientHeight;
+    }
+    return height;
   };
 
   const handleResize = () => {
