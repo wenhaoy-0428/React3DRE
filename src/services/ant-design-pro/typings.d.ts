@@ -98,14 +98,16 @@ declare namespace API {
     description?: string;
     type?: NoticeIconItemType;
   };
+  //定义类型并继承map方法
   type ProjectsAttribute = {
     id?: int;
     avatar?: string;
+    imgNum?:int
     title?: string;
     datetime?: String;
     state?: int;
   };
-  // type ProjectsResult = {
-    
-  // }
+  type Projects={
+    projects:Array<ProjectsAttribute>;
+  }
 }

@@ -1,10 +1,10 @@
-import { getProjectsInfo } from '@/services/ant-design-pro/api';
-import { PageContainer , ModalForm, ProFormText, ProFormUploadButton} from '@ant-design/pro-components';
+import { getAllProjects } from '@/services/ant-design-pro/api';
+import { PageContainer, ModalForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone } from '@ant-design/icons';
 import { App, Spin, Button, Avatar, Card, Divider, Dropdown, Row, Col } from 'antd';
 import type { MenuProps } from 'antd';
-import React, { useRef, useState, useEffect} from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import { Empty } from 'antd';
 // import { Col, Row } from 'antd';
@@ -27,7 +27,7 @@ const { Meta } = Card;
 
 
 
-const waitTime = (time:number = 100) => {
+const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(true);
@@ -37,7 +37,7 @@ const waitTime = (time:number = 100) => {
 
 
 
-const items: MenuProps['items'] =[
+const items: MenuProps['items'] = [
   {
     key: '1',
     label: (
@@ -61,49 +61,49 @@ const items: MenuProps['items'] =[
         3st menu item
       </a>
     ),
-    disabled:true
+    disabled: true
   },
 ]
 
 function GetStateIcon(state) {
-  if(state){
-    return <CheckSquareTwoTone/>
-  }else {
-    return <SyncOutlined rotate={180}/>
+  if (state) {
+    return <CheckSquareTwoTone />
+  } else {
+    return <SyncOutlined rotate={180} />
   }
 }
 
 
-const AvatarConvert = ({imageData}) => {
+const AvatarConvert = ({ imageData }) => {
   const dataUrl = `data:image/png;base64,${imageData}`;
-  return <img src={ dataUrl } alt='Base64 Image' width="260" height="160"/>
+  return <img src={dataUrl} alt='Base64 Image' width="260" height="160" />
 }
 
-function ProjectsCard( props) {
-  console.log(props.state)
-  console.log(props.state == 2)
-  if(props.state ==  0) {
+function ProjectsCard(props) {
+  // console.log(props.state)
+  // console.log(props.state == 2)
+  if (props.state == 0) {
     return <Meta
-              avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>} 
-              title={props.title} 
-              description = 'processing data'
-            />
-  }else if(props.state == 1) {
+      avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
+      title={props.title}
+      description='processing data'
+    />
+  } else if (props.state == 1) {
     return <Meta
-              avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>} 
-              title={props.title} 
-              description = 'untrained'
-            />
-  }else if(props.state == 2) {
-    return  <Meta
-              avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>} 
-              title={props.title} 
-              description = 'training ends'
-            />
-  }else{
+      avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
+      title={props.title}
+      description='untrained'
+    />
+  } else if (props.state == 2) {
+    return <Meta
+      avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
+      title={props.title}
+      description='training ends'
+    />
+  } else {
     return <p>"something went wrong"</p>
   }
-  
+
 }
 
 
@@ -120,194 +120,196 @@ const Welcome: React.FC = () => {
   const [EmptyMessage, setEmptyMessage] = useState(false);
   const { message, modal, notification } = App.useApp();
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Array<API.ProjectsAttribute>>([]);
 
   //Antd Spin
-  const [ loading, setLoading] = useState(false); 
-  const toggle = (checked:boolean) => {
+  const [loading, setLoading] = useState(false);
+  const toggle = (checked: boolean) => {
     setLoading(checked);
   };
 
   const container = (
     <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 16,
-            // height:'70vh',
-            
-          }}
-        >
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 16,
+        // height:'70vh',
 
-      {EmptyMessage?    <Row style={{width:'100%'}}>   <Col span={8}></Col> <Col span={8}><Empty
-    image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-    imageStyle={{ height: 60 }}
-    description={
-      <span>
-        您还没有上传模型，请创建一个吧:\(￣▽￣)/
-      </span>
-    }
-  >
-    <Button key="1" type="primary">
+      }}
+    >
+
+      {EmptyMessage ? <Row style={{ width: '100%' }}>   <Col span={8}></Col> <Col span={8}><Empty
+        image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+        imageStyle={{ height: 60 }}
+        description={
+          <span>
+            您还没有上传模型，请创建一个吧:\(￣▽￣)/
+          </span>
+        }
+      >
+        <Button key="1" type="primary">
           <Link to="/upload">
             <PlusCircleTwoTone />
             创建模型
           </Link>
         </Button>
-  </Empty>
-  </Col>
-  </Row>:null}
-          {data.map((item) => (
-            
-            <Card
-              key={ item.id }
-              hoverable
-              style={{ width: 240
-              ,height: 'auto'}}
-              cover={<AvatarConvert imageData={item.avatar}/>}
-              
-              actions={[
-                // TODO 需要判断是否已经重建完成来决定该图标状态
-                
-                <RenderButton title={item.title} state={item.state} />,
-                
-                // TODO 新开一个页面
-                <ModalForm
-                  
-                  title = "编辑信息"
-                  formRef={restFormRef}
-                  open={modalVisible}
-                  trigger={
-                    
-                    <EditOutlined  key="edit" />
-                    
-                  }
-                  onOpenChange={setModalVisible}
-                  submitter={{
-                    searchConfig: {
-                      resetText:'重置',
-                    },
-                    resetButtonProps: {
-                      onClick: () => {
-                        restFormRef.current?.resetFields();
-                      },
-                    },
-                  }}
-                  onFinish={async (values) => {
-                    await waitTime(2000);
-                    console.log(values);
-                    message.success('提交成功');
-                    return true;
-                  }}
-                  >
-                    <ProFormText
-                      width = "md"
-                      name = "title"
-                      label = "模型名称"
-                      tooltip = ''
-                      placeholder={item.title}
-                      />
-                    <ProFormUploadButton
-                      name = "avatar"
-                      label = "封面"
-                      max = {1}
-                      fieldProps={{
-                        name : "file",
-                        listType: 'picture-card'
-                      }}
-                      />
-                  
-                </ModalForm>,
-                
-                // TOOD 一个下拉菜单
-                <Dropdown menu={{items}}>
-                  
-                  <a onClick={(e) => e.preventDefault()}>
-                    <EllipsisOutlined key="extra"/>
-                  </a>
-                </Dropdown>,
-              ]}
+      </Empty>
+      </Col>
+      </Row> : null}
+      {data.map((item) => (
+
+        <Card
+          key={item.id}
+          hoverable
+          style={{
+            width: 240
+            , height: 'auto'
+          }}
+          cover={<AvatarConvert imageData={item.avatar} />}
+
+          actions={[
+            // TODO 需要判断是否已经重建完成来决定该图标状态
+
+            <RenderButton title={item.title} state={item.state} />,
+
+            // TODO 新开一个页面
+            <ModalForm
+
+              title="编辑信息"
+              formRef={restFormRef}
+              open={modalVisible}
+              trigger={
+
+                <EditOutlined key="edit" />
+
+              }
+              onOpenChange={setModalVisible}
+              submitter={{
+                searchConfig: {
+                  resetText: '重置',
+                },
+                resetButtonProps: {
+                  onClick: () => {
+                    restFormRef.current?.resetFields();
+                  },
+                },
+              }}
+              onFinish={async (values) => {
+                await waitTime(2000);
+                console.log(values);
+                message.success('提交成功');
+                return true;
+              }}
             >
-              <ProjectsCard title={item.title} state={item.state} />
-          </Card>
-          ))}
-        </div>
+              <ProFormText
+                width="md"
+                name="title"
+                label="模型名称"
+                tooltip=''
+                placeholder={item.title}
+              />
+              <ProFormUploadButton
+                name="avatar"
+                label="封面"
+                max={1}
+                fieldProps={{
+                  name: "file",
+                  listType: 'picture-card'
+                }}
+              />
+
+            </ModalForm>,
+
+            // TOOD 一个下拉菜单
+            <Dropdown menu={{ items }}>
+
+              <a onClick={(e) => e.preventDefault()}>
+                <EllipsisOutlined key="extra" />
+              </a>
+            </Dropdown>,
+          ]}
+        >
+          <ProjectsCard title={item.title} state={item.state} />
+        </Card>
+      ))}
+    </div>
   );
 
-  function RenderButton( props ) {
+  function RenderButton(props) {
 
     function showMessage() {
       message.success('Success!');
     }
-    function showModal(){
+    function showModal() {
       modal.warning({
-          title: 'warning message',
-          content: 'something went wrong',
+        title: 'warning message',
+        content: 'something went wrong',
       })
     }
-    
-    function handleRender (title) {
+
+    function handleRender(title) {
       const formdata = new FormData();
-      formdata.append('title',title);
+      formdata.append('title', title);
       setLoading(true);
-      axios.post('http://10.177.35.76:8081/api/viewer',formdata,{
+      axios.post('http://10.177.35.76:8081/api/viewer', formdata, {
         headers: {
           'Content-Type': 'multipart/form-data',
         }
       })
-        .then((response)=>{
-            console.log(response.data);
-            console.log('Render request submission response:', response);
-            
-            const status = response.data.status;
-            if(status == 'success') {
-              setLoading(false);
-              // {showMessage();}
-              window.location.href = '/show_model';
-            }
-            
-          })
-          .catch((error)=>{
-            console.error('Form submission error:', error);
-            // {showModal();}
-        
-    
-          });
+        .then((response) => {
+          console.log(response.data);
+          console.log('Render request submission response:', response);
+
+          const status = response.data.status;
+          if (status == 'success') {
+            setLoading(false);
+            // {showMessage();}
+            window.location.href = '/show_model';
+          }
+
+        })
+        .catch((error) => {
+          console.error('Form submission error:', error);
+          // {showModal();}
+
+
+        });
     }
     // {setLoading(true);
     // setTimeout(()=> {
     //   setLoading(false);
     // },5000);}
-  
-    if(props.state == 2) {
-      return <Button type='link'  onClick={()=>handleRender(props.title)} block>
-                <PlayCircleTwoTone key = "start" twoToneColor="#52c41a" />
-             </Button>
-    }else {
-      return <Button type='link'   block>
-                <PlayCircleTwoTone key = "start" twoToneColor="#eb2f2f"/>
-              </Button>
-        
+
+    if (props.state == 2) {
+      return <Button type='link' onClick={() => handleRender(props.title)} block>
+        <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
+      </Button>
+    } else {
+      return <Button type='link' block>
+        <PlayCircleTwoTone key="start" twoToneColor="#eb2f2f" />
+      </Button>
+
     }
   }
   //将这段IP地址改成Host/api/getAllProjects
 
   useEffect(() => {
-    axios.get('http://10.177.35.76:8081/api/getAllProjects').then(response =>
-      {
-        console.log('1');
-        console.log(response.data.projects);
-        //如果是空的话，就不要setData了
-        if(response.data.projects.length == 0) {
-          //加入antd的空页面
-          setEmptyMessage(true);
-          return;
-        }else{
-        setData(response.data.projects);
-        }
-        console.log(data);
-        console.log("success");
-      })
+    const projects_info =  getAllProjects();
+    // console.log(projects_info);
+    getAllProjects().then(response => {
+      console.log(response.projects);
+      //如果是空的话，就不要setData了
+      if (response.projects.length == 0) {
+        //加入antd的空页面
+        setEmptyMessage(true);
+        return;
+      } else {
+        setData(response.projects);
+      }
+      console.log(data);
+      console.log("success");
+    })
       .catch(error => {
         console.error(error)
       })
@@ -330,7 +332,8 @@ const Welcome: React.FC = () => {
         </Button>,
       ]}
       style={{
-    height: '80vh'}}
+        height: '80vh'
+      }}
     >
       {/* TODO 这个Divider 太丑了 */}
       <Divider></Divider>
@@ -339,16 +342,11 @@ const Welcome: React.FC = () => {
           backgroundPosition: '100% -30%',
           backgroundRepeat: 'no-repeat',
           backgroundSize: '274px auto',
-          
         }}
       >
-        
         <Spin spinning={loading} delay={500}>
           {container}
         </Spin>
-        
-
-
       </div>
     </PageContainer>
   );
