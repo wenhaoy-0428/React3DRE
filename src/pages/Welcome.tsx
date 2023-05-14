@@ -330,7 +330,7 @@ const Welcome: React.FC = () => {
         </Button>,
       ]}
       style={{
-        height: '80vh'
+        height: ''
       }}
     >
       {/* TODO 这个Divider 太丑了 */}
