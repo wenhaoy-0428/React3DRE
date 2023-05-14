@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Upload, message, DatePicker, Divider } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Button, Upload, message, DatePicker, Divider, Progress } from 'antd';
 import { RcFile, UploadFile, UploadChangeParam } from 'antd/lib/upload';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -12,7 +12,9 @@ const { TextArea } = Input;
 const MyForm: React.FC = () => {
   const [form] = Form.useForm();
   const [avatarFile, setAvatarFile] = useState<RcFile | null>(null);
-  const [ImageFile, setImageFile] = useState<RcFile[]>([]);
+  const [ImageFile, setImageFile] = useState([]);
+
+  const [percent, setPercent] = useState(Number);
 
   const handleAvatarChange = ( info: UploadChangeParam ) => {
     if (info.fileList.length === 1) {
@@ -22,8 +24,8 @@ const MyForm: React.FC = () => {
     }
     
   };
-  const handleImageChange =  ( info: UploadChangeParam ) => {
-    setImageFile(info.fileList);
+  const handleImageChange =  ( {imageFile} ) => {
+    setImageFile(imageFile);
   };
 
   const onPreview = async (file : UploadFile) => {
@@ -51,10 +53,12 @@ const MyForm: React.FC = () => {
     formData.append('title', values.name);
     formData.append('datetime', form.getFieldValue('date').format('YYYY-MM-DD'));
     formData.append('avatar', (avatarFile as RcFile).originFileObj)
-    //console.log(avatarFile.originFileObj)
-    ImageFile.forEach((file) => {
-      formData.append('imageFiles', file.originFileObj);
-    });
+    
+    // ImageFile.forEach((file) => {
+    //   formData.append('imageFiles', file.originFileObj);
+    // });
+
+    
 
     // 处理成功响应
     function handleResponse(response) {
@@ -65,9 +69,41 @@ const MyForm: React.FC = () => {
     }
 
     //后端接口
-    axios.post('http://10.177.35.76:8081/api/startTrain',formData)
+    axios.post('http://10.177.35.76:8081/api/createProject',formData)
       .then((handleResponse) => {
-        
+        const chunkSize = 30;
+        const chunks = [];
+        for (let i = 0; i < ImageFile.length; i += chunkSize) {
+          chunks.push(ImageFile.slice(i, i + chunkSize));
+        }
+        const uploadChunk = (chunkIndex = 0) => {
+          if(chunkIndex >= chunks.length) {
+            message.success('上传成功');
+            setImageFile([]);
+            return;
+          }
+          let newPercent = (chunkIndex+1) / chunks.length
+          if (newPercent > 1) {
+            newPercent = 1;
+          }
+          setPercent(newPercent) 
+          const formData = new FormData();
+          formData.append('title', values.name)
+          chunks[chunkIndex].forEach(file => {
+            formData.append('imageFiles', file);
+          })
+          axios.post('http://10.177.35.76:8081/api/uploadImgs',formData)
+          .then((response) => {
+            uploadChunk(chunkIndex + 1)
+            
+          })
+          .catch((error) => {
+            console.error( error);
+            message.error('上传失败')
+            
+          });
+        }
+        uploadChunk();
         
       })
       .catch((error) => {
@@ -76,6 +112,8 @@ const MyForm: React.FC = () => {
         // 处理错误响应
       });
   };
+
+  
 
   
   const uploadAvatarProps = {
@@ -135,23 +173,40 @@ const MyForm: React.FC = () => {
         </ImgCrop>
       </Form.Item>
 
-      <Form.Item label="上传图片">
+      {/* <Form.Item label="上传图片">
         <Upload 
           accept='image/*'
           fileList={ImageFile}
+          //showUploadList={false}
           onChange={handleImageChange}
           name='imageFiles'
-          multiple = {true}
+          multiple = {false}
+          beforeUpload={()=>false}
+          
           directory
           //onPreview={handlePreview}
           >
           
           <Button icon={<UploadOutlined/>}>上传文件</Button>
         </Upload>
+      </Form.Item> */}
+
+      {/* {input速度快} */}
+      <Form.Item label="上传图片">
+      <Input type='file' multiple
+             onChange={e => handleImageChange({imageFile: [...e.target.files]})}
+        >
+      </Input>
       </Form.Item>
+      <Progress
+        percent={Math.round((percent) * 100)}
+        status = {ImageFile.length > 0 ? 'active':'normal'}
+        />
+
+      
 
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" >
           提交
         </Button>
       </Form.Item>
