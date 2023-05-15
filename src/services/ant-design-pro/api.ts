@@ -1,6 +1,7 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from '@umijs/max';
+import axios from 'axios';
 const host="http://10.177.35.76:8081";
 /** 获取当前的用户 GET /api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
@@ -108,3 +109,15 @@ export async function viewer(options?: { [key: string]: any }) {
     ...(options || {}),
   });
 }
+// TODO 暂时不知道怎么合理封装这个接口
+// export async function closeviewer(options?: { [key: string]: any }) {
+//   return axios.post(host+'/api/viewerClose', {
+//     ...(options || {}),
+//   })
+// }
+// export async function closeviewer(options?: { [key: string]: any }) {
+//   return request<API.ProjectsTitle>(host+'/api/viewerClose', {
+//     method: 'POST',
+//     ...(options || {}),
+//   });
+

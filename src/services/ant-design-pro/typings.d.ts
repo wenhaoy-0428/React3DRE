@@ -109,5 +109,9 @@ declare namespace API {
   };
   type Projects={
     projects:Array<ProjectsAttribute>;
-  }
+  };
+  type ProjectsTitle={
+    title:string;
+  };
 }
+
