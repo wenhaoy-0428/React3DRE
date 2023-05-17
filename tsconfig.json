@@ -19,5 +19,5 @@
       "@@test/*": ["./src/.umi-test/*"]
     }
   },
-  "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx", "src/pages/Test/test.jsx", "src/pages/ShowModel/App.jsx", "src/components/Viser/ViewerWindow/ViewerWindow.jsx", "src/components/Viser/SidePanel/CameraPanel/CameraPanel.jsx", "src/components/Viser/Scene/Scene.jsx", "src/components/Scene/Scene.jsx"]
+  "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx", "src/pages/Test/test.jsx", "src/pages/ShowModel/App.jsx", "src/components/Viser/ViewerWindow/ViewerWindow.jsx", "src/components/Viser/SidePanel/CameraPanel/CameraPanel.jsx", "src/components/Viser/Scene/Scene.jsx", "src/components/Scene/Scene.jsx", "src/pages/ShowModel/show_test.jsx", "src/pages/ShowModel/show_test.jsx"]
 }
