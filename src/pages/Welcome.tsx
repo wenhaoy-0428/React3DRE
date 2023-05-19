@@ -265,7 +265,7 @@ const Welcome: React.FC = () => {
           if (status == 'success') {
             setLoading(false);
             // {showMessage();}
-            window.location.href = '/show_model?id='+title;
+            window.location.href = '/show_model?id='+title+'&websocket_url='+response.data.websocket_url;
           }
 
         })

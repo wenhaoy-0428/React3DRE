@@ -74,12 +74,5 @@ export default [
 
     component: './ShowModel/ShowModel',
   },
-  {
-    path: 'test',
-    component: './Test/test',
-  },
-  // {
-  //   path: 'show_test',
-  //   component: './ShowModel/show_test',
-  // }
+  
 ];
