@@ -113,5 +113,13 @@ declare namespace API {
   type ProjectsTitle={
     title:string;
   };
+  type OpenViewerParams={
+    title?: string;
+  }
+  type OpenViewerResult={
+    status?:string;
+    websocket_url?: string;
+  }
+
 }
 

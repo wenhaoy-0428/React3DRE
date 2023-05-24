@@ -1,4 +1,4 @@
-import { getAllProjects } from '@/services/ant-design-pro/api';
+import { getAllProjects, openViewer } from '@/services/ant-design-pro/api';
 import { PageContainer, ModalForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone } from '@ant-design/icons';
@@ -237,7 +237,6 @@ const Welcome: React.FC = () => {
   );
 
   function RenderButton(props) {
-
     function showMessage() {
       message.success('Success!');
     }
@@ -248,31 +247,28 @@ const Welcome: React.FC = () => {
       })
     }
 
-    function handleRender(title) {
-      const formdata = new FormData();
-      formdata.append('title', title);
-      setLoading(true);
-      axios.post('http://10.177.35.76:8081/api/viewer', formdata, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
-      })
+    function handleRender (title: API.OpenViewerParams) {
+      openViewer(title)
+      // axios.post('http://10.177.35.76:8081/api/viewer', formdata, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //   }
+      // })
         .then((response) => {
-          console.log(response.data);
-          console.log('Render request submission response:', response);
-
-          const status = response.data.status;
+          console.log(response);
+          const status = response.status;
+          console.log(status)
           if (status == 'success') {
             setLoading(false);
             // {showMessage();}
-            window.location.href = '/show_model?id='+title+'&websocket_url='+response.data.websocket_url;
+            // debugger;
+            window.location.href = '/show_model?id='+title+'&websocket_url='+response.websocket_url;
           }
 
         })
         .catch((error) => {
-          console.error('Form submission error:', error);
+          console.error('Open Viewer error:', error);
           // {showModal();}
-
 
         });
     }
@@ -282,7 +278,7 @@ const Welcome: React.FC = () => {
     // },5000);}
 
     if (props.state == 2) {
-      return <Button type='link' onClick={() => handleRender(props.title)} block>
+      return <Button type='link' onClick={() => handleRender(props.title as API.OpenViewerParams)} block>
         <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
       </Button>
     } else {
@@ -305,7 +301,7 @@ const Welcome: React.FC = () => {
       } else {
         setData(response.projects);
       }
-      console.log(data);
+      //console.log(data[0]);
       console.log("success");
     })
       .catch(error => {

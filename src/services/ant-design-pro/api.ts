@@ -121,3 +121,20 @@ export async function viewer(options?: { [key: string]: any }) {
 //     ...(options || {}),
 //   });
 
+export async function openViewer(params: API.OpenViewerParams, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  console.log(params)
+  const title = params
+  if (title !== undefined){
+    formdata.append('title', <string>title);
+  }
+  // console.log(formdata)
+  return request<API.OpenViewerResult>(host + '/api/viewer', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
