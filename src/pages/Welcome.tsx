@@ -249,11 +249,6 @@ const Welcome: React.FC = () => {
 
     function handleRender (title: API.OpenViewerParams) {
       openViewer(title)
-      // axios.post('http://10.177.35.76:8081/api/viewer', formdata, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   }
-      // })
         .then((response) => {
           console.log(response);
           const status = response.status;

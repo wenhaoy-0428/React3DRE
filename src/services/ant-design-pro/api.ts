@@ -123,7 +123,7 @@ export async function viewer(options?: { [key: string]: any }) {
 
 export async function openViewer(params: API.OpenViewerParams, options?: { [key: string]: any }) {
   const formdata = new FormData();
-  console.log(params)
+  //console.log(params)
   const title = params
   if (title !== undefined){
     formdata.append('title', <string>title);
@@ -136,5 +136,23 @@ export async function openViewer(params: API.OpenViewerParams, options?: { [key:
     },
     data: formdata,
     ...(options || {}),
+  });
+}
+
+export async function closeViewer(params:string, flag:number) {
+
+  const formdata = new FormData();
+  formdata.append('title', params);
+  if (flag == 2) {
+    const url = host + '/api/viewerClose'
+    const result = window.navigator.sendBeacon(url, formdata);
+  }
+  return request<API.CloseViewerResult>(host + '/api/viewerClose', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    
   });
 }
