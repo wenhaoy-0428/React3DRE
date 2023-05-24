@@ -298,6 +298,17 @@ export function ViserWebSocket({ children }: { children: React.ReactNode }) {
   // console.log(store.getState());
   const ws = React.useRef<WebSocket | null>(null);
 
+  const searchParams = new URLSearchParams(window.location.search);
+  const socket_url = searchParams.get('websocket_url');
+
+  dispatch({
+    type: 'write',
+      path: 'websocketState/websocket_url',
+      data: socket_url,
+  })
+  console.log(socket_url+'show_model')
+  
+
   const websocket_url = useSelector(
     (state) => state.websocketState.websocket_url,
   );
