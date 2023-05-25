@@ -8,23 +8,19 @@ import ViewerWindow from '../../components/Viser/ViewerWindow/ViewerWindow';
 import { appTheme } from '../../components/themes/theme';
 import axios from 'axios';
 // import { closeviewer } from '@/services/ant-design-pro/api';
-import { API } from '@/services/ant-design-pro/typings.d';
+import { closeViewer } from '../../services/ant-design-pro/api';
 export default function App(){
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const id = searchParams.get('id');
-    const formdata = new FormData();
-      formdata.append('title', id);
+    
     // 在组件卸载时发送请求
   //   console.log('1')
   //  const [projecttitle,setprojecttitle]=useState<>({title:id});
     // 在组件挂载时注册清理函数
     return () => {
-      axios.post('http://10.177.35.76:8081/api/viewerClose',formdata,{
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
-      }).then((res)=>{
+      closeViewer(id, 1)
+        .then((res)=>{
         console.log(res)
         }).catch((err)=>{
           console.log(err)

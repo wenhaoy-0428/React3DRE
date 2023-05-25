@@ -113,5 +113,38 @@ declare namespace API {
   type ProjectsTitle={
     title:string;
   };
+  
+  type OpenViewerParams={
+    title?: string;
+  }
+  type OpenViewerResult={
+    status?: string;
+    websocket_url?: string;
+  }
+  type CloseViewerParams={
+    title?: string;
+  }
+  type CloseViewerResult={
+    status?: string;
+    message?: string;
+  }
+
+  type UploadCreateProjectParams={
+    title?: string;
+    datetime?: string;
+    avatar?: File;
+  }
+  type UploadCreateProjectResult={
+    status?: string;
+  }
+  type UploadImageParams={
+    title?: string
+    imageFiles?: File[];
+  }
+  type UploadImageResult={
+    status?: string;
+  }
 }
+
+
 
