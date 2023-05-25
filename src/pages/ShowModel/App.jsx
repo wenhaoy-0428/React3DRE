@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import { BasicTabs } from '../../components/Viser/SidePanel/SidePanel';
 import ViewerWindow from '../../components/Viser/ViewerWindow/ViewerWindow';
 import { appTheme } from '../../components/themes/theme';
-import axios from 'axios';
 // import { closeviewer } from '@/services/ant-design-pro/api';
 import { closeViewer } from '../../services/ant-design-pro/api';
 export default function App(){
