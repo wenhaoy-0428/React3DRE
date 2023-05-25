@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { UploadOutlined } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
-
+import { createProject, uploadImages } from '@/services/ant-design-pro/api';
 
 const { TextArea } = Input;
 
@@ -46,20 +46,9 @@ const MyForm: React.FC = () => {
   
 
   const onFinish = (values) => {
-    console.log('Form values:', values);
-
-    // 使用axios将表单数据提交给后端API
-    const formData = new FormData();
-    formData.append('title', values.name);
-    formData.append('datetime', form.getFieldValue('date').format('YYYY-MM-DD'));
-    formData.append('avatar', (avatarFile as RcFile).originFileObj)
-    
-    // ImageFile.forEach((file) => {
-    //   formData.append('imageFiles', file.originFileObj);
-    // });
-
-    
-
+    let value = values as API.UploadCreateProjectParams;
+    value.datetime = form.getFieldValue('datetime').format('YYYY-MM-DD');
+    value.avatar = (avatarFile as RcFile).originFileObj
     // 处理成功响应
     function handleResponse(response) {
       console.log('Form submission response:', response);
@@ -67,9 +56,8 @@ const MyForm: React.FC = () => {
       setImageFile([]);
       message.success('表单提交成功')
     }
-
     //后端接口
-    axios.post('http://10.177.35.76:8081/api/createProject',formData)
+    createProject(value)
       .then((handleResponse) => {
         const chunkSize = 30;
         const chunks = [];
@@ -87,12 +75,9 @@ const MyForm: React.FC = () => {
             newPercent = 1;
           }
           setPercent(newPercent) 
-          const formData = new FormData();
-          formData.append('title', values.name)
-          chunks[chunkIndex].forEach(file => {
-            formData.append('imageFiles', file);
-          })
-          axios.post('http://10.177.35.76:8081/api/uploadImgs',formData)
+          let value2:API.UploadImageParams = {'title': values.title,'imageFiles':chunks[chunkIndex]}
+          console.log(value2)
+          uploadImages(value2)
           .then((response) => {
             uploadChunk(chunkIndex + 1)
             
@@ -143,7 +128,7 @@ const MyForm: React.FC = () => {
       <Divider/>
       <Form.Item
         label="模型名称"
-        name="name"
+        name="title"
         rules={[{ required: true, message: '请输入名称' }]}
       >
         <Input placeholder="请输入名称" />
@@ -151,13 +136,16 @@ const MyForm: React.FC = () => {
 
       <Form.Item
         label="请输入日期"
-        name="date"
+        name="datetime"
         rules={[{ required: true, message: '请输入日期' }]}
       >
         <DatePicker format="YYYY-MM-DD"/>
       </Form.Item>
 
-      <Form.Item label="上传封面">
+      <Form.Item 
+        label="上传封面"
+        name="avatar"
+      >
         <ImgCrop rotationSlider aspect={13/8}>
           <Upload 
             accept='image/*'

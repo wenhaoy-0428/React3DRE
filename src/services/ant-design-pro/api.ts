@@ -156,3 +156,37 @@ export async function closeViewer(params:string, flag:number) {
     
   });
 }
+
+export async function createProject(params: API.UploadCreateProjectParams, options?: { [key: string]: any }) {
+  console.log(params);
+  const formData = new FormData();
+  formData.append('title', params.title as string);
+  formData.append('datetime', params.datetime as string);
+  formData.append('avatar', params.avatar as File)
+  return request<API.OpenViewerResult>(host + '/api/createProject', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formData,
+    ...(options || {}),
+  });
+}
+export async function uploadImages(params: API.UploadImageParams, options?: { [key: string]: any }) {
+  console.log(params);
+  const formData = new FormData();
+  formData.append('title', params.title as string);
+  if(params.imageFiles !== undefined) {
+    for (let file of params.imageFiles) {
+      formData.append('imageFiles', file);
+    }
+  }
+  return request<API.UploadImageResult>(host + '/api/uploadImgs', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formData,
+    ...(options || {}),
+  });
+}

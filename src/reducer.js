@@ -4,7 +4,7 @@ const initialState = {
   // the websocket connection state
   websocketState: {
     isConnected: false,
-    websocket_url: 'ws://10.177.35.76:7007',
+    websocket_url: '',
   },
 
   // for sending actual commands to the client
@@ -99,9 +99,6 @@ export default function rootReducer(state = initialState, action) {
       // Return the updated state object
       return newState;
     }
-
-    case 'SET_WEBSOCKET_URL':
-      return {...state, websocketUrl:action.payload}
 
     // If the reducer doesn't recognize the action type, return the existing state unchanged
     default:

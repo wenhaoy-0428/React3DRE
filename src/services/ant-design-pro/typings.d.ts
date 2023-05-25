@@ -118,17 +118,32 @@ declare namespace API {
     title?: string;
   }
   type OpenViewerResult={
-    status?:string;
+    status?: string;
     websocket_url?: string;
   }
   type CloseViewerParams={
-    title?:string;
+    title?: string;
   }
   type CloseViewerResult={
-    status?:string;
-    message?:string;
+    status?: string;
+    message?: string;
   }
 
+  type UploadCreateProjectParams={
+    title?: string;
+    datetime?: string;
+    avatar?: File;
+  }
+  type UploadCreateProjectResult={
+    status?: string;
+  }
+  type UploadImageParams={
+    title?: string
+    imageFiles?: File[];
+  }
+  type UploadImageResult={
+    status?: string;
+  }
 }
 
 
