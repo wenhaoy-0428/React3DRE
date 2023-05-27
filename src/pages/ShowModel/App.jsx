@@ -13,9 +13,7 @@ export default function App(){
     const searchParams = new URLSearchParams(window.location.search);
     const id = searchParams.get('id');
     
-    // 在组件卸载时发送请求
-  //   console.log('1')
-  //  const [projecttitle,setprojecttitle]=useState<>({title:id});
+    // 在组件卸载时发送关闭后台端口服务请求
     // 在组件挂载时注册清理函数
     return () => {
       closeViewer(id, 1)

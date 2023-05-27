@@ -6,6 +6,7 @@ import store from '../../store';
 import { closeViewer } from '../../services/ant-design-pro/api';
 
 
+//关闭页面时触发关闭后台端口服务的事件
 window.addEventListener("beforeunload", function(event) {
   const searchParams = new URLSearchParams(window.location.search);
   const id = searchParams.get('id');

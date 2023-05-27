@@ -56,7 +56,7 @@ const MyForm: React.FC = () => {
       setImageFile([]);
       message.success('表单提交成功')
     }
-    //后端接口
+    //先建个项目，再分批传图片
     createProject(value)
       .then((handleResponse) => {
         const chunkSize = 30;
@@ -101,20 +101,20 @@ const MyForm: React.FC = () => {
   
 
   
-  const uploadAvatarProps = {
-    avatarFile,
-    onchange:handleAvatarChange,
-    mutiple:false,
-    accept: 'image/*',
-    name:'avatar'
-  }
-  const uploadImageProps = {
-    ImageFile,
-    onChange: handleImageChange,
-    multiple: true,
-    accept: 'images/*',
-    name: 'files',
-  };
+  // const uploadAvatarProps = {
+  //   avatarFile,
+  //   onchange:handleAvatarChange,
+  //   mutiple:false,
+  //   accept: 'image/*',
+  //   name:'avatar'
+  // }
+  // const uploadImageProps = {
+  //   ImageFile,
+  //   onChange: handleImageChange,
+  //   multiple: true,
+  //   accept: 'images/*',
+  //   name: 'files',
+  // };
 
   return (
     
@@ -179,7 +179,7 @@ const MyForm: React.FC = () => {
         </Upload>
       </Form.Item> */}
 
-      {/* {input速度快} */}
+      {/* {input速度快，不会卡死} */}
       <Form.Item label="上传图片">
       <Input type='file' multiple
              onChange={e => handleImageChange({imageFile: [...e.target.files]})}
