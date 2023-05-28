@@ -121,6 +121,22 @@ export async function viewer(options?: { [key: string]: any }) {
 //     ...(options || {}),
 //   });
 
+export async function processData(params: API.HandleDataParams, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  const title = params
+  if (title !== undefined){
+    formdata.append('title', <string>title);
+  }
+  return request<API.HandleDataResult>(host + '/api/runColmap', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+
 export async function openViewer(params: API.OpenViewerParams, options?: { [key: string]: any }) {
   const formdata = new FormData();
   //console.log(params)

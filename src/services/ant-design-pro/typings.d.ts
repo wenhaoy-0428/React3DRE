@@ -113,6 +113,13 @@ declare namespace API {
   type ProjectsTitle={
     title:string;
   };
+
+  type HandleDataParams={
+    title?: string;
+  }
+  type HandleDataResult={
+    status?: string;
+  }
   
   type OpenViewerParams={
     title?: string;
@@ -144,6 +151,7 @@ declare namespace API {
   type UploadImageResult={
     status?: string;
   }
+  
 }
 
 

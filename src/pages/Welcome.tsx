@@ -1,7 +1,7 @@
-import { getAllProjects, openViewer } from '@/services/ant-design-pro/api';
+import { getAllProjects, openViewer, processData } from '@/services/ant-design-pro/api';
 import { PageContainer, ModalForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
-import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone } from '@ant-design/icons';
+import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone, ClockCircleTwoTone } from '@ant-design/icons';
 import { App, Spin, Button, Avatar, Card, Divider, Dropdown, Row, Col } from 'antd';
 import type { MenuProps } from 'antd';
 import React, { useRef, useState, useEffect } from 'react';
@@ -92,7 +92,7 @@ function ProjectsCard(props) {
     return <Meta
       avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
       title={props.title}
-      description='untrained'
+      description='training'
     />
   } else if (props.state == 2) {
     return <Meta
@@ -117,13 +117,14 @@ const Welcome: React.FC = () => {
   const restFormRef = useRef<ProFormInstance>();
   const formRef = useRef<ProFormInstance>();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [EmptyMessage, setEmptyMessage] = useState(false);
-  const { message, modal, notification } = App.useApp();
+  const [EmptyMessage, setEmptyMessage] = useState(false);             // 空页面
+  const { message, modal, notification } = App.useApp();     
 
-  const [data, setData] = useState<Array<API.ProjectsAttribute>>([]);
+  const [data, setData] = useState<Array<API.ProjectsAttribute>>([]);  // project数据
 
   //Antd Spin
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);                       // 给后台留一点加载时间
+
   const toggle = (checked: boolean) => {
     setLoading(checked);
   };
@@ -236,7 +237,10 @@ const Welcome: React.FC = () => {
     </div>
   );
 
+
+  //主页那个播放按钮
   function RenderButton(props) {
+    const [ state, setState] = useState<number>(props.state);
     function showMessage() {
       message.success('Success!');
     }
@@ -247,6 +251,7 @@ const Welcome: React.FC = () => {
       })
     }
 
+    //发送打开渲染请求
     function handleRender (title: API.OpenViewerParams) {
       openViewer(title)
         .then((response) => {
@@ -267,24 +272,36 @@ const Welcome: React.FC = () => {
 
         });
     }
-    // {setLoading(true);
-    // setTimeout(()=> {
-    //   setLoading(false);
-    // },5000);}
+    
+    //发送runCOLMAP请求
+    function handleData(title: API.HandleDataParams) {
+      processData(title)
+        .then((response) => {
+          console.log(response.status);
+          setState(1)
+        })
+        .catch((error) => {
+          console.error('handleData error:', error);
+        });
+    }
 
-    if (props.state == 2) {
+    //根据请求返回的state改变按钮状态
+    if (state == 2) {
       return <Button type='link' onClick={() => handleRender(props.title as API.OpenViewerParams)} block>
-        <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
-      </Button>
+                <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
+              </Button>
+    } else if(state ==1) {
+      return <Button  block>
+                <ClockCircleTwoTone key="start"/>
+              </Button>
     } else {
-      return <Button type='link' block>
-        <PlayCircleTwoTone key="start" twoToneColor="#eb2f2f" />
-      </Button>
-
+      return <Button type='link' onClick={() => handleData(props.title as API.HandleDataParams)}block>
+                <PlayCircleTwoTone key="start" twoToneColor="#eb2f2f" />
+              </Button>
     }
   }
-  //将这段IP地址改成Host/api/getAllProjects
 
+  //得到所有project
   useEffect(() => {
     getAllProjects().then(response => {
       console.log(response.projects);
@@ -303,13 +320,7 @@ const Welcome: React.FC = () => {
         console.error(error)
       })
   }, [])
-  // {useEffect(() => {
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   },5000);
-  // },[]);}
-
-
+ 
   return (
     <PageContainer
       extra={[
