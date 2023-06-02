@@ -1,8 +1,7 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from '@umijs/max';
-import axios from 'axios';
-const host="http://10.177.35.76:8081";
+const host = 'http://10.177.35.162:8081';
 /** 获取当前的用户 GET /api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
@@ -93,18 +92,17 @@ export async function getProjectsInfo(options?: { [key: string]: any }) {
   });
 }
 
-
 // 获取项目列表
 export async function getAllProjects(options?: { [key: string]: any }) {
   return request<{
     projects: API.Projects;
-  }>(host+'/api/getAllProjects', {
+  }>(host + '/api/getAllProjects', {
     method: 'GET',
     ...(options || {}),
   });
 }
 export async function viewer(options?: { [key: string]: any }) {
-  return request<API.RuleListItem>(host+'/api/viewer', {
+  return request<API.RuleListItem>(host + '/api/viewer', {
     method: 'POST',
     ...(options || {}),
   });
@@ -123,11 +121,11 @@ export async function viewer(options?: { [key: string]: any }) {
 
 export async function processData(params: API.HandleDataParams, options?: { [key: string]: any }) {
   const formdata = new FormData();
-  const title = params
-  if (title !== undefined){
+  const title = params;
+  if (title !== undefined) {
     formdata.append('title', <string>title);
   }
-  return request<API.HandleDataResult>(host + '/api/runColmap', {
+  return request<API.HandleDataResult>(host + '/api/runColmapAndTrain', {
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -140,8 +138,8 @@ export async function processData(params: API.HandleDataParams, options?: { [key
 export async function openViewer(params: API.OpenViewerParams, options?: { [key: string]: any }) {
   const formdata = new FormData();
   //console.log(params)
-  const title = params
-  if (title !== undefined){
+  const title = params;
+  if (title !== undefined) {
     formdata.append('title', <string>title);
   }
   // console.log(formdata)
@@ -155,12 +153,11 @@ export async function openViewer(params: API.OpenViewerParams, options?: { [key:
   });
 }
 
-export async function closeViewer(params:string, flag:number) {
-
+export async function closeViewer(params: string, flag: number) {
   const formdata = new FormData();
   formdata.append('title', params);
   if (flag == 2) {
-    const url = host + '/api/viewerClose'
+    const url = host + '/api/viewerClose';
     const result = window.navigator.sendBeacon(url, formdata);
   }
   return request<API.CloseViewerResult>(host + '/api/viewerClose', {
@@ -169,16 +166,18 @@ export async function closeViewer(params:string, flag:number) {
       'Content-Type': 'multipart/form-data',
     },
     data: formdata,
-    
   });
 }
 
-export async function createProject(params: API.UploadCreateProjectParams, options?: { [key: string]: any }) {
+export async function createProject(
+  params: API.UploadCreateProjectParams,
+  options?: { [key: string]: any },
+) {
   console.log(params);
   const formData = new FormData();
   formData.append('title', params.title as string);
   formData.append('datetime', params.datetime as string);
-  formData.append('avatar', params.avatar as File)
+  formData.append('avatar', params.avatar as File);
   return request<API.OpenViewerResult>(host + '/api/createProject', {
     method: 'POST',
     headers: {
@@ -188,11 +187,14 @@ export async function createProject(params: API.UploadCreateProjectParams, optio
     ...(options || {}),
   });
 }
-export async function uploadImages(params: API.UploadImageParams, options?: { [key: string]: any }) {
+export async function uploadImages(
+  params: API.UploadImageParams,
+  options?: { [key: string]: any },
+) {
   console.log(params);
   const formData = new FormData();
   formData.append('title', params.title as string);
-  if(params.imageFiles !== undefined) {
+  if (params.imageFiles !== undefined) {
     for (let file of params.imageFiles) {
       formData.append('imageFiles', file);
     }
