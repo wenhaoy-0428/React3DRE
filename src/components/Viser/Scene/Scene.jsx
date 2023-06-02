@@ -39,7 +39,8 @@ export function get_scene_tree() {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const dispatch = useDispatch();
-  const BANNER_HEIGHT = 50;
+  const BANNER_HEIGHT = 70;
+  const SidePanelWidth = 290;
 
   // Main camera
   const main_camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
@@ -293,7 +294,9 @@ export function get_scene_tree() {
   const onMouseDown = () => {
     drag = false;
     const curPos = camera_controls.getPosition();
+    console.log("curPos:"+curPos)
     const newTar = camera_controls.getTarget();
+    console.log("curTar:"+newTar)
     const newDiff = newTar
       .sub(curPos)
       .normalize()
@@ -309,8 +312,9 @@ export function get_scene_tree() {
     drag = true;
 
     sceneTree.metadata.renderer.getSize(size);
-    mouseVector.x = 2 * (e.clientX / size.x) - 1;
-    mouseVector.y = 1 - 2 * ((e.clientY - BANNER_HEIGHT) / size.y);
+    mouseVector.x = 2 * ((e.clientX-SidePanelWidth) / size.x) - 1;
+    mouseVector.y = 1 - 2 * ((e.clientY - BANNER_HEIGHT) / size.y); //手动定义canvas离顶部和左边的距离
+
 
     const mouse_in_scene = !(
       mouseVector.x > 1 ||
@@ -318,6 +322,10 @@ export function get_scene_tree() {
       mouseVector.y > 1 ||
       mouseVector.y < -1
     );
+    
+    console.log("mouseVector.x: "+mouseVector.x)
+    console.log("mouseVector.y: " +mouseVector.y)
+    console.log("mouseinscene: "+mouse_in_scene)
 
     scene_state.setValue('mouse_x', mouseVector.x);
     scene_state.setValue('mouse_y', mouseVector.y);
