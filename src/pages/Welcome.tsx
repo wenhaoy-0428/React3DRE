@@ -253,6 +253,7 @@ const Welcome: React.FC = () => {
 
     //发送打开渲染请求
     function handleRender (title: API.OpenViewerParams) {
+      setLoading(true)
       openViewer(title)
         .then((response) => {
           console.log(response);
@@ -261,7 +262,7 @@ const Welcome: React.FC = () => {
           if (status == 'success') {
             setLoading(false);
             // {showMessage();}
-            // debugger;
+            debugger;
             window.location.href = '/show_model?id='+title+'&websocket_url='+response.websocket_url;
           }
 
