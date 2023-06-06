@@ -325,12 +325,12 @@ const Welcome: React.FC = () => {
   return (
     <PageContainer
       extra={[
-        <Button key="1" type="primary">
-          <Link to="/upload">
-            <PlusCircleTwoTone />
-            创建模型
-          </Link>
-        </Button>,
+        // <Button key="1" type="primary">
+        //   <Link to="/upload">
+        //     <PlusCircleTwoTone />
+        //     创建模型
+        //   </Link>
+        // </Button>,
       ]}
       style={{
         height: ''
