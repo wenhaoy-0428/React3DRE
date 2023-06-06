@@ -8,10 +8,14 @@ const Settings: ProLayoutProps & {
   logo?: string;
 } = {
   navTheme: 'light',
+  //去掉页头页尾
   menuHeaderRender:false,
   headerRender:false,
   menuFooterRender:false,
   menuRender:false,
+  headerTitleRender:false,
+  headerContentRender:false,
+  pageTitleRender:false,
   // 拂晓蓝
   colorPrimary: '#1890ff',
   layout: 'mix',
