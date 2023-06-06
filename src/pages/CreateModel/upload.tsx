@@ -116,6 +116,24 @@ const MyForm: React.FC = () => {
   //   name: 'files',
   // };
 
+  // useEffect(()=>{
+  //   // let audio_player = document.getElementById('audio_player');
+  //   // if (audio_player.paused) {
+  //   //   audio_player.play();
+  //   // }
+  //   }, [])
+
+
+  // TODO:音乐自动播放接口
+  const playClickedImg = () => {
+    let audio_player = document.getElementById('audio_player');
+    if (audio_player.paused) {
+      audio_player.play();
+    } else {
+      audio_player.pause();
+    }
+  };
+
   return (
     
     <Form form={form} onFinish={onFinish}>
@@ -190,14 +208,23 @@ const MyForm: React.FC = () => {
         percent={Math.round((percent) * 100)}
         status = {ImageFile.length > 0 ? 'active':'normal'}
         />
-
-      
-
       <Form.Item>
         <Button type="primary" htmlType="submit" >
           提交
         </Button>
       </Form.Item>
+
+
+       {/* TODO:音乐自动播放接口 */}
+      <div className="audioBox">
+        {/* 不需要按钮则将button给注释掉 */}
+            <Button type="primary" onClick={playClickedImg} >    
+                  播放/暂停
+            </Button>
+            <audio id="audio_player" loop autoPlay={true}>
+               <source src={require('../../../public/mp3/music.mp3')}/>
+            </audio>
+          </div>
     </Form>
   );
 };

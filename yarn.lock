@@ -1767,15 +1767,15 @@
     "@esbuild-kit/core-utils" "^3.0.0"
     get-tsconfig "^4.4.0"
 
-"@esbuild/win32-x64@0.16.17":
+"@esbuild/linux-x64@0.16.17":
   version "0.16.17"
-  resolved "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.16.17.tgz"
-  integrity sha512-y+EHuSchhL7FjHgvQL/0fnnFmO4T1bhvWANX6gcnqTjtnKWbTvUMCpGnv2+t+31d7RzyEAYAd4u2fnIhHL6N/Q==
+  resolved "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.16.17.tgz"
+  integrity sha512-mdPjPxfnmoqhgpiEArqi4egmBAMYvaObgn4poorpUaqmvzzbvqbowRllQ+ZgzGVMGKaPkqUmPDOOFQRUFDmeUw==
 
-"@esbuild/win32-x64@0.17.15":
+"@esbuild/linux-x64@0.17.15":
   version "0.17.15"
-  resolved "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.17.15.tgz"
-  integrity sha512-DjDa9ywLUUmjhV2Y9wUTIF+1XsmuFGvZoCmOWkli1XcNAh5t25cc7fgsCx4Zi/Uurep3TTLyDiKATgGEg61pkA==
+  resolved "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.17.15.tgz"
+  integrity sha512-JsdS0EgEViwuKsw5tiJQo9UdQdUJYuB+Mf6HxtJSPN35vez1hlrNb1KajvKWF5Sa35j17+rW1ECEO9iNrIXbNg==
 
 "@eslint-community/eslint-utils@^4.2.0":
   version "4.4.0"
@@ -2289,10 +2289,10 @@
     semver "^7.3.5"
     tar "^6.1.11"
 
-"@msgpackr-extract/msgpackr-extract-win32-x64@3.0.2":
+"@msgpackr-extract/msgpackr-extract-linux-x64@3.0.2":
   version "3.0.2"
-  resolved "https://registry.npmjs.org/@msgpackr-extract/msgpackr-extract-win32-x64/-/msgpackr-extract-win32-x64-3.0.2.tgz"
-  integrity sha512-O+6Gs8UeDbyFpbSh2CPEz/UOrrdWPTBYNblZK5CxxLisYt4kGX3Sc+czffFonyjiGSq3jWLwJS/CCJc7tBr4sQ==
+  resolved "https://registry.npmjs.org/@msgpackr-extract/msgpackr-extract-linux-x64/-/msgpackr-extract-linux-x64-3.0.2.tgz"
+  integrity sha512-gsWNDCklNy7Ajk0vBBf9jEx04RUxuDQfBse918Ww+Qb9HCPoGzS+XJTLe96iN3BVK7grnLiYghP/M4L8VsaHeA==
 
 "@mui/base@5.0.0-alpha.128":
   version "5.0.0-alpha.128"
@@ -3972,10 +3972,15 @@
   resolved "https://registry.npmjs.org/@umijs/did-you-know/-/did-you-know-1.0.3.tgz"
   integrity sha512-9EZ+rgY9+2HEaE+Z9dGkal2ccw8L4uuz77tCB5WpskW7NBZX5nOj82sqF/shEtA5tU3SWO/Mi4n35K3iONvDtw==
 
-"@umijs/es-module-parser-win32-x64-msvc@0.0.7":
+"@umijs/es-module-parser-linux-x64-gnu@0.0.7":
   version "0.0.7"
-  resolved "https://registry.npmjs.org/@umijs/es-module-parser-win32-x64-msvc/-/es-module-parser-win32-x64-msvc-0.0.7.tgz"
-  integrity sha512-X3Pqy0l38hg6wMPquPeMHuoHU+Cx+wzyz32SVYCta+RPJQ7n9PjrEBiIuVAw5+GJZjSABN7LVr8u/n0RZT9EQA==
+  resolved "https://registry.npmjs.org/@umijs/es-module-parser-linux-x64-gnu/-/es-module-parser-linux-x64-gnu-0.0.7.tgz"
+  integrity sha512-PHrKHtT665Za0Ydjch4ACrNpRU+WIIden12YyF1CtMdhuLDSoU6UfdhF3NoDbgEUcXVDX/ftOqmj0SbH3R1uew==
+
+"@umijs/es-module-parser-linux-x64-musl@0.0.7":
+  version "0.0.7"
+  resolved "https://registry.npmjs.org/@umijs/es-module-parser-linux-x64-musl/-/es-module-parser-linux-x64-musl-0.0.7.tgz"
+  integrity sha512-cyZvUK5lcECLWzLp/eU1lFlCETcz+LEb+wrdARQSST1dgoIGZsT4cqM1WzYmdZNk3o883tiZizLt58SieEiHBQ==
 
 "@umijs/es-module-parser@0.0.7":
   version "0.0.7"
@@ -10109,10 +10114,15 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-lightningcss-win32-x64-msvc@1.19.0:
+lightningcss-linux-x64-gnu@1.19.0:
   version "1.19.0"
-  resolved "https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.19.0.tgz"
-  integrity sha512-C+VuUTeSUOAaBZZOPT7Etn/agx/MatzJzGRkeV+zEABmPuntv1zihncsi+AyGmjkkzq3wVedEy7h0/4S84mUtg==
+  resolved "https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-1.19.0.tgz"
+  integrity sha512-0AFQKvVzXf9byrXUq9z0anMGLdZJS+XSDqidyijI5njIwj6MdbvX2UZK/c4FfNmeRa2N/8ngTffoIuOUit5eIQ==
+
+lightningcss-linux-x64-musl@1.19.0:
+  version "1.19.0"
+  resolved "https://registry.npmjs.org/lightningcss-linux-x64-musl/-/lightningcss-linux-x64-musl-1.19.0.tgz"
+  integrity sha512-SJoM8CLPt6ECCgSuWe+g0qo8dqQYVcPiW2s19dxkmSI5+Uu1GIRzyKA0b7QqmEXolA+oSJhQqCmJpzjY4CuZAg==
 
 lightningcss@1.19.0:
   version "1.19.0"
