@@ -71,8 +71,12 @@ export default [
   },
   {
     path: '/show_model',
-
     component: './ShowModel/ShowModel',
+  },
+  {
+    path: '/showPanorama',
+    layout: false,
+    component: './ShowPanorama/components/VideoPano',
   },
   
 ];

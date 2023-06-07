@@ -1,0 +1,13 @@
+.card-button {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    transition: all 0.2s;
+    
+  }
+  
+  .card-button:hover {
+    opacity: 1;
+  }
