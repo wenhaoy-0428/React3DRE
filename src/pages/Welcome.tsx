@@ -16,6 +16,7 @@ import {
   PlusCircleTwoTone,
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import './welcome.css';
 /**
  * 每个单独的卡片，为了复用样式抽成了组件
  * @param param0
@@ -123,17 +124,25 @@ const Welcome: React.FC = () => {
   const [data, setData] = useState<Array<API.ProjectsAttribute>>([]);  // project数据
 
   //Antd Spin
-  const [loading, setLoading] = useState(false);                       // 给后台留一点加载时间
+  const [loading, setLoading] = useState(false);  
+
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
+
+  // 给后台留一点加载时间
 
   const toggle = (checked: boolean) => {
     setLoading(checked);
   };
 
+  
+
   const container = (
     <div
       style={{
         display: 'flex',
-        flexWrap: 'wrap',
+        justifyContent: 'center',
+        // flexWrap: 'wrap',
         gap: 16,
         // height:'70vh',
 
@@ -158,15 +167,19 @@ const Welcome: React.FC = () => {
       </Empty>
       </Col>
       </Row> : null}
-      {data.map((item) => (
-
-        <Card
-          key={item.id}
+      <Row justify={'center'} >
+      {data.map((item,index) => (
+        
+        
+        <Col  span={12}>
+        <Card 
+          key={index}
           hoverable
           style={{
             width: 240
             , height: 'auto'
           }}
+          
           cover={<AvatarConvert imageData={item.avatar} />}
 
           actions={[
@@ -230,13 +243,40 @@ const Welcome: React.FC = () => {
               </a>
             </Dropdown>,
           ]}
+          onMouseEnter={() => {
+            handleCardMouseEnter(index)
+            // var button = document.querySelector('.card-button')
+            // console.log(button)
+            // if (button !== null)
+            //   button.style.display = 'block'
+          }}
+          onMouseLeave={() => {
+            handleCardMouseLeave()
+            // var button = document.querySelector('.card-button')
+            // if (button !== null)
+            //   button.style.display = 'none'
+          }}
+
         >
+          {hoveredIndex === index && (
+            <Button className={"card-button"} href='/ShowPanorama' ghost>预览</Button>
+          )}
+          
           <ProjectsCard title={item.title} state={item.state} />
         </Card>
+        </Col>
       ))}
+      </Row>
+      
     </div>
   );
-
+  
+  const handleCardMouseEnter = (index) => {
+    setHoveredIndex(index);
+  }
+  const handleCardMouseLeave = () => {
+    setHoveredIndex(null);
+  }
 
   //主页那个播放按钮
   function RenderButton(props) {
