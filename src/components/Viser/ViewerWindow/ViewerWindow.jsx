@@ -104,7 +104,16 @@ function TransformIcons(props) {
 // manages a camera
 export default function ViewerWindow(props) {
   const sceneTree = props.sceneTree;
+// 对threejs不太熟悉，这段话去掉了场景里的图片和坐标
   const scene = sceneTree.object;
+  console.log(scene);
+   scene.traverse((obj) => {
+      // if (obj.name === 'CAMERA_LABEL') {
+        // eslint-disable-next-line no-param-reassign
+        // obj.visible = is_scene_visible && camera_choice === 'Main Camera';
+obj.visible = false;
+      // }
+    });
   const renderer = sceneTree.metadata.renderer;
   const labelRenderer = sceneTree.metadata.labelRenderer;
 
