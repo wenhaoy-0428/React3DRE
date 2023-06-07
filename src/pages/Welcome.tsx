@@ -2,7 +2,7 @@ import { getAllProjects, openViewer, processData, downloadVideo } from '@/servic
 import { PageContainer, ModalForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone, ClockCircleTwoTone, CameraTwoTone } from '@ant-design/icons';
-import { App, Spin, Button, Avatar, Card, Divider, Dropdown, Row, Col } from 'antd';
+import { App, Spin, Button, Avatar, Card, Divider, Dropdown, Row, Col, Tooltip, Space } from 'antd';
 import type { MenuProps } from 'antd';
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
@@ -17,6 +17,7 @@ import {
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './welcome.css';
+import { ColorLensOutlined } from '@mui/icons-material';
 /**
  * 每个单独的卡片，为了复用样式抽成了组件
  * @param param0
@@ -179,11 +180,22 @@ const Welcome: React.FC = () => {
           cover={<AvatarConvert imageData={item.avatar} />}
 
           actions={[
-            // TODO 需要判断是否已经重建完成来决定该图标状态
-
-            <RenderButton title={item.title} state={item.state} />,
+            //  需要判断是否已经重建完成来决定该图标状态
+            <>
+              <Space wrap>
+                <Tooltip title="开始渲染" color='orange' >
+                  <RenderButton title={item.title} state={item.state} />,
+                </Tooltip> 
+              </Space>
+              <Space wrap>
+                <Tooltip overlay="浏览全景" color='orange' >
+                  <PanoButton title={item.title} />,
+                </Tooltip>
+              </Space>
+             
             
-            <PanoButton title={item.title} />
+            </>
+            
             
             
           ]}
@@ -298,6 +310,8 @@ const Welcome: React.FC = () => {
       .catch(error => {
         console.error(error)
       })
+
+      //下载视频示例（浏览器下载）
       // const response = downloadVideo()
       
       // downloadVideo().then(response => {
