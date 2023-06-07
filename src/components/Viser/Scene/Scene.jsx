@@ -323,9 +323,9 @@ export function get_scene_tree() {
       mouseVector.y < -1
     );
     
-    console.log("mouseVector.x: "+mouseVector.x)
-    console.log("mouseVector.y: " +mouseVector.y)
-    console.log("mouseinscene: "+mouse_in_scene)
+    // console.log("mouseVector.x: "+mouseVector.x)
+    // console.log("mouseVector.y: " +mouseVector.y)
+    // console.log("mouseinscene: "+mouse_in_scene)
 
     scene_state.setValue('mouse_x', mouseVector.x);
     scene_state.setValue('mouse_y', mouseVector.y);
