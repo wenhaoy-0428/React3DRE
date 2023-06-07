@@ -1,7 +1,7 @@
-import { getAllProjects, openViewer, processData } from '@/services/ant-design-pro/api';
+import { getAllProjects, openViewer, processData, downloadVideo } from '@/services/ant-design-pro/api';
 import { PageContainer, ModalForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
-import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone, ClockCircleTwoTone } from '@ant-design/icons';
+import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone, ClockCircleTwoTone, CameraTwoTone } from '@ant-design/icons';
 import { App, Spin, Button, Avatar, Card, Divider, Dropdown, Row, Col } from 'antd';
 import type { MenuProps } from 'antd';
 import React, { useRef, useState, useEffect } from 'react';
@@ -85,24 +85,19 @@ function ProjectsCard(props) {
   // console.log(props.state == 2)
   if (props.state == 0) {
     return <Meta
-      avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
       title={props.title}
-      description='processing data'
     />
   } else if (props.state == 1) {
     return <Meta
-      avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
       title={props.title}
-      description='training'
     />
   } else if (props.state == 2) {
     return <Meta
-      avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
       title={props.title}
-      description='training ends'
+      style={{textAlign:"center"}}
     />
   } else {
-    return <p>"something went wrong"</p>
+    return <p>""</p>
   }
 
 }
@@ -167,11 +162,12 @@ const Welcome: React.FC = () => {
       </Empty>
       </Col>
       </Row> : null}
+      <div style={{width:"100vh",height:"100vh"}}>
       <Row justify={'center'} >
       {data.map((item,index) => (
         
         
-        <Col  span={12}>
+        <Col  span={8}>
         <Card 
           key={index}
           hoverable
@@ -186,76 +182,11 @@ const Welcome: React.FC = () => {
             // TODO 需要判断是否已经重建完成来决定该图标状态
 
             <RenderButton title={item.title} state={item.state} />,
-
-            // TODO 新开一个页面
-            <ModalForm
-
-              title="编辑信息"
-              formRef={restFormRef}
-              open={modalVisible}
-              trigger={
-
-                <EditOutlined key="edit" />
-
-              }
-              onOpenChange={setModalVisible}
-              submitter={{
-                searchConfig: {
-                  resetText: '重置',
-                },
-                resetButtonProps: {
-                  onClick: () => {
-                    restFormRef.current?.resetFields();
-                  },
-                },
-              }}
-              onFinish={async (values) => {
-                await waitTime(2000);
-                console.log(values);
-                message.success('提交成功');
-                return true;
-              }}
-            >
-              <ProFormText
-                width="md"
-                name="title"
-                label="模型名称"
-                tooltip=''
-                placeholder={item.title}
-              />
-              <ProFormUploadButton
-                name="avatar"
-                label="封面"
-                max={1}
-                fieldProps={{
-                  name: "file",
-                  listType: 'picture-card'
-                }}
-              />
-
-            </ModalForm>,
-
-            // TOOD 一个下拉菜单
-            <Dropdown menu={{ items }}>
-
-              <a onClick={(e) => e.preventDefault()}>
-                <EllipsisOutlined key="extra" />
-              </a>
-            </Dropdown>,
+            
+            <PanoButton title={item.title} />
+            
+            
           ]}
-          onMouseEnter={() => {
-            handleCardMouseEnter(index)
-            // var button = document.querySelector('.card-button')
-            // console.log(button)
-            // if (button !== null)
-            //   button.style.display = 'block'
-          }}
-          onMouseLeave={() => {
-            handleCardMouseLeave()
-            // var button = document.querySelector('.card-button')
-            // if (button !== null)
-            //   button.style.display = 'none'
-          }}
 
         >
           {hoveredIndex === index && (
@@ -267,7 +198,7 @@ const Welcome: React.FC = () => {
         </Col>
       ))}
       </Row>
-      
+      </div>
     </div>
   );
   
@@ -302,7 +233,7 @@ const Welcome: React.FC = () => {
           if (status == 'success') {
             setLoading(false);
             // {showMessage();}
-            debugger;
+            
             window.location.href = '/show_model?id='+title+'&websocket_url='+response.websocket_url;
           }
 
@@ -342,6 +273,13 @@ const Welcome: React.FC = () => {
     }
   }
 
+  function PanoButton(props) {
+    return <Button type='link' href='/ShowPanorama'>
+              <CameraTwoTone key="pano"/>
+            </Button>
+
+  }
+
   //得到所有project
   useEffect(() => {
     getAllProjects().then(response => {
@@ -360,6 +298,23 @@ const Welcome: React.FC = () => {
       .catch(error => {
         console.error(error)
       })
+      // const response = downloadVideo()
+      
+      // downloadVideo().then(response => {
+      //   const reader = new FileReader();
+      //   reader.readAsDataURL(response)
+      //   reader.onload=()=>{
+      //     if (reader.result !== null && typeof reader.result === 'string'){
+      //       const link = document.createElement('a');
+      //     link.href = reader.result
+      //     link.setAttribute('download', 'video.mp4');
+      //     document.body.appendChild(link)
+      //     link.click()
+      //     document.body.removeChild(link);
+      //     }
+          
+      //   }
+      // })
   }, [])
  
   return (

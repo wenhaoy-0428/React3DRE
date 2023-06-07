@@ -208,3 +208,12 @@ export async function uploadImages(
     ...(options || {}),
   });
 }
+
+
+export async function downloadVideo(options?: { [key: string]: any }) {
+  return request(host + '/api/downloadFile',{
+    method: 'POST',
+    responseType: 'blob',
+    ...(options || {}),
+  });
+}
