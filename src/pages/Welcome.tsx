@@ -17,7 +17,6 @@ import {
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import './welcome.css';
-import { ColorLensOutlined } from '@mui/icons-material';
 /**
  * 每个单独的卡片，为了复用样式抽成了组件
  * @param param0
@@ -27,80 +26,31 @@ import { ColorLensOutlined } from '@mui/icons-material';
 // TODO 和服务器同步状态的一段代码
 const { Meta } = Card;
 
-
-
-const waitTime = (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
-
-
-const items: MenuProps['items'] = [
+const projects = [
   {
-    key: '1',
-    label: (
-      <a target='_blank' rel='noopener noreferrer' href=''>
-        1st menu item
-      </a>
-    )
+    title:"养老家园沙盘",
+    state: 2,
+    id:1,
+    avatar: "imgs/2.png"
   },
   {
-    key: '2',
-    label: (
-      <a target='_blank' rel='noopener noreferrer' href=''>
-        2st menu item
-      </a>
-    )
-  },
-  {
-    key: '3',
-    label: (
-      <a target='_blank' rel='noopener noreferrer' href=''>
-        3st menu item
-      </a>
-    ),
-    disabled: true
-  },
-]
-
-function GetStateIcon(state) {
-  if (state) {
-    return <CheckSquareTwoTone />
-  } else {
-    return <SyncOutlined rotate={180} />
+    title:"杨浦滨江",
+    state: 2,
+    id:2,
+    avatar: "imgs/1.png" 
   }
-}
+]
+  
+   
+console.log(projects)
 
 
-const AvatarConvert = ({ imageData }) => {
-  const dataUrl = `data:image/png;base64,${imageData}`;
-  return <img src={dataUrl} alt='Base64 Image' width="260" height="160" />
-}
 
 function ProjectsCard(props) {
-  // console.log(props.state)
-  // console.log(props.state == 2)
-  if (props.state == 0) {
-    return <Meta
-      title={props.title}
-    />
-  } else if (props.state == 1) {
-    return <Meta
-      title={props.title}
-    />
-  } else if (props.state == 2) {
-    return <Meta
-      title={props.title}
-      style={{textAlign:"center"}}
-    />
-  } else {
-    return <p>""</p>
-  }
-
+  return  <Meta
+            title={props.title}
+            style={{textAlign:"center",height:'30px'} }
+          />
 }
 
 
@@ -124,15 +74,6 @@ const Welcome: React.FC = () => {
 
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
-
-  // 给后台留一点加载时间
-
-  const toggle = (checked: boolean) => {
-    setLoading(checked);
-  };
-
-  
-
   const container = (
     <div
       style={{
@@ -144,57 +85,48 @@ const Welcome: React.FC = () => {
 
       }}
     >
-
-      {EmptyMessage ? <Row style={{ width: '100%' }}>   <Col span={8}></Col> <Col span={8}><Empty
-        image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-        imageStyle={{ height: 60 }}
-        description={
-          <span>
-            您还没有上传模型，请创建一个吧:\(￣▽￣)/
-          </span>
-        }
-      >
-        <Button key="1" type="primary">
-          <Link to="/upload">
-            <PlusCircleTwoTone />
-            创建模型
-          </Link>
-        </Button>
-      </Empty>
-      </Col>
-      </Row> : null}
-      <div style={{width:"100vh",height:"100vh"}}>
+      <div id='card-container-flag'style={{width:"100vh",height:"100vh"}}>
       <Row justify={'center'} >
-      {data.map((item,index) => (
+      {projects.map((item,index) => (
         
         
-        <Col  span={8}>
+        <Col  span={10}>
         <Card 
           key={index}
           hoverable
           style={{
-            width: 240
-            , height: 'auto'
+            width: 300
+            , height: 360
           }}
           
-          cover={<AvatarConvert imageData={item.avatar} />}
+          cover={<img src={item.avatar} width="300" height="240" />}
 
           actions={[
             //  需要判断是否已经重建完成来决定该图标状态
-            <>
-              <Space wrap>
-                <Tooltip title="开始渲染" color='orange' >
-                  <RenderButton title={item.title} state={item.state} />,
-                </Tooltip> 
-              </Space>
-              <Space wrap>
-                <Tooltip overlay="浏览全景" color='orange' >
-                  <PanoButton title={item.title} />,
+            <div style={{height:'45px'}}>
+              <Row>
+                <Col span={4}></Col>
+                <Col span={6}>
+                <Tooltip title="" color='orange' >
+                  <RenderButton title={item.title} state={item.state} />
+                
                 </Tooltip>
-              </Space>
+                </Col>
+                <Col span={4}></Col>
+                <Col span={6} >
+                <Tooltip overlay="" color='orange' >
+                  <PanoButton title={item.title} />
+                </Tooltip>
+                </Col>
+                <Col span={4}></Col>
+              
+                
+            
+              </Row>
+              
              
             
-            </>
+            </div>
             
             
             
@@ -224,15 +156,6 @@ const Welcome: React.FC = () => {
   //主页那个播放按钮
   function RenderButton(props) {
     const [ state, setState] = useState<number>(props.state);
-    function showMessage() {
-      message.success('Success!');
-    }
-    function showModal() {
-      modal.warning({
-        title: 'warning message',
-        content: 'something went wrong',
-      })
-    }
 
     //发送打开渲染请求
     function handleRender (title: API.OpenViewerParams) {
@@ -272,64 +195,76 @@ const Welcome: React.FC = () => {
     //根据请求返回的state改变按钮状态
     if (state == 2) {
       return <Button type='link' onClick={() => handleRender(props.title as API.OpenViewerParams)} block>
-                <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
+                {/* <PlayCircleTwoTone key="start" twoToneColor="#52c41a" style={{fontSize:'18px'}}/><br/> */}
+                开始渲染
               </Button>
     } else if(state ==1) {
       return <Button  block>
-                <ClockCircleTwoTone key="start"/>
+                {/* <ClockCircleTwoTone key="start"/> */}
               </Button>
     } else {
       return <Button type='link' onClick={() => handleData(props.title as API.HandleDataParams)}block>
-                <PlayCircleTwoTone key="start" twoToneColor="#eb2f2f" />
+                {/* <PlayCircleTwoTone key="start" twoToneColor="#eb2f2f" /> */}
+                
               </Button>
     }
   }
 
   function PanoButton(props) {
-    return <Button type='link' href='/ShowPanorama'>
-              <CameraTwoTone key="pano"/>
+    if (props.title == '养老家园沙盘') {
+      return <Button type='link' href='/showPanorama_2'>
+              {/* <CameraTwoTone key="pano" style={{fontSize:'18px'}}/> */}
+              浏览全景
             </Button>
+    }else if (props.title == '杨浦滨江') {
+      return <Button type='link' href='/showPanorama_1'>
+              {/* <CameraTwoTone key="pano" style={{fontSize:'18px'}}/> */}
+              浏览全景
+            </Button>
+    }
+
+    
 
   }
 
-  //得到所有project
-  useEffect(() => {
-    getAllProjects().then(response => {
-      console.log(response.projects);
-      //如果是空的话，就不要setData了
-      if (response.projects.length == 0) {
-        //加入antd的空页面
-        setEmptyMessage(true);
-        return;
-      } else {
-        setData(response.projects);
-      }
-      //console.log(data[0]);
-      console.log("success");
-    })
-      .catch(error => {
-        console.error(error)
-      })
+  // //得到所有project
+  // useEffect(() => {
+  //   getAllProjects().then(response => {
+  //     console.log(response.projects);
+  //     //如果是空的话，就不要setData了
+  //     if (response.projects.length == 0) {
+  //       //加入antd的空页面
+  //       setEmptyMessage(true);
+  //       return;
+  //     } else {
+  //       setData(response.projects);
+  //     }
+  //     //console.log(data[0]);
+  //     console.log("success");
+  //   })
+  //     .catch(error => {
+  //       console.error(error)
+  //     })
 
-      //下载视频示例（浏览器下载）
-      // const response = downloadVideo()
+  //     //下载视频示例（浏览器下载）
+  //     // const response = downloadVideo()
       
-      // downloadVideo().then(response => {
-      //   const reader = new FileReader();
-      //   reader.readAsDataURL(response)
-      //   reader.onload=()=>{
-      //     if (reader.result !== null && typeof reader.result === 'string'){
-      //       const link = document.createElement('a');
-      //     link.href = reader.result
-      //     link.setAttribute('download', 'video.mp4');
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link);
-      //     }
+  //     // downloadVideo().then(response => {
+  //     //   const reader = new FileReader();
+  //     //   reader.readAsDataURL(response)
+  //     //   reader.onload=()=>{
+  //     //     if (reader.result !== null && typeof reader.result === 'string'){
+  //     //       const link = document.createElement('a');
+  //     //     link.href = reader.result
+  //     //     link.setAttribute('download', 'video.mp4');
+  //     //     document.body.appendChild(link)
+  //     //     link.click()
+  //     //     document.body.removeChild(link);
+  //     //     }
           
-      //   }
-      // })
-  }, [])
+  //     //   }
+  //     // })
+  // }, [])
  
   return (
     <PageContainer

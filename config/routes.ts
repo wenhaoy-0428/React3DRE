@@ -74,9 +74,14 @@ export default [
     component: './ShowModel/ShowModel',
   },
   {
-    path: '/showPanorama',
+    path: '/showPanorama_1',
     layout: false,
-    component: './ShowPanorama/components/VideoPano',
+    component: './ShowPanorama/components/VideoPanoFirst',
+  },
+  {
+    path: '/showPanorama_2',
+    layout: false,
+    component: './ShowPanorama/components/VideoPanoSecond',
   },
   
 ];
