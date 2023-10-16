@@ -1,4 +1,4 @@
-import { getAllProjects, openViewer, processData } from '@/services/ant-design-pro/api';
+import { getAllProjects, openViewer_N2M, runColmap_N2M, runTrain_N2M } from '@/services/ant-design-pro/api';
 import { PageContainer, ModalForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone, ClockCircleTwoTone } from '@ant-design/icons';
@@ -86,20 +86,27 @@ function ProjectsCard(props) {
     return <Meta
       avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
       title={props.title}
-      description='processing data'
+      description='unprocessed data'
     />
   } else if (props.state == 1) {
     return <Meta
       avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
       title={props.title}
-      description='training'
+      description='run Colmap'
     />
   } else if (props.state == 2) {
     return <Meta
       avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
       title={props.title}
-      description='training ends'
+      description='colmap ends'
     />
+  } else if (props.state == 3) {
+    return <Meta
+      avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
+      title={props.title}
+      description='train'
+    />
+    
   } else {
     return <p>"something went wrong"</p>
   }
@@ -109,7 +116,7 @@ function ProjectsCard(props) {
 
 
 
-const Welcome: React.FC = () => {
+const MeshProject: React.FC = () => {
   // const { token } = theme.useToken();
   // const { initialState } = useModel('@@initialState');
 
@@ -251,20 +258,19 @@ const Welcome: React.FC = () => {
       })
     }
 
-    //发送打开渲染请求
-    function handleRender (title: API.OpenViewerParams) {
+    //打开可视化
+    {/* TODO 暂时先用查询参数方式传值 */}
+    function Viewer(title: API.openViewerParams_N2M) {
       setLoading(true)
-      openViewer(title)
+      openViewer_N2M(title)
         .then((response) => {
           console.log(response);
-          const status = response.status;
-          console.log(status)
-          if (status == 'success') {
-            setLoading(false);
-            // {showMessage();}
-            debugger;
-            window.location.href = '/show_model?id='+title+'&websocket_url='+response.websocket_url;
-          }
+          const path = response;
+      
+          // debugger;
+          // window.location.href = '/show_model?id='+title+'&websocket_url='+response.websocket_url;
+          window.location.href = '/showModel_n2m?path='+path+'&scene='+title
+          
 
         })
         .catch((error) => {
@@ -275,31 +281,36 @@ const Welcome: React.FC = () => {
     }
     
     //发送runCOLMAP请求
-    function handleData(title: API.HandleDataParams) {
-      processData(title)
+    function runColmap_N2M(title: API.runColmapParams_N2M) {
+      runColmap_N2M(title)
         .then((response) => {
-          console.log(response.status);
+          // console.log(response.status);
           setState(1)
         })
         .catch((error) => {
-          console.error('handleData error:', error);
+          console.error('runColmap_Nerf2Mesh error:', error);
         });
     }
 
     //根据请求返回的state改变按钮状态
-    if (state == 2) {
-      return <Button type='link' onClick={() => handleRender(props.title as API.OpenViewerParams)} block>
+    if (state == 0) {
+      return <Button type='link' onClick={() => runColmap_N2M(props.title as API.runColmapParams_N2M)}block>
                 <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
               </Button>
-    } else if(state ==1) {
+    } else if (state == 1) {
       return <Button  block>
-                <ClockCircleTwoTone key="start"/>
+                <ClockCircleTwoTone key="start" twoToneColor="#eb2f2f"/>
               </Button>
-    } else {
-      return <Button type='link' onClick={() => handleData(props.title as API.HandleDataParams)}block>
-                <PlayCircleTwoTone key="start" twoToneColor="#eb2f2f" />
+    } else if (state == 2) {
+      return <Button type='link' onClick={() => runTrain_N2M(props.title as API.runTrainParams_N2M)}block>
+                <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
+              </Button>
+    } else if (state == 3) {
+      return <Button type='link' onClick={() => Viewer(props.title as API.openViewerParams_N2M)} block>
+                <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
               </Button>
     }
+
   }
 
   //得到所有project
@@ -314,7 +325,7 @@ const Welcome: React.FC = () => {
       } else {
         const projectData = response.projects;
         
-        const filteredProjects = projectData.filter((project)=>project.method==0)
+        const filteredProjects = projectData.filter((project)=>project.method==1)
         setData(filteredProjects);
       }
       //console.log(data[0]);
@@ -356,4 +367,4 @@ const Welcome: React.FC = () => {
   );
 };
 
-export default Welcome;
+export default MeshProject;

@@ -26,7 +26,22 @@ export default [
     path: '/workspace',
     name: 'workspace',
     icon: 'HomeOutlined',
-    component: './Welcome',
+    routes: [
+      {
+        path: '/workspace',
+        redirect: '/workspace/render'
+      },
+      {
+        path: '/workspace/render',
+        name: '渲染',
+        component: './Welcome'
+      },
+      {
+        path: '/workspace/mesh',
+        name: 'Mesh',
+        component: './Projects/MeshProject'
+      },
+    ]
   },
   // {
   //   path: '/admin',
@@ -73,6 +88,11 @@ export default [
     path: '/show_model',
 
     component: './ShowModel/ShowModel',
+  },
+  {
+    path: '/showModel_n2m',
+
+    component: './ShowModel/ShowModel_N2M',
   },
   
 ];

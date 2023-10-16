@@ -100,12 +100,13 @@ declare namespace API {
   };
   //定义类型并继承map方法
   type ProjectsAttribute = {
-    id?: int;
+    id?: number;
     avatar?: string;
-    imgNum?:int
+    imgNum?: number;
     title?: string;
     datetime?: String;
-    state?: int;
+    state?: number;
+    method?: number;
   };
   type Projects={
     projects:Array<ProjectsAttribute>;
@@ -152,6 +153,41 @@ declare namespace API {
     status?: string;
   }
   
+  // Nerf2Mesh
+  type ProjectsAttribute_N2M = {
+    id?: number;
+    avatar?: string;
+    imgNum?: number;
+    title?: string;
+    datetime?: String;
+    state?: number;
+  };
+  type Projects_N2M={
+    projects:Array<ProjectsAttribute_N2M>;
+  };
+
+  type runColmapParams_N2M={
+    title?: string;
+  }
+  type runColmapResponse_N2M={
+    status?: string;
+  }
+  
+  type runTrainParams_N2M={
+    title?: string;
+  }
+  type runTrainResponse_N2M={
+    status?: string;
+  }
+
+  type openViewerParams_N2M={
+    title?: string;
+  }
+  type openViewerResponse_N2M={
+    status?: string;
+    stage1_path?: string;
+  }
+
 }
 
 

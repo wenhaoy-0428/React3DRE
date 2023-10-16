@@ -187,6 +187,7 @@ export async function createProject(
     ...(options || {}),
   });
 }
+
 export async function uploadImages(
   params: API.UploadImageParams,
   options?: { [key: string]: any },
@@ -208,3 +209,111 @@ export async function uploadImages(
     ...(options || {}),
   });
 }
+
+// Nerf2Mesh方法的api
+export async function createProject_N2M(
+  params: API.UploadCreateProjectParams,
+  options?: { [key: string]: any },
+) {
+  console.log(params);
+  const formData = new FormData();
+  formData.append('title', params.title as string);
+  formData.append('datetime', params.datetime as string);
+  formData.append('avatar', params.avatar as File);
+  return request<API.UploadCreateProjectResult>(host + '/nerf2mesh/createProject', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formData,
+    ...(options || {}),
+  });
+}
+
+export async function uploadImages_N2M(
+  params: API.UploadImageParams,
+  options?: { [key: string]: any },
+) {
+  console.log(params);
+  const formData = new FormData();
+  formData.append('title', params.title as string);
+  if (params.imageFiles !== undefined) {
+    for (let file of params.imageFiles) {
+      formData.append('imageFiles', file);
+    }
+  }
+  return request<API.UploadImageResult>(host + '/nerf2mesh/uploadImgs', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formData,
+    ...(options || {}),
+  });
+}
+
+export async function runColmap_N2M(params: API.runColmapParams_N2M, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  const title = params;
+  if (title !== undefined) {
+    formdata.append('title', <string>title);
+  }
+  return request<API.runColmapResponse_N2M>(host + '/nerf2mesh/runColmap', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+export async function runTrain_N2M(params: API.runTrainParams_N2M, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  const title = params;
+  if (title !== undefined) {
+    formdata.append('title', <string>title);
+  }
+  return request<API.runTrainResponse_N2M>(host + '/nerf2mesh/runTrain', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+
+export async function openViewer_N2M(params: API.openViewerParams_N2M, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  //console.log(params)
+  const title = params;
+  if (title !== undefined) {
+    formdata.append('title', <string>title);
+  }
+  // console.log(formdata)
+  return request<API.openViewerResponse_N2M>(host + '/nerf2mesh/viewer', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+/*
+export async function closeViewer_N2M(params: string, flag: number) {
+  const formdata = new FormData();
+  formdata.append('title', params);
+  if (flag == 2) {
+    const url = host + '/api/viewerClose';
+    const result = window.navigator.sendBeacon(url, formdata);
+  }
+  return request<API.CloseViewerResult>(host + '/api/viewerClose', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+  });
+}
+*/
