@@ -39,7 +39,7 @@ export default [
       {
         path: '/workspace/mesh',
         name: 'Mesh',
-        component: './Projects/MeshProject'
+        component: './Project/MeshProject'
       },
     ]
   },

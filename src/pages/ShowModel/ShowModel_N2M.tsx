@@ -1,5 +1,5 @@
 import {  } from 'antd';
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useLocation } from 'react-router';
 import * as THREE from 'three';
 import WebGL from 'three/examples/jsm/capabilities/WebGL'
@@ -7,7 +7,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Status from 'three/examples/jsm/libs/stats.module'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min'
-
+import ReactDOM  from 'react-dom';
 
 
 // shaders
@@ -193,6 +193,17 @@ function createViewDependenceFunctions(network_weights) {
 
 
 const ShowModel_N2M: React.FC = () => {
+    
+    return (
+        <div>
+            <div id="container" style={{display: 'flex',
+        justifyContent: 'center',
+        alignItems: ' center',}} ></div>
+            <div id="progressBar" style={{textAlign: 'center'}}> </div>
+
+        </div>
+    );
+
     let container, params, progressBar, progress, scene, camera, renderer, controls, stats, configs, sceneRef;
 
     const location = useLocation();
@@ -259,16 +270,21 @@ const ShowModel_N2M: React.FC = () => {
     
         // create renderer
         container = document.getElementById('container');
-    
+        // container = document.querySelector('#container')
+        
+        console.log(container+'fl')
+
         renderer = new THREE.WebGLRenderer({
             powerPreference: 'high-performance',
             precision: 'mediump',
         });
-    
+        
+
         renderer.setPixelRatio( 1 );
         renderer.setSize( configs.W, configs.H );
         renderer.domElement.classList.add("renderer");
         container.appendChild( renderer.domElement );
+        // ReactDOM.findDOMNode(container).appendChild(renderer.domElement)
     
         stats = new Stats();
         container.appendChild( stats.dom );
@@ -477,16 +493,10 @@ const ShowModel_N2M: React.FC = () => {
     }
     init();
 
+    
 
-    return (
-        <div>
-            <div id="container" style={{display: 'flex',
-        justifyContent: 'center',
-        alignItems: ' center',}}></div>
-            <div id="progressBar" style={{textAlign: 'center'}}> </div>
 
-        </div>
-    );
+    
 };
    
 
