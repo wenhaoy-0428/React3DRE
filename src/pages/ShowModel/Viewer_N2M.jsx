@@ -193,17 +193,13 @@ return RenderFragShader;
 }
 
 let container, params, progressBar, progress, scene, camera, renderer, controls, stats, configs, sceneRef;
-let path
+
 // support changing scene name from url param
 // e.g. ?scene=lego&scene=chair
 params = new URLSearchParams(new URL(window.location.href).searchParams);
 const scene_names = params.getAll('scene');
 
-openViewer_N2M(scene_names[0]).then((response)=>{
-    path = response
-}).catch((error)=>{
-    console.log(error)
-})
+
 
 
 // global config
@@ -252,6 +248,14 @@ const Viewer_N2M = () => {
   
   
   useEffect(()=>{
+    let path='/home/dcy/code/EDREserver/app/n2m_data/newtest/newtest/mesh_stage1'
+    // openViewer_N2M(scene_names[0]).then((response)=>{
+    //     path = response +'/'
+    //     console.log(path)
+    // }).catch((error)=>{
+    //     console.log(error)
+    // })
+
     if (containerRef) {
         console.log(containerRef.current)
         function init() {
@@ -306,7 +310,7 @@ const Viewer_N2M = () => {
             scene = new THREE.Scene();
             sceneRef = {};
           
-            console.log(configs.bg_color);
+            console.log('configs_bgcolor:'+configs.bg_color);
             scene.background = new THREE.Color(configs.bg_color); // white background
             
             // window.addEventListener( 'resize', onWindowResize, false );
@@ -388,7 +392,7 @@ const Viewer_N2M = () => {
                 folder.add(configs[name], 'rot_z', 0, 360).onChange(v => {sceneRef[name].forEach((object, index) => {object.rotation.z = v / 180 * Math.PI;})});
                 folder.close(); // collapsed by default
             });
-          
+            console.log('391')
             configs['save config URL'] = () => {
                 // construct a URL string that repeat current configs
                 let base =  window.location.href.split('?')[0];
@@ -419,10 +423,10 @@ const Viewer_N2M = () => {
             // load all scenes async
             let promises = [];
             progress = {};
-          
+            
             scene_names.forEach((name, index) => {
-                promises.push(fetch(path+name+'/mlp.json').then(response => { return response.json(); }).then(network_weights => {
-          
+                promises.push(fetch('../mesh_stage1/mlp.json').then(response =>{console.log(response);return response.json()}) .then(network_weights => {
+                    // console.log(network_weights)
                     console.log("[INFO] loading:", name);
           
                     // check bound, load all meshes
@@ -435,11 +439,11 @@ const Viewer_N2M = () => {
                     for (let cas = 0; cas < cascade; cas++) {
           
                         // load feature texture
-                        let tex0 = new THREE.TextureLoader().load(path+name+'/feat0_'+cas.toString()+'.jpg', object => {
+                        let tex0 = new THREE.TextureLoader().load('../mesh_stage1/feat0_'+cas.toString()+'.jpg', object => {
                             console.log('[INFO] loaded diffuse tex:', name, cas);
                             updateProgressBar(name, cas * 3 + 1);
                         });
-                        let tex1 = new THREE.TextureLoader().load(path+name+'/feat1_'+cas.toString()+'.jpg', object => {
+                        let tex1 = new THREE.TextureLoader().load('../mesh_stage1/feat1_'+cas.toString()+'.jpg', object => {
                             console.log('[INFO] loaded specular tex:', name, cas);
                             updateProgressBar(name, cas * 3 + 2);
                         });
@@ -469,7 +473,7 @@ const Viewer_N2M = () => {
                         });
                     
                         // load obj
-                        new OBJLoader().load(path+name+'/mesh_'+cas.toString()+'.obj', object => {
+                        new OBJLoader().load('../mesh_stage1/mesh_'+cas.toString()+'.obj', object => {
                             object.traverse(function (child) {
                                 if (child.type == 'Mesh') {
                                     child.material = newmat;

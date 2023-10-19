@@ -91,7 +91,7 @@ export default [
   },
   {
     path: '/viewer_n2m',
-
+    layout: false,
     component: './ShowModel/Viewer_N2M',
   },
   
