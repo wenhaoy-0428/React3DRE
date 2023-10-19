@@ -260,24 +260,25 @@ const MeshProject: React.FC = () => {
 
     //打开可视化
     {/* TODO 暂时先用查询参数方式传值 */}
-    function Viewer(title: API.openViewerParams_N2M) {
+    function openViewer(title) {
       setLoading(true)
-      openViewer_N2M(title)
-        .then((response) => {
-          console.log(response);
-          const path = response;
+      window.location.href = '/viewer_n2m?scene='+title
+      // openViewer_N2M(title)
+      //   .then((response) => {
+      //     console.log(response);
+      //     const path = response;
       
-          // debugger;
-          // window.location.href = '/show_model?id='+title+'&websocket_url='+response.websocket_url;
-          window.location.href = '/showModel_n2m?path='+path+'&scene='+title
+      //     // debugger;
+      //     // window.location.href = '/show_model?id='+title+'&websocket_url='+response.websocket_url;
+      //     window.location.href = '/showModel_n2m?path='+path+'&scene='+title
           
 
-        })
-        .catch((error) => {
-          console.error('Open Viewer error:', error);
-          // {showModal();}
+      //   })
+      //   .catch((error) => {
+      //     console.error('Open Viewer error:', error);
+      //     // {showModal();}
 
-        });
+      //   });
     }
     
     //发送runCOLMAP请求
@@ -306,7 +307,7 @@ const MeshProject: React.FC = () => {
                 <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
               </Button>
     } else if (state == 3) {
-      return <Button type='link' onClick={() => Viewer(props.title as API.openViewerParams_N2M)} block>
+      return <Button type='link' onClick={() => openViewer(props.title )} block>
                 <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
               </Button>
     }

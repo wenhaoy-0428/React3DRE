@@ -90,9 +90,9 @@ export default [
     component: './ShowModel/ShowModel',
   },
   {
-    path: '/showModel_n2m',
+    path: '/viewer_n2m',
 
-    component: './ShowModel/ShowModel_N2M',
+    component: './ShowModel/Viewer_N2M',
   },
   
 ];
