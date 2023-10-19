@@ -107,17 +107,6 @@ export async function viewer(options?: { [key: string]: any }) {
     ...(options || {}),
   });
 }
-// TODO 暂时不知道怎么合理封装这个接口
-// export async function closeviewer(options?: { [key: string]: any }) {
-//   return axios.post(host+'/api/viewerClose', {
-//     ...(options || {}),
-//   })
-// }
-// export async function closeviewer(options?: { [key: string]: any }) {
-//   return request<API.ProjectsTitle>(host+'/api/viewerClose', {
-//     method: 'POST',
-//     ...(options || {}),
-//   });
 
 export async function processData(params: API.HandleDataParams, options?: { [key: string]: any }) {
   const formdata = new FormData();

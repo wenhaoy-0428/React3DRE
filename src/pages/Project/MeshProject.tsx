@@ -104,7 +104,7 @@ function ProjectsCard(props) {
     return <Meta
       avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
       title={props.title}
-      description='train'
+      description='train ends'
     />
     
   } else {
@@ -282,7 +282,7 @@ const MeshProject: React.FC = () => {
     }
     
     //发送runCOLMAP请求
-    function runColmap_N2M(title: API.runColmapParams_N2M) {
+    function runColmap(title: API.runColmapParams_N2M) {
       runColmap_N2M(title)
         .then((response) => {
           // console.log(response.status);
@@ -295,7 +295,7 @@ const MeshProject: React.FC = () => {
 
     //根据请求返回的state改变按钮状态
     if (state == 0) {
-      return <Button type='link' onClick={() => runColmap_N2M(props.title as API.runColmapParams_N2M)}block>
+      return <Button type='link' onClick={() => runColmap(props.title as API.runColmapParams_N2M)}block>
                 <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
               </Button>
     } else if (state == 1) {

@@ -86,13 +86,13 @@ function ProjectsCard(props) {
     return <Meta
       avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
       title={props.title}
-      description='processing data'
+      description='unprocessed data'
     />
   } else if (props.state == 1) {
     return <Meta
       avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel"></Avatar>}
       title={props.title}
-      description='training'
+      description='run Colmap and Train'
     />
   } else if (props.state == 2) {
     return <Meta
