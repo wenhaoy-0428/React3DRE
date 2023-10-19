@@ -192,7 +192,7 @@ RenderFragShader = RenderFragShader.replace(new RegExp('NUM_CHANNELS_TWO', 'g'),
 return RenderFragShader;
 }
 
-let container, params, progressBar, progress, scene, camera, renderer, controls, stats, configs, sceneRef;
+let container, params, progressBar, progress, scene, camera, renderer, controls, stats, configs, sceneRef, path;
 
 // support changing scene name from url param
 // e.g. ?scene=lego&scene=chair
@@ -239,265 +239,267 @@ function updateProgressBar(name, index) {
 }
 
 
-console.log("flag1")
+function init() {
+
+    console.log("[INFO] initialize...");
+  
+    // init webgl
+    if ( WebGL.isWebGL2Available() === false ) {
+        document.body.appendChild( WebGL.getWebGL2ErrorMessage() );
+        return;
+    }
+  
+    // return error message if conf is empty
+    if (Object.keys(scene_names).length === 0) {
+        let e = document.createElement('p');
+        e.style.cssText = 'text-align: center; font-size: 28px;'
+        e.innerHTML = "<b>Please provide at least one scene as URL parameters:</b> \
+        <br> ?scene=trial_lego/mesh_stage1/ \
+        ";
+        document.body.appendChild(e);
+        return;
+    }
+  
+    // create renderer
+    container = document.getElementById('container');
+  
+    renderer = new THREE.WebGLRenderer({
+        powerPreference: 'high-performance',
+        precision: 'mediump',
+    });
+  
+    renderer.setPixelRatio( 1 );
+    renderer.setSize( configs.W, configs.H );
+    renderer.domElement.classList.add("renderer");
+    container.appendChild( renderer.domElement );
+  
+    stats = new Stats();
+  container.appendChild( stats.dom );
+  
+    // create camera
+    camera = new THREE.PerspectiveCamera( configs.fovy, configs.W / configs.H, configs.near, configs.far);
+    camera.position.y = 2.0;
+    camera.position.z = 3.464;
+    camera.up.set(0, 0, 1);
+  
+    
+    controls = new OrbitControls(camera, renderer.domElement);
+    // controls.enableDamping = true;
+    // controls.screenSpacePanning = true;
+  
+    // create scene
+    scene = new THREE.Scene();
+    sceneRef = {};
+  
+    console.log('configs_bgcolor:'+configs.bg_color);
+    scene.background = new THREE.Color(configs.bg_color); // white background
+    
+    // window.addEventListener( 'resize', onWindowResize, false );
+    
+    // create GUI
+    const gui = new GUI();
+    
+    gui.addColor(configs, 'bg_color').onChange(v => {
+        scene.background = new THREE.Color(v);
+    });
+    gui.add(configs, 'H', 64, Math.max(configs.H, 1024)).onChange(v => {
+        camera.aspect = configs.W / v;
+        camera.updateProjectionMatrix();
+        renderer.setSize( configs.W, v );
+        render();
+    });
+    gui.add(configs, 'W', 64, Math.max(configs.W, 1024)).onChange(v => {
+        camera.aspect = v / configs.H;
+        camera.updateProjectionMatrix();
+        renderer.setSize( v, configs.H );
+        render();
+    });
+    gui.add(configs, 'fovy', 0.001, 180).onChange(v => {
+        camera.fov = v;
+        camera.updateProjectionMatrix();
+        render();
+    });
+    gui.add(configs, 'near', 0.001, 10).onChange(v => {
+        camera.near = v;
+        camera.updateProjectionMatrix();
+        render();
+    });
+    gui.add(configs, 'far', 0.001, 1000).onChange(v => {
+        camera.far = v;
+        camera.updateProjectionMatrix();
+        render();
+    });
+    
+    // load camera pose
+    if (configs['cameraState'] !== null) {
+        camera.matrix.fromArray(JSON.parse(configs['cameraState']));
+        camera.matrix.decompose(camera.position, camera.quaternion, camera.scale);
+        camera.updateProjectionMatrix();
+        controls.update();
+    }
+    
+    // separate config per scene
+    scene_names.forEach((name, index) => {
+        configs[name] = {
+            renderMode: parseInt(params.get(name + '.renderMode')) || 0, // rendering mode: 0 = normal, 1 = diffuse, 2 = specular.
+            pos_x: parseFloat(params.get(name + '.pos_x')) || 0,
+            pos_y: parseFloat(params.get(name + '.pos_y')) || 0,
+            pos_z: parseFloat(params.get(name + '.pos_z')) || 0,
+            scale_x: parseFloat(params.get(name + '.scale_x')) || 1,
+            scale_y: parseFloat(params.get(name + '.scale_y')) || 1,
+            scale_z: parseFloat(params.get(name + '.scale_z')) || 1,
+            rot_x: parseFloat(params.get(name + '.rot_x')) || 0,
+            rot_y: parseFloat(params.get(name + '.rot_y')) || 0,
+            rot_z: parseFloat(params.get(name + '.rot_z')) || 0,
+        };
+        const folder = gui.addFolder(name);
+        folder.add(configs[name], 'renderMode', {normal: 0, diffuse: 1, specular: 2}).onChange(v => {
+            sceneRef[name].forEach((object, index) => {
+                object.traverse(function (child) {
+                    if (child.type == 'Mesh') {
+                        child.material.uniforms['mode']['value'] = v;
+                    }
+                });
+            });
+        });
+        folder.add(configs[name], 'pos_x', -10, 10).onChange(v => {sceneRef[name].forEach((object, index) => {object.position.x = v;})});
+        folder.add(configs[name], 'pos_y', -10, 10).onChange(v => {sceneRef[name].forEach((object, index) => {object.position.y = v;})});
+        folder.add(configs[name], 'pos_z', -10, 10).onChange(v => {sceneRef[name].forEach((object, index) => {object.position.z = v;})});
+        folder.add(configs[name], 'scale_x', 0, 5).onChange(v => {sceneRef[name].forEach((object, index) => {object.scale.x = v;})});
+        folder.add(configs[name], 'scale_y', 0, 5).onChange(v => {sceneRef[name].forEach((object, index) => {object.scale.y = v;})});
+        folder.add(configs[name], 'scale_z', 0, 5).onChange(v => {sceneRef[name].forEach((object, index) => {object.scale.z = v;})});
+        folder.add(configs[name], 'rot_x', 0, 360).onChange(v => {sceneRef[name].forEach((object, index) => {object.rotation.x = v / 180 * Math.PI;})});
+        folder.add(configs[name], 'rot_y', 0, 360).onChange(v => {sceneRef[name].forEach((object, index) => {object.rotation.y = v / 180 * Math.PI;})});
+        folder.add(configs[name], 'rot_z', 0, 360).onChange(v => {sceneRef[name].forEach((object, index) => {object.rotation.z = v / 180 * Math.PI;})});
+        folder.close(); // collapsed by default
+    });
+    console.log('391')
+    configs['save config URL'] = () => {
+        // construct a URL string that repeat current configs
+        let base =  window.location.href.split('?')[0];
+        function unwrap(x, prefix='') {
+            let res = [];
+            for (const key of Object.keys(x)) {
+                // leave out default values
+                if ((key.includes('pos') && x[key] === 0) || (key.includes('scale') && x[key] === 1) || (key.includes('rot') && x[key] === 0) || (key === 'renderMode' && x[key] === 0)) continue;
+                res.push(prefix + key + '=' + String(x[key]));
+            }
+            return res.join('&');
+        }
+        let res = [];
+        for (const key of Object.keys(configs)) {
+            if ((key == 'save config URL') || (key === 'fovy' && configs[key] === 60) || (key === 'near' && configs[key] === 0.01) || (key === 'far' && configs[key] === 100) || (key === 'bg_color' && configs[key] === 0xffffff)) { continue; }
+            else if (key == 'cameraState') { res.push('cameraState=' + JSON.stringify(camera.matrix.toArray())); }
+            else if (configs[key].constructor == Object) {
+                res.push('scene='+key);
+                res.push(unwrap(configs[key], key+'.'));
+            } else {
+                res.push(key + '=' + String(configs[key]));
+            }
+        }
+        prompt("Copy to clipboard: Ctrl+C, Enter", base + '?' + res.join('&'));
+    };
+    gui.add(configs, 'save config URL');
+  
+    // load all scenes async
+    let promises = [];
+    progress = {};
+    
+    scene_names.forEach((name, index) => {
+        promises.push(fetch(path+'mlp.json').then(response =>{console.log(response);return response.json()}) .then(network_weights => {
+            // console.log(network_weights)
+            console.log("[INFO] loading:", name);
+  
+            // check bound, load all meshes
+            let bound = network_weights['bound'];
+            let cascade = network_weights['cascade'];
+            
+            initProgressBar(name, cascade);
+            sceneRef[name] = [];
+  
+            for (let cas = 0; cas < cascade; cas++) {
+  
+                // load feature texture
+                let tex0 = new THREE.TextureLoader().load(path + name + '/feat0_'+cas.toString()+'.jpg', object => {
+                    console.log('[INFO] loaded diffuse tex:', name, cas);
+                    updateProgressBar(name, cas * 3 + 1);
+                });
+                let tex1 = new THREE.TextureLoader().load(path + name + '/feat1_'+cas.toString()+'.jpg', object => {
+                    console.log('[INFO] loaded specular tex:', name, cas);
+                    updateProgressBar(name, cas * 3 + 2);
+                });
+  
+                tex0.magFilter = THREE.NearestFilter;
+                tex0.minFilter = THREE.NearestFilter;
+                tex1.magFilter = THREE.NearestFilter;
+                tex1.minFilter = THREE.NearestFilter;
+            
+                // load MLP
+                let RenderFragShader = createViewDependenceFunctions(network_weights);
+                let weightsTexZero = createNetworkWeightTexture(network_weights['net.0.weight']);
+                let weightsTexOne = createNetworkWeightTexture(network_weights['net.1.weight']);
+  
+                let newmat = new THREE.RawShaderMaterial({
+                    side: THREE.DoubleSide,
+                    vertexShader: RenderVertShader,
+                    fragmentShader: RenderFragShader,
+                    uniforms: {
+                        mode: { value: configs[name].renderMode },
+                        tDiffuse: { value: tex0 },
+                        tSpecular: { value: tex1 },
+                        weightsZero: { value: weightsTexZero },
+                        weightsOne: { value: weightsTexOne },
+                    },
+                    glslVersion: THREE.GLSL3
+                });
+            
+                // load obj
+                new OBJLoader().load(path + name + '/mesh_'+cas.toString()+'.obj', object => {
+                    object.traverse(function (child) {
+                        if (child.type == 'Mesh') {
+                            child.material = newmat;
+                        }
+                    });
+                    console.log('[INFO] loaded mesh:', name, cas);
+                    updateProgressBar(name, cas * 3);
+                    object.position.set(configs[name].pos_x, configs[name].pos_y, configs[name].pos_z);
+                    object.scale.set(configs[name].scale_x, configs[name].scale_y, configs[name].scale_z);
+                    object.rotation.set(configs[name].rot_x / 180 * Math.PI, configs[name].rot_y / 180 * Math.PI, configs[name].rot_z / 180 * Math.PI);
+                    sceneRef[name].push(object);
+                    scene.add(object);
+                });
+            }
+        }));
+    });
+    
+    Promise.all(promises).then(response => {
+        console.log("[INFO] start animation!");
+        animate();
+    });
+  
+}
 
 
 const Viewer_N2M = () => {
     const containerRef = useRef(null);
-
+    
+   
   
   
   useEffect(()=>{
-    let path='/home/dcy/code/EDREserver/app/n2m_data/newtest/newtest/mesh_stage1'
-    // openViewer_N2M(scene_names[0]).then((response)=>{
-    //     path = response +'/'
-    //     console.log(path)
-    // }).catch((error)=>{
-    //     console.log(error)
-    // })
+    
 
     if (containerRef) {
         console.log(containerRef.current)
-        function init() {
-
-            console.log("[INFO] initialize...");
+        openViewer_N2M(scene_names[0]).then((response)=>{
+            path = response +'/'
+            console.log(path)
+            init()
+        }).catch((error)=>{
+            console.log(error)
+        })
+        
           
-            // init webgl
-            if ( WebGL.isWebGL2Available() === false ) {
-                document.body.appendChild( WebGL.getWebGL2ErrorMessage() );
-                return;
-            }
-          
-            // return error message if conf is empty
-            if (Object.keys(scene_names).length === 0) {
-                let e = document.createElement('p');
-                e.style.cssText = 'text-align: center; font-size: 28px;'
-                e.innerHTML = "<b>Please provide at least one scene as URL parameters:</b> \
-                <br> ?scene=trial_lego/mesh_stage1/ \
-                ";
-                document.body.appendChild(e);
-                return;
-            }
-          
-            // create renderer
-            container = document.getElementById('container');
-          
-            renderer = new THREE.WebGLRenderer({
-                powerPreference: 'high-performance',
-                precision: 'mediump',
-            });
-          
-            renderer.setPixelRatio( 1 );
-            renderer.setSize( configs.W, configs.H );
-            renderer.domElement.classList.add("renderer");
-            container.appendChild( renderer.domElement );
-          
-            stats = new Stats();
-          container.appendChild( stats.dom );
-          
-            // create camera
-            camera = new THREE.PerspectiveCamera( configs.fovy, configs.W / configs.H, configs.near, configs.far);
-            camera.position.y = 2.0;
-            camera.position.z = 3.464;
-            camera.up.set(0, 0, 1);
-          
-            
-            controls = new OrbitControls(camera, renderer.domElement);
-            // controls.enableDamping = true;
-            // controls.screenSpacePanning = true;
-          
-            // create scene
-            scene = new THREE.Scene();
-            sceneRef = {};
-          
-            console.log('configs_bgcolor:'+configs.bg_color);
-            scene.background = new THREE.Color(configs.bg_color); // white background
-            
-            // window.addEventListener( 'resize', onWindowResize, false );
-            
-            // create GUI
-            const gui = new GUI();
-            
-            gui.addColor(configs, 'bg_color').onChange(v => {
-                scene.background = new THREE.Color(v);
-            });
-            gui.add(configs, 'H', 64, Math.max(configs.H, 1024)).onChange(v => {
-                camera.aspect = configs.W / v;
-                camera.updateProjectionMatrix();
-                renderer.setSize( configs.W, v );
-                render();
-            });
-            gui.add(configs, 'W', 64, Math.max(configs.W, 1024)).onChange(v => {
-                camera.aspect = v / configs.H;
-                camera.updateProjectionMatrix();
-                renderer.setSize( v, configs.H );
-                render();
-            });
-            gui.add(configs, 'fovy', 0.001, 180).onChange(v => {
-                camera.fov = v;
-                camera.updateProjectionMatrix();
-                render();
-            });
-            gui.add(configs, 'near', 0.001, 10).onChange(v => {
-                camera.near = v;
-                camera.updateProjectionMatrix();
-                render();
-            });
-            gui.add(configs, 'far', 0.001, 1000).onChange(v => {
-                camera.far = v;
-                camera.updateProjectionMatrix();
-                render();
-            });
-            
-            // load camera pose
-            if (configs['cameraState'] !== null) {
-                camera.matrix.fromArray(JSON.parse(configs['cameraState']));
-                camera.matrix.decompose(camera.position, camera.quaternion, camera.scale);
-                camera.updateProjectionMatrix();
-                controls.update();
-            }
-            
-            // separate config per scene
-            scene_names.forEach((name, index) => {
-                configs[name] = {
-                    renderMode: parseInt(params.get(name + '.renderMode')) || 0, // rendering mode: 0 = normal, 1 = diffuse, 2 = specular.
-                    pos_x: parseFloat(params.get(name + '.pos_x')) || 0,
-                    pos_y: parseFloat(params.get(name + '.pos_y')) || 0,
-                    pos_z: parseFloat(params.get(name + '.pos_z')) || 0,
-                    scale_x: parseFloat(params.get(name + '.scale_x')) || 1,
-                    scale_y: parseFloat(params.get(name + '.scale_y')) || 1,
-                    scale_z: parseFloat(params.get(name + '.scale_z')) || 1,
-                    rot_x: parseFloat(params.get(name + '.rot_x')) || 0,
-                    rot_y: parseFloat(params.get(name + '.rot_y')) || 0,
-                    rot_z: parseFloat(params.get(name + '.rot_z')) || 0,
-                };
-                const folder = gui.addFolder(name);
-                folder.add(configs[name], 'renderMode', {normal: 0, diffuse: 1, specular: 2}).onChange(v => {
-                    sceneRef[name].forEach((object, index) => {
-                        object.traverse(function (child) {
-                            if (child.type == 'Mesh') {
-                                child.material.uniforms['mode']['value'] = v;
-                            }
-                        });
-                    });
-                });
-                folder.add(configs[name], 'pos_x', -10, 10).onChange(v => {sceneRef[name].forEach((object, index) => {object.position.x = v;})});
-                folder.add(configs[name], 'pos_y', -10, 10).onChange(v => {sceneRef[name].forEach((object, index) => {object.position.y = v;})});
-                folder.add(configs[name], 'pos_z', -10, 10).onChange(v => {sceneRef[name].forEach((object, index) => {object.position.z = v;})});
-                folder.add(configs[name], 'scale_x', 0, 5).onChange(v => {sceneRef[name].forEach((object, index) => {object.scale.x = v;})});
-                folder.add(configs[name], 'scale_y', 0, 5).onChange(v => {sceneRef[name].forEach((object, index) => {object.scale.y = v;})});
-                folder.add(configs[name], 'scale_z', 0, 5).onChange(v => {sceneRef[name].forEach((object, index) => {object.scale.z = v;})});
-                folder.add(configs[name], 'rot_x', 0, 360).onChange(v => {sceneRef[name].forEach((object, index) => {object.rotation.x = v / 180 * Math.PI;})});
-                folder.add(configs[name], 'rot_y', 0, 360).onChange(v => {sceneRef[name].forEach((object, index) => {object.rotation.y = v / 180 * Math.PI;})});
-                folder.add(configs[name], 'rot_z', 0, 360).onChange(v => {sceneRef[name].forEach((object, index) => {object.rotation.z = v / 180 * Math.PI;})});
-                folder.close(); // collapsed by default
-            });
-            console.log('391')
-            configs['save config URL'] = () => {
-                // construct a URL string that repeat current configs
-                let base =  window.location.href.split('?')[0];
-                function unwrap(x, prefix='') {
-                    let res = [];
-                    for (const key of Object.keys(x)) {
-                        // leave out default values
-                        if ((key.includes('pos') && x[key] === 0) || (key.includes('scale') && x[key] === 1) || (key.includes('rot') && x[key] === 0) || (key === 'renderMode' && x[key] === 0)) continue;
-                        res.push(prefix + key + '=' + String(x[key]));
-                    }
-                    return res.join('&');
-                }
-                let res = [];
-                for (const key of Object.keys(configs)) {
-                    if ((key == 'save config URL') || (key === 'fovy' && configs[key] === 60) || (key === 'near' && configs[key] === 0.01) || (key === 'far' && configs[key] === 100) || (key === 'bg_color' && configs[key] === 0xffffff)) { continue; }
-                    else if (key == 'cameraState') { res.push('cameraState=' + JSON.stringify(camera.matrix.toArray())); }
-                    else if (configs[key].constructor == Object) {
-                        res.push('scene='+key);
-                        res.push(unwrap(configs[key], key+'.'));
-                    } else {
-                        res.push(key + '=' + String(configs[key]));
-                    }
-                }
-                prompt("Copy to clipboard: Ctrl+C, Enter", base + '?' + res.join('&'));
-            };
-            gui.add(configs, 'save config URL');
-          
-            // load all scenes async
-            let promises = [];
-            progress = {};
-            
-            scene_names.forEach((name, index) => {
-                promises.push(fetch('../mesh_stage1/mlp.json').then(response =>{console.log(response);return response.json()}) .then(network_weights => {
-                    // console.log(network_weights)
-                    console.log("[INFO] loading:", name);
-          
-                    // check bound, load all meshes
-                    let bound = network_weights['bound'];
-                    let cascade = network_weights['cascade'];
-                    
-                    initProgressBar(name, cascade);
-                    sceneRef[name] = [];
-          
-                    for (let cas = 0; cas < cascade; cas++) {
-          
-                        // load feature texture
-                        let tex0 = new THREE.TextureLoader().load('../mesh_stage1/feat0_'+cas.toString()+'.jpg', object => {
-                            console.log('[INFO] loaded diffuse tex:', name, cas);
-                            updateProgressBar(name, cas * 3 + 1);
-                        });
-                        let tex1 = new THREE.TextureLoader().load('../mesh_stage1/feat1_'+cas.toString()+'.jpg', object => {
-                            console.log('[INFO] loaded specular tex:', name, cas);
-                            updateProgressBar(name, cas * 3 + 2);
-                        });
-          
-                        tex0.magFilter = THREE.NearestFilter;
-                        tex0.minFilter = THREE.NearestFilter;
-                        tex1.magFilter = THREE.NearestFilter;
-                        tex1.minFilter = THREE.NearestFilter;
-                    
-                        // load MLP
-                        let RenderFragShader = createViewDependenceFunctions(network_weights);
-                        let weightsTexZero = createNetworkWeightTexture(network_weights['net.0.weight']);
-                        let weightsTexOne = createNetworkWeightTexture(network_weights['net.1.weight']);
-          
-                        let newmat = new THREE.RawShaderMaterial({
-                            side: THREE.DoubleSide,
-                            vertexShader: RenderVertShader,
-                            fragmentShader: RenderFragShader,
-                            uniforms: {
-                                mode: { value: configs[name].renderMode },
-                                tDiffuse: { value: tex0 },
-                                tSpecular: { value: tex1 },
-                                weightsZero: { value: weightsTexZero },
-                                weightsOne: { value: weightsTexOne },
-                            },
-                            glslVersion: THREE.GLSL3
-                        });
-                    
-                        // load obj
-                        new OBJLoader().load('../mesh_stage1/mesh_'+cas.toString()+'.obj', object => {
-                            object.traverse(function (child) {
-                                if (child.type == 'Mesh') {
-                                    child.material = newmat;
-                                }
-                            });
-                            console.log('[INFO] loaded mesh:', name, cas);
-                            updateProgressBar(name, cas * 3);
-                            object.position.set(configs[name].pos_x, configs[name].pos_y, configs[name].pos_z);
-                            object.scale.set(configs[name].scale_x, configs[name].scale_y, configs[name].scale_z);
-                            object.rotation.set(configs[name].rot_x / 180 * Math.PI, configs[name].rot_y / 180 * Math.PI, configs[name].rot_z / 180 * Math.PI);
-                            sceneRef[name].push(object);
-                            scene.add(object);
-                        });
-                    }
-                }));
-            });
-            
-            Promise.all(promises).then(response => {
-                console.log("[INFO] start animation!");
-                animate();
-            });
-          
-          }
-          init()
     }
   },[])
 
