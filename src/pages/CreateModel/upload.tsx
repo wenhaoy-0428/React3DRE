@@ -53,11 +53,7 @@ const MyForm: React.FC = () => {
     setMethod(value)
     
   }
-  const [imageType, setImageType] = useState(0)
-
-  const handleImageTypeChange =(e: RadioChangeEvent)=> {
-    setImageType(e.target.value);
-  }
+  
 
   const onPreview = async (file : UploadFile) => {
     let src = file.url as string;
@@ -82,7 +78,6 @@ const MyForm: React.FC = () => {
     let value = values as API.UploadCreateProjectParams;
     value.datetime = form.getFieldValue('datetime').format('YYYY-MM-DD');
     value.avatar = (avatarFile as RcFile).originFileObj
-    value.dataType = form.getFieldValue('dataType') ;
 
     // 分批上传图片函数
     function uploadImage() {
@@ -297,12 +292,7 @@ const MyForm: React.FC = () => {
         percent={Math.round((percent) * 100)}
         status = {ImageFile.length > 0 ? 'active':'normal'}
         />
-      <Form.Item name='dataType'>
-        <Radio.Group onChange={handleImageTypeChange} value={imageType} defaultValue={0}>
-          <Radio value={0}>透视图</Radio>
-          <Radio value={1}>全景图</Radio>
-        </Radio.Group>
-      </Form.Item>
+
       
 
       <Form.Item >

@@ -108,13 +108,11 @@ export async function viewer(options?: { [key: string]: any }) {
   });
 }
 
-export async function processData(params: API.HandleDataParams, options?: { [key: string]: any }) {
+export async function runColmapAndTrain_NerfStudio(params: API.runColmapAndTrainParams_NerfStudio, options?: { [key: string]: any }) {
   const formdata = new FormData();
-  const title = params;
-  if (title !== undefined) {
-    formdata.append('title', <string>title);
-  }
-  return request<API.HandleDataResult>(host + '/api/runColmapAndTrain', {
+  formdata.append('title', params.title as string);
+  formdata.append('pano', params.pano as string);
+  return request<API.runColmapAndTrainResponse_NerfStudio>(host + '/api/runColmapAndTrain', {
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -167,7 +165,6 @@ export async function createProject(
   formData.append('title', params.title as string);
   formData.append('datetime', params.datetime as string);
   formData.append('avatar', params.avatar as File);
-  formData.append('pano', String(params.dataType) );
   return request<API.OpenViewerResult>(host + '/api/createProject', {
     method: 'POST',
     headers: {

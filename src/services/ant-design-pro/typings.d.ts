@@ -121,6 +121,13 @@ declare namespace API {
   type HandleDataResult={
     status?: string;
   }
+  type runColmapAndTrainParams_NerfStudio={
+    title?: string;
+    pano?: string;
+  }
+  type runColmapAndTrainResponse_NerfStudio={
+    status?: string;
+  }
   
   type OpenViewerParams={
     title?: string;
@@ -141,7 +148,6 @@ declare namespace API {
     title?: string;
     datetime?: string;
     avatar?: File;
-    dataType?: string;
   }
   type UploadCreateProjectResult={
     status?: string;

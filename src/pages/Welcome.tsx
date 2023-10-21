@@ -1,12 +1,12 @@
-import { getAllProjects, openViewer, processData } from '@/services/ant-design-pro/api';
+import { getAllProjects, openViewer, runColmapAndTrain_NerfStudio } from '@/services/ant-design-pro/api';
 import { PageContainer, ModalForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone, ClockCircleTwoTone } from '@ant-design/icons';
-import { App, Spin, Button, Avatar, Card, Divider, Dropdown, Row, Col } from 'antd';
+import { App, Spin, Button, Avatar, Card, Divider, Dropdown, Row, Col, RadioChangeEvent } from 'antd';
 import type { MenuProps } from 'antd';
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
-import { Empty } from 'antd';
+import { Empty, Modal, Radio } from 'antd';
 // import { Col, Row } from 'antd';
 import {
   EditOutlined,
@@ -34,6 +34,7 @@ const waitTime = (time: number = 100) => {
     }, time);
   });
 };
+
 
 
 
@@ -122,6 +123,7 @@ const Welcome: React.FC = () => {
 
   const [data, setData] = useState<Array<API.ProjectsAttribute>>([]);  // project数据
 
+  
   //Antd Spin
   const [loading, setLoading] = useState(false);                       // 给后台留一点加载时间
 
@@ -170,11 +172,9 @@ const Welcome: React.FC = () => {
           cover={<AvatarConvert imageData={item.avatar} />}
 
           actions={[
-            // TODO 需要判断是否已经重建完成来决定该图标状态
 
             <RenderButton title={item.title} state={item.state} />,
 
-            // TODO 新开一个页面
             <ModalForm
 
               title="编辑信息"
@@ -275,15 +275,35 @@ const Welcome: React.FC = () => {
     }
     
     //发送runCOLMAP请求
-    function handleData(title: API.HandleDataParams) {
-      processData(title)
+    function runColmapAndTrain(params : API.runColmapAndTrainParams_NerfStudio) {
+      runColmapAndTrain_NerfStudio(params)
         .then((response) => {
           console.log(response.status);
           setState(1)
         })
         .catch((error) => {
-          console.error('handleData error:', error);
+          console.error('run colmap and train error:', error);
         });
+    }
+    const [isHandleDataModalOpen, setIsHandleDataModalOpen] = useState(false);
+    const showHandleDataModal = () => {
+      setIsHandleDataModalOpen(true);
+    }
+    const handleDataModalOK = (title, pano) => {
+      
+      const runColmapParams = {title, pano} as API.runColmapAndTrainParams_NerfStudio;
+      console.log(runColmapParams)
+      // debugger;
+      runColmapAndTrain(runColmapParams)
+      setIsHandleDataModalOpen(false);
+    }
+    const handleDataModalCancel = () => {
+      setIsHandleDataModalOpen(false);
+    }
+
+    const [colmapDataType, setColmapDataType] = useState(0); 
+    const colmapDataTypeChange = (e : RadioChangeEvent) => {
+      setColmapDataType(e.target.value);
     }
 
     //根据请求返回的state改变按钮状态
@@ -295,10 +315,20 @@ const Welcome: React.FC = () => {
       return <Button  block>
                 <ClockCircleTwoTone key="start"/>
               </Button>
-    } else {
-      return <Button type='link' onClick={() => handleData(props.title as API.HandleDataParams)}block>
+    } else if (state == 0) {
+      return  <>
+              <Button type='link' onClick={showHandleDataModal}block>
                 <PlayCircleTwoTone key="start" twoToneColor="#eb2f2f" />
               </Button>
+              <Modal title="数据处理选择" open={isHandleDataModalOpen} onOk={()=>handleDataModalOK(props.title, colmapDataType)} onCancel={handleDataModalCancel}>
+                
+                  <Radio.Group onChange={colmapDataTypeChange} value={colmapDataType}>
+                    <Radio value={0}>透视图</Radio>
+                    <Radio value={1}>全景图</Radio>
+                  </Radio.Group>
+              </Modal>
+              </>
+              
     }
   }
 
