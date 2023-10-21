@@ -207,7 +207,6 @@ export async function createProject_N2M(
   formData.append('title', params.title as string);
   formData.append('datetime', params.datetime as string);
   formData.append('avatar', params.avatar as File);
-  formData.append('pano', String(params.dataType) );
   return request<API.UploadCreateProjectResult>(host + '/nerf2mesh/createProject', {
     method: 'POST',
     headers: {
@@ -240,13 +239,11 @@ export async function uploadImages_N2M(
   });
 }
 
-export async function runColmap_N2M(params: API.runColmapParams_N2M, options?: { [key: string]: any }) {
+export async function runColmap_N2M(params: API.runColmapAndTrainParams_NerfStudio, options?: { [key: string]: any }) {
   const formdata = new FormData();
-  const title = params;
-  if (title !== undefined) {
-    formdata.append('title', <string>title);
-  }
-  return request<API.runColmapResponse_N2M>(host + '/nerf2mesh/runColmap', {
+  formdata.append('title', params.title as string);
+  formdata.append('pano', params.pano as string);
+  return request<API.runColmapAndTrainResponse_NerfStudio>(host + '/nerf2mesh/runColmap', {
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',

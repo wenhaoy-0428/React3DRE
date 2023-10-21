@@ -6,7 +6,7 @@ import { App, Spin, Button, Avatar, Card, Divider, Dropdown, Row, Col } from 'an
 import type { MenuProps } from 'antd';
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
-import { Empty } from 'antd';
+import { Empty, Modal, Radio } from 'antd';
 // import { Col, Row } from 'antd';
 import {
   EditOutlined,
@@ -282,8 +282,8 @@ const MeshProject: React.FC = () => {
     }
     
     //发送runCOLMAP请求
-    function runColmap(title: API.runColmapParams_N2M) {
-      runColmap_N2M(title)
+    function runColmap(params: API.runColmapAndTrainParams_NerfStudio) {
+      runColmap_N2M(params)
         .then((response) => {
           // console.log(response.status);
           setState(1)
@@ -303,11 +303,42 @@ const MeshProject: React.FC = () => {
         });
     }
 
+    const [isHandleDataModalOpen, setIsHandleDataModalOpen] = useState(false);
+    const showHandleDataModal = () => {
+      setIsHandleDataModalOpen(true);
+    }
+    const handleDataModalOK = (title, pano) => {
+      
+      const runColmapParams = {title, pano} as API.runColmapAndTrainParams_NerfStudio;
+      console.log(runColmapParams)
+      // debugger;
+      runColmap(runColmapParams)
+      setIsHandleDataModalOpen(false);
+    }
+    const handleDataModalCancel = () => {
+      setIsHandleDataModalOpen(false);
+    }
+
+    const [colmapDataType, setColmapDataType] = useState(0); 
+    const colmapDataTypeChange = (e : RadioChangeEvent) => {
+      setColmapDataType(e.target.value);
+    }
+
+
     //根据请求返回的state改变按钮状态
     if (state == 0) {
-      return <Button type='link' onClick={() => runColmap(props.title as API.runColmapParams_N2M)}block>
-                <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
-              </Button>
+      return <>
+            <Button type='link' onClick={showHandleDataModal}block>
+              <PlayCircleTwoTone key="start" twoToneColor="#eb2f2f" />
+            </Button>
+            <Modal title="数据处理选择" open={isHandleDataModalOpen} onOk={()=>handleDataModalOK(props.title, colmapDataType)} onCancel={handleDataModalCancel}>
+              
+                <Radio.Group onChange={colmapDataTypeChange} value={colmapDataType}>
+                  <Radio value={0}>透视图</Radio>
+                  <Radio value={1}>全景图</Radio>
+                </Radio.Group>
+            </Modal>
+          </>
     } else if (state == 1) {
       return <Button  block>
                 <ClockCircleTwoTone key="start" twoToneColor="#eb2f2f"/>
