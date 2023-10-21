@@ -406,7 +406,7 @@ function init() {
     progress = {};
     
     scene_names.forEach((name, index) => {
-        promises.push(fetch(path+'mlp.json').then(response =>{console.log(response);return response.json()}) .then(network_weights => {
+        promises.push(fetch(path+name+'mlp.json').then(response =>{console.log(response);return response.json()}) .then(network_weights => {
             // console.log(network_weights)
             console.log("[INFO] loading:", name);
   

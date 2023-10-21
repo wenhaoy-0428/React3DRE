@@ -292,6 +292,16 @@ const MeshProject: React.FC = () => {
           console.error('runColmap_Nerf2Mesh error:', error);
         });
     }
+    function runTrain(title: API.runTrainParams_N2M) {
+      runTrain_N2M(title)
+        .then((response) => {
+          // console.log(response.status);
+          setState(2)
+        })
+        .catch((error) => {
+          console.error('runTrain error:', error);
+        });
+    }
 
     //根据请求返回的state改变按钮状态
     if (state == 0) {
@@ -303,7 +313,7 @@ const MeshProject: React.FC = () => {
                 <ClockCircleTwoTone key="start" twoToneColor="#eb2f2f"/>
               </Button>
     } else if (state == 2) {
-      return <Button type='link' onClick={() => runTrain_N2M(props.title as API.runTrainParams_N2M)}block>
+      return <Button type='link' onClick={() => runTrain(props.title as API.runTrainParams_N2M)}block>
                 <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
               </Button>
     } else if (state == 3) {

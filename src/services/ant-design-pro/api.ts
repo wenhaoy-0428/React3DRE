@@ -167,6 +167,7 @@ export async function createProject(
   formData.append('title', params.title as string);
   formData.append('datetime', params.datetime as string);
   formData.append('avatar', params.avatar as File);
+  formData.append('pano', String(params.dataType) );
   return request<API.OpenViewerResult>(host + '/api/createProject', {
     method: 'POST',
     headers: {
@@ -209,6 +210,7 @@ export async function createProject_N2M(
   formData.append('title', params.title as string);
   formData.append('datetime', params.datetime as string);
   formData.append('avatar', params.avatar as File);
+  formData.append('pano', String(params.dataType) );
   return request<API.UploadCreateProjectResult>(host + '/nerf2mesh/createProject', {
     method: 'POST',
     headers: {

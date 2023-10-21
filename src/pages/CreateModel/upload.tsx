@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Upload, message, DatePicker, Divider, Progress, Select, Radio, Space } from 'antd';
+import { Form, Input, Button, Upload, message, DatePicker, Divider, Progress, Select, Radio, Space, RadioChangeEvent } from 'antd';
 import { RcFile, UploadFile, UploadChangeParam } from 'antd/lib/upload';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -53,6 +53,11 @@ const MyForm: React.FC = () => {
     setMethod(value)
     
   }
+  const [imageType, setImageType] = useState(0)
+
+  const handleImageTypeChange =(e: RadioChangeEvent)=> {
+    setImageType(e.target.value);
+  }
 
   const onPreview = async (file : UploadFile) => {
     let src = file.url as string;
@@ -77,6 +82,7 @@ const MyForm: React.FC = () => {
     let value = values as API.UploadCreateProjectParams;
     value.datetime = form.getFieldValue('datetime').format('YYYY-MM-DD');
     value.avatar = (avatarFile as RcFile).originFileObj
+    value.dataType = form.getFieldValue('dataType') ;
 
     // 分批上传图片函数
     function uploadImage() {
@@ -236,9 +242,9 @@ const MyForm: React.FC = () => {
       </Form.Item>
 
       <Form.Item
-        label="请输入日期"
+        label="输入日期"
         name="datetime"
-        rules={[{ required: true, message: '请输入日期' }]}
+        rules={[{ required: true, message: '输入日期' }]}
       >
         <DatePicker format="YYYY-MM-DD"/>
       </Form.Item>
@@ -291,10 +297,15 @@ const MyForm: React.FC = () => {
         percent={Math.round((percent) * 100)}
         status = {ImageFile.length > 0 ? 'active':'normal'}
         />
-
+      <Form.Item name='dataType'>
+        <Radio.Group onChange={handleImageTypeChange} value={imageType} defaultValue={0}>
+          <Radio value={0}>透视图</Radio>
+          <Radio value={1}>全景图</Radio>
+        </Radio.Group>
+      </Form.Item>
       
 
-      <Form.Item>
+      <Form.Item >
         <Button type="primary" htmlType="submit" >
           提交
         </Button>

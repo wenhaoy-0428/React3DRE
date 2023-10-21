@@ -141,6 +141,7 @@ declare namespace API {
     title?: string;
     datetime?: string;
     avatar?: File;
+    dataType?: string;
   }
   type UploadCreateProjectResult={
     status?: string;
