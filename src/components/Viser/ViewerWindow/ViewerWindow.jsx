@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import React, { useContext, useEffect, useRef } from 'react';
-import { SelectChangeEvent } from '@mui/material/Select';
+// import { SelectChangeEvent } from '@mui/material/Select';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IconButton, ToggleButtonGroup, ToggleButton } from '@mui/material';
