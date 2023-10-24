@@ -406,7 +406,7 @@ function init() {
     progress = {};
     
     scene_names.forEach((name, index) => {
-        promises.push(fetch(path+name+'mlp.json').then(response =>{console.log(response);return response.json()}) .then(network_weights => {
+        promises.push(fetch('mesh/'+name+'/mlp.json').then(response =>{console.log(response);return response.json()}) .then(network_weights => {
             // console.log(network_weights)
             console.log("[INFO] loading:", name);
   
@@ -420,11 +420,11 @@ function init() {
             for (let cas = 0; cas < cascade; cas++) {
   
                 // load feature texture
-                let tex0 = new THREE.TextureLoader().load(path + name + '/feat0_'+cas.toString()+'.jpg', object => {
+                let tex0 = new THREE.TextureLoader().load( 'mesh/'+name + '/feat0_'+cas.toString()+'.jpg', object => {
                     console.log('[INFO] loaded diffuse tex:', name, cas);
                     updateProgressBar(name, cas * 3 + 1);
                 });
-                let tex1 = new THREE.TextureLoader().load(path + name + '/feat1_'+cas.toString()+'.jpg', object => {
+                let tex1 = new THREE.TextureLoader().load( 'mesh/'+name + '/feat1_'+cas.toString()+'.jpg', object => {
                     console.log('[INFO] loaded specular tex:', name, cas);
                     updateProgressBar(name, cas * 3 + 2);
                 });
@@ -454,7 +454,7 @@ function init() {
                 });
             
                 // load obj
-                new OBJLoader().load(path + name + '/mesh_'+cas.toString()+'.obj', object => {
+                new OBJLoader().load('mesh/'+name + '/mesh_'+cas.toString()+'.obj', object => {
                     object.traverse(function (child) {
                         if (child.type == 'Mesh') {
                             child.material = newmat;

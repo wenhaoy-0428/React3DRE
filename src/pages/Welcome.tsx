@@ -262,7 +262,7 @@ const Welcome: React.FC = () => {
           if (status == 'success') {
             setLoading(false);
             // {showMessage();}
-            debugger;
+            // debugger;
             window.location.href = '/show_model?id='+title+'&websocket_url='+response.websocket_url;
           }
 

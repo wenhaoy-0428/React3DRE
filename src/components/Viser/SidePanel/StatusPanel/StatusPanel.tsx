@@ -91,7 +91,7 @@ export default function StatusPanel(props) {
 
   return (
     <div className="StatusPanel">
-      <div className="StatusPanel-play-button">
+      {/* <div className="StatusPanel-play-button">
         <Button
           className="StatusPanel-play-button"
           variant="contained"
@@ -102,10 +102,11 @@ export default function StatusPanel(props) {
         >
           {is_training_text}
         </Button>
-      </div>
+      </div> */}
       <Button
         className="StatusPanel-hide-scene-button"
-        variant="outlined"
+        // variant="outlined"
+        variant="contained"
         onClick={() => {
           set_is_scene_visible(!is_scene_visible);
         }}
@@ -117,7 +118,8 @@ export default function StatusPanel(props) {
       </Button>
       <Button
         className="StatusPanel-hide-scene-button"
-        variant="outlined"
+        // variant="outlined"
+        variant="contained"
         onClick={() => {
           set_is_images_visible(!is_images_visible);
         }}
@@ -127,7 +129,7 @@ export default function StatusPanel(props) {
       >
         {cameras_button}
       </Button>
-      <Button
+      {/* <Button
         className="StatusPanel-hide-scene-button"
         variant="outlined"
         onClick={() => {
@@ -137,15 +139,15 @@ export default function StatusPanel(props) {
         style={{ textTransform: 'none' }}
       >
         Refresh Page
-      </Button>
-      <div className="StatusPanel-metrics">
+      </Button> */}
+      {/* <div className="StatusPanel-metrics">
         <div>
           <b>Iteration:</b> {step}
         </div>
         <div>
           <b>Resolution:</b> {eval_res}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -40,7 +40,7 @@ export default function App(){
           {/* Order matters here. The viewer window must be rendered first. */}
           <ViewerWindow sceneTree={sceneTree} />
           <div className="SidePanel">
-            {/*<BasicTabs sceneTree={sceneTree} />*/ }
+            <BasicTabs sceneTree={sceneTree} />
             
           </div>
         </div>

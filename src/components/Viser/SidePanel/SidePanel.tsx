@@ -139,7 +139,7 @@ export function BasicTabs(props: BasicTabsProps) {
   return (
     <div>
       <StatusPanel sceneTree={sceneTree} />
-      <Divider />
+      {/* <Divider />
       <Box sx={{ width: '100%' }}>
         <PanelContents>
           
@@ -147,7 +147,7 @@ export function BasicTabs(props: BasicTabsProps) {
           <ScenePanel sceneTree={sceneTree} />
           <ExportPanel sceneTree={sceneTree} />
         </PanelContents>
-      </Box>
+      </Box> */}
     </div>
   );
 }
