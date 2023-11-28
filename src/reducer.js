@@ -1,6 +1,15 @@
 import { split_path } from './utils';
 
 const initialState = {
+  measureState: {
+    is_measure_available: false,
+    // the sample points
+    measure_sample_points: {startPoint:{x:0,y:0}, endPoint:{x:0,y:0}},
+    
+  },
+
+  
+
   // the websocket connection state
   websocketState: {
     isConnected: false,
@@ -69,6 +78,8 @@ const initialState = {
   },
 };
 
+
+
 // Recursive function to update the state object with new data at a given path
 function setData(state, path, data) {
   // If we've reached the final level of the path, update the property with the new data
@@ -98,6 +109,16 @@ export default function rootReducer(state = initialState, action) {
       const newState = setData(state, pathSegments, data);
       // Return the updated state object
       return newState;
+    }
+
+    case 'sample': {
+      return {
+        ...state,
+        measureState:{
+          ...state.measureState,
+          measure_sample_points:action.data,
+        },
+      };
     }
 
     // If the reducer doesn't recognize the action type, return the existing state unchanged

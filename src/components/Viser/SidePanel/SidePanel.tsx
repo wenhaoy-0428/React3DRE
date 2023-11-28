@@ -19,6 +19,7 @@ import CameraPanel from './CameraPanel';
 import ScenePanel from './ScenePanel';
 import { RenderControls } from '../ConfigPanel/ConfigPanel';
 import ExportPanel from './ExportPanel';
+import MeasurePanel from './MeasurePanel';
 
 export const snap_to_camera = (sceneTree, camera, matrix) => {
   const mat = new THREE.Matrix4();
@@ -102,7 +103,9 @@ function PanelContents(props: PanelContentsProps) {
           aria-label="panel tabs"
           centered
         >
-          <Tab icon={<TuneRounded />} label="Controls" {...a11yProps(0)} />
+          {/*边栏*/}
+          <Tab label="Measure" {...a11yProps(0)} />
+          {/* <Tab icon={<TuneRounded />} label="Controls" {...a11yProps(0)} />
           <Tab icon={<CameraAltRounded />} label="Render" {...a11yProps(1)} />
           <Tab
             icon={<WidgetsRounded />}
@@ -115,7 +118,7 @@ function PanelContents(props: PanelContentsProps) {
             label="Export"
             disabled={camera_choice === 'Render Camera'}
             {...a11yProps(3)}
-          />
+          /> */}
         </Tabs>
       </Box>
 
@@ -139,6 +142,11 @@ export function BasicTabs(props: BasicTabsProps) {
   return (
     <div>
       <StatusPanel sceneTree={sceneTree} />
+      <Box sx={{width: '100%'}}>
+        <PanelContents>
+          <MeasurePanel sceneTree={sceneTree}></MeasurePanel>
+        </PanelContents>
+      </Box>
       {/* <Divider />
       <Box sx={{ width: '100%' }}>
         <PanelContents>

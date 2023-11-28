@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 // import { SelectChangeEvent } from '@mui/material/Select';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -131,6 +131,7 @@ export default function ViewerWindow(props) {
   });
   const viewport_width = viewport_size.width;
   const viewport_height = viewport_size.height;
+  
 
   // on change, update the camera and controls
   sceneTree.metadata.camera = sceneTree.find_object(['Cameras', camera_choice]);
@@ -227,10 +228,12 @@ export default function ViewerWindow(props) {
 
   const render_height = useSelector(
     (state) => state.renderingState.render_height,
+ 
   );
   const render_width = useSelector(
     (state) => state.renderingState.render_width,
   );
+  
 
   let crop_w;
   let crop_h;
@@ -261,7 +264,7 @@ export default function ViewerWindow(props) {
     width: crop_w,
     height: crop_h,
   };
-
+  console.log(crop_w, crop_h)
   // set the threejs field of view
   // such that the rendered video will match correctly
   if (camera_choice !== 'Main Camera') {
@@ -291,6 +294,7 @@ export default function ViewerWindow(props) {
       is_moving = true;
     }
     old_camera_matrix = sceneTree.metadata.camera.matrix.elements.slice();
+    console.log(old_camera_matrix)
     sendThrottledCameraMessage({
       type: 'CameraMessage',
       aspect: sceneTree.metadata.camera.aspect,
@@ -333,6 +337,22 @@ export default function ViewerWindow(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWebsocketConnected]);
+  
+  // 测试在THREEJS中画线
+  // var positions = [
+  //   new THREE.Vector2(-0.5, -0.5),
+  //   new THREE.Vector2(0, 0.5),
+  //   new THREE.Vector2(0.5, -0.5)
+  // ];
+
+  // var lineGeometry = new THREE.BufferGeometry().setFromPoints(positions);
+  
+  // var lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  // var line = new THREE.Line(lineGeometry, lineMaterial);
+  // scene.add(line);
+  // render();
+
+  
 
   return (
     <>
@@ -348,7 +368,7 @@ export default function ViewerWindow(props) {
         hidden
       />
       {/* viewer窗口高度固定 */}
-      <div className="canvas-container-main" ref={myRef} style={{height:'70vh'}} > 
+      <div className="canvas-container-main" ref={myRef}  > 
         <div className="ViewerWindow-camera-toggle">
           {/* {<CameraToggle />} */}
         </div>
@@ -359,6 +379,7 @@ export default function ViewerWindow(props) {
       <div className="ViewerWindow-render-crop-container">
         <div className="ViewerWindow-render-crop" style={crop_style} />
       </div>
+      
     </>
   );
 }

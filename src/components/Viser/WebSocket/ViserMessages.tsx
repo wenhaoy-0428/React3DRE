@@ -1,5 +1,9 @@
 // AUTOMATICALLY GENERATED message interfaces, from Python dataclass definitions.
 // This file should not be manually modified.
+interface MeasurementSampleMessage {
+  type: "MeasurementSampleMessage";
+  samplePoints:[]
+}
 interface BackgroundImageMessage {
   type: "BackgroundImageMessage";
   media_type: 'image/jpeg' | 'image/png';
@@ -102,6 +106,9 @@ interface TimeConditionMessage {
 interface OutputOptionsMessage {
   type: "OutputOptionsMessage";
   options: any;
+}
+interface UseMeasureSampleMessage {
+
 }
 
 export type Message = 

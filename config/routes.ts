@@ -33,7 +33,7 @@ export default [
       },
       {
         path: '/workspace/render',
-        name: '渲染',
+        name: 'Render',
         component: './Welcome'
       },
       {
@@ -86,7 +86,7 @@ export default [
   },
   {
     path: '/show_model',
-
+    layout: false,
     component: './ShowModel/ShowModel',
   },
   {

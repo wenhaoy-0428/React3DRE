@@ -13,6 +13,8 @@ import SceneNode from '../../../SceneNode';
 import { subscribe_to_changes } from '../../../subscriber';
 import { snap_to_camera } from '../SidePanel/SidePanel';
 
+import { useEffect, useState } from 'react';
+
 const SCENE_BOX_NAME = 'Scene Box';
 const CAMERAS_NAME = 'Training Cameras';
 
@@ -159,6 +161,9 @@ export function get_scene_tree() {
   }
 
   function moveCamera() {
+    // console.log(scene)
+    // console.log(sceneTree)
+    // console.log(scene_state)
     if (!scene_state.value.get('mouse_in_scene')) {
       return;
     }
@@ -167,7 +172,10 @@ export function get_scene_tree() {
     }
     translate();
     rotate();
+    
   }
+
+  
 
   function onKeyUp(event) {
     const keyCode = event.code;
@@ -178,6 +186,62 @@ export function get_scene_tree() {
     keyMap[keyCode] = true;
   }
 
+  // 保存起始点，函数组件中使用hooks保存
+  const initialSamplePoints = { startPoint: { x: 0, y: 0 }, endPoint: { x: 0, y: 0 } };
+  const [samplePoints, setSamplePoints] = useState(initialSamplePoints);
+  
+  const sampleLine=(e)=> {
+    
+      sceneTree.metadata.renderer.getSize(size);
+      
+      if (samplePoints.startPoint.y==0)
+      { 
+        const newX = e.clientX / size.x;
+        const newY = (e.clientY - BANNER_HEIGHT) / size.y;
+        console.log(1)
+        setSamplePoints((prevSamplePoints)=>{
+          const updatedStartPoint = {...prevSamplePoints.startPoint,x:newX,y:newY};
+          const updatedSamplePoint = {...prevSamplePoints,startPoint: updatedStartPoint};
+          return updatedSamplePoint;
+        });
+        // setStep((step)=> step+1);
+        return;
+      } else if (samplePoints.startPoint.y!=0 && samplePoints.endPoint.y==0) {
+        const newX = e.clientX / size.x;
+        const newY = (e.clientY - BANNER_HEIGHT) / size.y;
+        setSamplePoints((prevSamplePoints)=>{
+          console.log(2)
+          const updatedEndPoint = {...prevSamplePoints.endPoint,x:newX,y:newY};
+          const updatedSamplePoint = {...prevSamplePoints,endPoint: updatedEndPoint};
+          return updatedSamplePoint;
+        });
+        // setStep((step)=>step+1);
+        return;
+      } else {
+          dispatch({
+            type: 'sample',
+            data: samplePoints,
+          });
+        
+        console.log('init')
+        // setSamplePoints({...initialSamplePoints.startPoint,x:0,y:0 })
+        setSamplePoints(()=>initialSamplePoints)
+        // setStep(()=>0);
+        // setOpenMeasureSample(!openMeasureSample)
+        
+      }
+      console.log(samplePoints)
+      if(redux_points.endPoint.x!=0)
+      {
+        console.log('redux')
+        console.log(redux_points);
+      }
+    }
+    useEffect(()=>{
+      console.log('samplePoints')
+      console.log(samplePoints)
+    })
+
   function checkVisibility(camera) {
     let curr = camera;
     while (curr !== null) {
@@ -187,11 +251,15 @@ export function get_scene_tree() {
     return true;
   }
 
-  window.addEventListener('keydown', onKeyDown, true);
-  window.addEventListener('keyup', onKeyUp, true);
+  
+  window.addEventListener('keydown', onKeyDown, false);
+  window.addEventListener('keyup', onKeyUp, false);
 
   sceneTree.metadata.camera_controls = camera_controls;
   sceneTree.metadata.moveCamera = moveCamera;
+  
+
+  
 
   // Transform Controls
   const transform_controls = new TransformControls(
@@ -292,28 +360,30 @@ export function get_scene_tree() {
 
   let drag = false;
   const onMouseDown = () => {
+    if(!scene_state.value.get('mouse_in_scene')) {
+      return;
+    }
+    console.log(sceneTree)
     drag = false;
     const curPos = camera_controls.getPosition();
-    console.log("curPos:"+curPos)
     const newTar = camera_controls.getTarget();
-    console.log("curTar:"+newTar)
     const newDiff = newTar
       .sub(curPos)
       .normalize()
       .multiplyScalar(curPos.length());
-    camera_controls.setTarget(
-      curPos.x + newDiff.x,
-      curPos.y + newDiff.y,
-      curPos.z + newDiff.z,
-    );
+    // camera_controls.setTarget(
+    //   curPos.x + newDiff.x,
+    //   curPos.y + newDiff.y,
+    //   curPos.z + newDiff.z,
+    // );
   };
 
   const onMouseMove = (e) => {
     drag = true;
 
     sceneTree.metadata.renderer.getSize(size);
-    mouseVector.x = 2 * ((e.clientX-SidePanelWidth) / size.x) - 1;
-    mouseVector.y = 1 - 2 * ((e.clientY - BANNER_HEIGHT) / size.y); //手动定义canvas离顶部和左边的距离
+    mouseVector.x = 2 * (e.clientX / size.x) - 1;
+    mouseVector.y = 1 - 2 * ((e.clientY - BANNER_HEIGHT) / size.y); //手动定义canvas离顶部的距离
 
 
     const mouse_in_scene = !(
@@ -323,9 +393,6 @@ export function get_scene_tree() {
       mouseVector.y < -1
     );
     
-    console.log("mouseVector.x: "+mouseVector.x)
-    console.log("mouseVector.y: " +mouseVector.y)
-    console.log("mouseinscene: "+mouse_in_scene)
 
     scene_state.setValue('mouse_x', mouseVector.x);
     scene_state.setValue('mouse_y', mouseVector.y);
@@ -380,7 +447,9 @@ export function get_scene_tree() {
       snap_to_camera(sceneTree, sceneTree.metadata.camera, clickedCam.matrix);
     }
   };
-  window.addEventListener('mousedown', onMouseDown, false);
+
+  window.addEventListener('dblclick', sampleLine,false);
+  // window.addEventListener('mousedown', onMouseDown, false);
   window.addEventListener('mousemove', onMouseMove, false);
   window.addEventListener('mouseup', onMouseUp, false);
   return sceneTree;

@@ -55,6 +55,10 @@ function handleMessage(
   store: Store,
 ) {
   switch (message.type) {
+    // case 'MeasurementSampleMessage': {
+
+    // }
+
     // Add a background image.
     case 'BackgroundImageMessage': {
       document
@@ -86,6 +90,7 @@ function handleMessage(
             hidden: false,
           },
         },
+
       });
       break;
     }

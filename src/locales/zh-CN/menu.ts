@@ -1,5 +1,7 @@
 export default {
   'menu.workspace': '工作空间',
+  'menu.workspace.Render': '渲染',
+  'menu.workspace.Mesh': '网格',
   'menu.more-blocks': '更多区块',
   'menu.home': '首页',
   'menu.admin': '管理页',

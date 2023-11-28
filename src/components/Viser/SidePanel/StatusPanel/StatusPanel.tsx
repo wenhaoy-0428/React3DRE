@@ -34,7 +34,7 @@ export default function StatusPanel(props) {
   );
 
   // logic for toggling visibility of the entire scene and just the training images
-  const [is_scene_visible, set_is_scene_visible] = React.useState(true);
+  const [is_scene_visible, set_is_scene_visible] = React.useState(false);
   const [is_images_visible, set_is_images_visible] = React.useState(true);
   const scene_button = is_scene_visible ? 'Hide Scene' : 'Show Scene';
   const cameras_button = is_images_visible ? 'Hide Images' : 'Show Images';

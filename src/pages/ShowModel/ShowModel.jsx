@@ -1,4 +1,5 @@
 // import React, { useRef } from 'react';
+import './index.scss';
 import { Provider } from 'react-redux';
 import { ViserWebSocket } from '../../components/Viser/WebSocket/ViserWebSocket';
 import  App  from './App';
