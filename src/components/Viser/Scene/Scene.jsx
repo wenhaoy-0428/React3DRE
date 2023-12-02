@@ -19,6 +19,7 @@ const SCENE_BOX_NAME = 'Scene Box';
 const CAMERAS_NAME = 'Training Cameras';
 
 export function get_scene_tree() {
+  
   const scene = new THREE.Scene();
 
   const scene_state = {
@@ -186,62 +187,7 @@ export function get_scene_tree() {
     keyMap[keyCode] = true;
   }
 
-  // 保存起始点，函数组件中使用hooks保存
-  const initialSamplePoints = { startPoint: { x: 0, y: 0 }, endPoint: { x: 0, y: 0 } };
-  const [samplePoints, setSamplePoints] = useState(initialSamplePoints);
   
-  const sampleLine=(e)=> {
-    
-      sceneTree.metadata.renderer.getSize(size);
-      
-      if (samplePoints.startPoint.y==0)
-      { 
-        const newX = e.clientX / size.x;
-        const newY = (e.clientY - BANNER_HEIGHT) / size.y;
-        console.log(1)
-        setSamplePoints((prevSamplePoints)=>{
-          const updatedStartPoint = {...prevSamplePoints.startPoint,x:newX,y:newY};
-          const updatedSamplePoint = {...prevSamplePoints,startPoint: updatedStartPoint};
-          return updatedSamplePoint;
-        });
-        // setStep((step)=> step+1);
-        return;
-      } else if (samplePoints.startPoint.y!=0 && samplePoints.endPoint.y==0) {
-        const newX = e.clientX / size.x;
-        const newY = (e.clientY - BANNER_HEIGHT) / size.y;
-        setSamplePoints((prevSamplePoints)=>{
-          console.log(2)
-          const updatedEndPoint = {...prevSamplePoints.endPoint,x:newX,y:newY};
-          const updatedSamplePoint = {...prevSamplePoints,endPoint: updatedEndPoint};
-          return updatedSamplePoint;
-        });
-        // setStep((step)=>step+1);
-        return;
-      } else {
-          dispatch({
-            type: 'sample',
-            data: samplePoints,
-          });
-        
-        console.log('init')
-        // setSamplePoints({...initialSamplePoints.startPoint,x:0,y:0 })
-        setSamplePoints(()=>initialSamplePoints)
-        // setStep(()=>0);
-        // setOpenMeasureSample(!openMeasureSample)
-        
-      }
-      console.log(samplePoints)
-      if(redux_points.endPoint.x!=0)
-      {
-        console.log('redux')
-        console.log(redux_points);
-      }
-    }
-    useEffect(()=>{
-      console.log('samplePoints')
-      console.log(samplePoints)
-    })
-
   function checkVisibility(camera) {
     let curr = camera;
     while (curr !== null) {
@@ -448,8 +394,7 @@ export function get_scene_tree() {
     }
   };
 
-  window.addEventListener('dblclick', sampleLine,false);
-  // window.addEventListener('mousedown', onMouseDown, false);
+  window.addEventListener('mousedown', onMouseDown, false);
   window.addEventListener('mousemove', onMouseMove, false);
   window.addEventListener('mouseup', onMouseUp, false);
   return sceneTree;

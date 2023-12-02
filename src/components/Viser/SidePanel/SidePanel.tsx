@@ -134,6 +134,7 @@ function PanelContents(props: PanelContentsProps) {
 
 interface BasicTabsProps {
   sceneTree: object;
+  handleSend: (msg:any)=>void;
 }
 
 export function BasicTabs(props: BasicTabsProps) {
@@ -144,7 +145,7 @@ export function BasicTabs(props: BasicTabsProps) {
       <StatusPanel sceneTree={sceneTree} />
       <Box sx={{width: '100%'}}>
         <PanelContents>
-          <MeasurePanel sceneTree={sceneTree}></MeasurePanel>
+          <MeasurePanel sceneTree={sceneTree} handleSend={props.handleSend}></MeasurePanel>
         </PanelContents>
       </Box>
       {/* <Divider />

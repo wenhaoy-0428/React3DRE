@@ -1,14 +1,13 @@
 import { split_path } from './utils';
 
 const initialState = {
-  measureState: {
-    is_measure_available: false,
-    // the sample points
-    measure_sample_points: {startPoint:{x:0,y:0}, endPoint:{x:0,y:0}},
-    
-  },
 
-  
+  target_length_sequence: [
+    {
+      name: '空',
+      real_world_length: 0,
+    }
+  ],   
 
   // the websocket connection state
   websocketState: {
@@ -119,6 +118,25 @@ export default function rootReducer(state = initialState, action) {
           measure_sample_points:action.data,
         },
       };
+    }
+
+    case 'write_length': {
+      console.log(action.data)
+      const newData = {
+        name: action.data.name,
+        real_world_length: action.data.real_world_length,
+      }
+      const newSequence = [...state.target_length_sequence,newData]
+      return {
+        ...state,
+        target_length_sequence : newSequence
+          // target_length_sequence:{
+          //   ...state.target_length_sequence,
+          //   name:[...state.target_length_sequence.name,action.data.name],
+          //   real_world_length:[...state.target_length_sequence.real_world_length,action.data.real_world_length],
+
+          // }
+      }  
     }
 
     // If the reducer doesn't recognize the action type, return the existing state unchanged

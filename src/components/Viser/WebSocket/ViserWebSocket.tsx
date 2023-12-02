@@ -289,6 +289,24 @@ function handleMessage(
       });
       break;
     }
+    case 'ReaLengthMessage': {
+      // const cur_target_length_sequence = store.getState().target_length_sequence;
+      if (message.real_world_distance==-1)
+      {
+        alert("您还没有采样")
+      }
+      dispatch({
+        type: 'write_length',
+        
+        data:
+          {
+            name: message.name,
+            real_world_length: message.real_world_distance,
+          }
+        
+      })
+      break;
+    }
     default: {
       console.log('Received message did not match any known types:', message);
       break;

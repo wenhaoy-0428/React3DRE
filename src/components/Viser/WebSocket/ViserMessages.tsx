@@ -107,8 +107,37 @@ interface OutputOptionsMessage {
   type: "OutputOptionsMessage";
   options: any;
 }
-interface UseMeasureSampleMessage {
 
+interface SampleScaleMessage {
+  type: "SampleScaleMessage";
+  samplePoints: [number, number, number, number];
+  real_sample_distance: number;
+
+  aspect: number;
+  render_aspect: number;
+  fov: number;
+  matrix: [number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number];
+  camera_type: 'perspective' | 'fisheye' | 'equirectangular';
+  is_moving: boolean;
+  timestamp: number;
+}
+interface CalculateLengthMessage {
+  type: "CalculateLengthMessage";
+  name: string;
+  samplePoints: [number, number, number, number];
+
+  aspect: number;
+  render_aspect: number;
+  fov: number;
+  matrix: [number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number];
+  camera_type: 'perspective' | 'fisheye' | 'equirectangular';
+  is_moving: boolean;
+  timestamp: number;
+}
+interface ReaLengthMessage {
+  type: "ReaLengthMessage";
+  name: string;
+  real_world_distance: number;
 }
 
 export type Message = 
@@ -132,4 +161,7 @@ export type Message =
   | SaveCheckpointMessage
   | UseTimeConditioningMessage
   | TimeConditionMessage
-  | OutputOptionsMessage;
+  | OutputOptionsMessage
+  | SampleScaleMessage
+  | CalculateLengthMessage
+  | ReaLengthMessage;

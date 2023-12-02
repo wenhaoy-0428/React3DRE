@@ -397,6 +397,16 @@ body {
   .canvas-container-main {
     z-index: 3;
   }
+
+  // .canvas-container-app {
+  //   position: absolute;
+  //   top: 0px;
+  //   right: $SidePanel-width;
+  //   bottom: 0px;
+  //   left: 0px;
+  //   border: $custom-border;
+  //   z-index: 5;
+  // }
   
   .ViewerWindow-render-crop {
     display: flex;

@@ -27,7 +27,7 @@ const ShowModel = () => {
   return (
     <Provider store={store}>
       <ViserWebSocket>
-        <App />
+        <App />     
       </ViserWebSocket>
     </Provider>
   );

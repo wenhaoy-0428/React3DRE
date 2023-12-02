@@ -16,6 +16,7 @@ import {
   makeThrottledMessageSender,
   ViserWebSocketContext,
 } from '../WebSocket/ViserWebSocket';
+import { Button } from 'antd';
 
 function CameraToggle() {
   const dispatch = useDispatch();
@@ -264,7 +265,7 @@ export default function ViewerWindow(props) {
     width: crop_w,
     height: crop_h,
   };
-  console.log(crop_w, crop_h)
+  // console.log(crop_w, crop_h)
   // set the threejs field of view
   // such that the rendered video will match correctly
   if (camera_choice !== 'Main Camera') {
@@ -338,20 +339,41 @@ export default function ViewerWindow(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWebsocketConnected]);
   
-  // 测试在THREEJS中画线
-  // var positions = [
-  //   new THREE.Vector2(-0.5, -0.5),
-  //   new THREE.Vector2(0, 0.5),
-  //   new THREE.Vector2(0.5, -0.5)
-  // ];
-
-  // var lineGeometry = new THREE.BufferGeometry().setFromPoints(positions);
+  // const drawline=()=>{
+  //   console.log(myRef.current)
+  //   const canvas=myRef.current.querySelector('canvas')
+  //   const ctx = canvas.getContext('2d');
+  //   if (!canvas.getContext) console.log('draw line failed');
+  //   console.log(canvas)
+  //   // // 绘制直线
+  //    ctx.beginPath();
+  //    ctx.moveTo(50, 50); // 起始点坐标
+  //    ctx.lineTo(1000, 1000); // 结束点坐标
+  //    ctx.closePath()
+  //     ctx.stroke();
+  // }
   
-  // var lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
-  // var line = new THREE.Line(lineGeometry, lineMaterial);
-  // scene.add(line);
-  // render();
+  // useEffect(()=>{
+  //   drawline()
+  // },[])
+  
+  // 测试在THREEJS中画线
+  var positions = [
+    new THREE.Vector2(-0.5, -0.5),
+    new THREE.Vector2(0, 0.5),
+    new THREE.Vector2(0.5, -0.5)
+  ];
 
+  var lineGeometry = new THREE.BufferGeometry().setFromPoints(positions);
+  
+  var lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  var line = new THREE.Line(lineGeometry, lineMaterial);
+  scene.add(line);
+  render();
+
+  
+
+  // document.addEventListener('dblclick',(event)=>{console.log('viewerwindow');event.stopImmediatePropagation();event.stopPropagation()},false)
   
 
   return (
@@ -368,11 +390,12 @@ export default function ViewerWindow(props) {
         hidden
       />
       {/* viewer窗口高度固定 */}
-      <div className="canvas-container-main" ref={myRef}  > 
+      <div className="canvas-container-main" ref={myRef} > 
         <div className="ViewerWindow-camera-toggle">
           {/* {<CameraToggle />} */}
         </div>
       </div>
+   
       <div className="ViewerWindow-buttons" style={{ display: 'none' }}>
         <TransformIcons sceneTree={sceneTree} />
       </div>
