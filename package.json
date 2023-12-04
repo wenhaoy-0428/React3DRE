@@ -86,6 +86,10 @@
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^2.1.5",
+    "@babel/core": "^7.23.5",
+    "@babel/plugin-transform-react-jsx": "^7.23.4",
+    "@babel/preset-env": "^7.23.5",
+    "@babel/preset-react": "^7.23.3",
     "@testing-library/react": "^13.4.0",
     "@types/classnames": "^2.3.1",
     "@types/express": "^4.17.17",

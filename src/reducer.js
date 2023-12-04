@@ -8,6 +8,10 @@ const initialState = {
       real_world_length: 0,
     }
   ],   
+  is_canvas_visible: false,
+  // measure_sample_points:{startPoint:{x:0,y:0},endPoint:{x:0,y:0}},
+  measure_sample_points:[],
+  measure_points:[],
 
   // the websocket connection state
   websocketState: {
@@ -111,14 +115,25 @@ export default function rootReducer(state = initialState, action) {
     }
 
     case 'sample': {
+      let newData = []
+      newData = [...action.data]
       return {
         ...state,
-        measureState:{
-          ...state.measureState,
-          measure_sample_points:action.data,
-        },
+        measure_sample_points:newData
+        
       };
     }
+
+    case 'measure': {
+      let newData = []
+      newData = [...action.data]
+      return {
+        ...state,
+        measure_points:newData
+        
+      };
+    }
+    
 
     case 'write_length': {
       console.log(action.data)

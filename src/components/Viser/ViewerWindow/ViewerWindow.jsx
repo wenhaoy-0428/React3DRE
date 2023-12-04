@@ -11,12 +11,13 @@ import PublicSharpIcon from '@mui/icons-material/PublicSharp';
 import SyncOutlinedIcon from '@mui/icons-material/SyncOutlined';
 import ThreeDRotationIcon from '@mui/icons-material/ThreeDRotation';
 import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBackOutlined';
-import { isEqual } from 'lodash';
+import { isEqual, sample } from 'lodash';
 import {
   makeThrottledMessageSender,
   ViserWebSocketContext,
 } from '../WebSocket/ViserWebSocket';
 import { Button } from 'antd';
+
 
 function CameraToggle() {
   const dispatch = useDispatch();
@@ -113,6 +114,7 @@ export default function ViewerWindow(props) {
   const viser_websocket = useContext(ViserWebSocketContext);
 
   
+  
 
   const field_of_view = useSelector(
     (state) => state.renderingState.field_of_view,
@@ -176,6 +178,7 @@ export default function ViewerWindow(props) {
     requestAnimationFrame(render);
     renderer.render(scene, sceneTree.metadata.camera);
     labelRenderer.render(scene, sceneTree.metadata.camera);
+    // console.log('1')
   };
 
   useEffect(() => {
@@ -295,7 +298,7 @@ export default function ViewerWindow(props) {
       is_moving = true;
     }
     old_camera_matrix = sceneTree.metadata.camera.matrix.elements.slice();
-    console.log(old_camera_matrix)
+    // console.log(old_camera_matrix)
     sendThrottledCameraMessage({
       type: 'CameraMessage',
       aspect: sceneTree.metadata.camera.aspect,
@@ -343,14 +346,18 @@ export default function ViewerWindow(props) {
   //   console.log(myRef.current)
   //   const canvas=myRef.current.querySelector('canvas')
   //   const ctx = canvas.getContext('2d');
-  //   if (!canvas.getContext) console.log('draw line failed');
-  //   console.log(canvas)
+  //   if (!canvas.getContext('2d')) console.log('draw line failed');
+  //   if (ctx) {
+      
+  //     console.log(canvas)
   //   // // 绘制直线
-  //    ctx.beginPath();
-  //    ctx.moveTo(50, 50); // 起始点坐标
-  //    ctx.lineTo(1000, 1000); // 结束点坐标
-  //    ctx.closePath()
+  //     ctx.beginPath();
+  //     ctx.moveTo(50, 50); // 起始点坐标
+  //     ctx.lineTo(1000, 1000); // 结束点坐标
+  //     ctx.closePath()
   //     ctx.stroke();
+  //   }
+    
   // }
   
   // useEffect(()=>{
@@ -358,22 +365,149 @@ export default function ViewerWindow(props) {
   // },[])
   
   // 测试在THREEJS中画线
-  var positions = [
-    new THREE.Vector2(-0.5, -0.5),
-    new THREE.Vector2(0, 0.5),
-    new THREE.Vector2(0.5, -0.5)
-  ];
+  // var positions = [
+  //   new THREE.Vector2(-0.5, -0.5),
+  //   new THREE.Vector2(0, 0.5),
+  //   new THREE.Vector2(0.5, -0.5)
+  // ];
 
-  var lineGeometry = new THREE.BufferGeometry().setFromPoints(positions);
+  // var lineGeometry = new THREE.BufferGeometry().setFromPoints(positions);
   
-  var lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
-  var line = new THREE.Line(lineGeometry, lineMaterial);
-  scene.add(line);
-  render();
+  // var lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  // var line = new THREE.Line(lineGeometry, lineMaterial);
+  // scene.add(line);
+  // render();
 
   
 
   // document.addEventListener('dblclick',(event)=>{console.log('viewerwindow');event.stopImmediatePropagation();event.stopPropagation()},false)
+  const appCanvasRef = useRef(null)
+  // const [appCanvasRef,setAppCanvasRef] = useState(null);
+  const [appCanvasVisible, setAppCanvasVisible] = useState('visible')
+
+  // useEffect(()=>{
+    
+  //   if (appCanvasRef) {
+  //     console.log(myRef.current.querySelector('canvas'))
+  //     const canvas = appCanvasRef.current;
+  //     console.log(canvas)
+      // canvas.width = get_window_width()
+      // canvas.height = get_window_height()
+  //     const context = canvas.getContext("2d");
+      
+    
+  
+      // const drawLine = (startX, startY, endX, endY) => {
+      //   context.clearRect(0, 0, canvas.width, canvas.height);
+      //   context.beginPath();
+      //   context.moveTo(startX, startY);
+      //   context.lineTo(endX,endY);
+      //   context.strokeStyle='black'
+      //   // context.lineWidth=1
+      //   context.closePath();
+      //   context.stroke();
+      //   console.log('line drawed')
+      // }
+  //     console.log(canvas.width,canvas.height)
+  //     drawLine(0,0,get_window_width(),get_window_height())
+  //   }
+  // },[appCanvasRef])
+
+  const [ isMeasureCanvasVisible, setIsMeasureCanvasVisible] = useState(false)
+  const [ samplePoints_redux, set_samplePoints_redux] = useState({startPoints:{x:0,y:0},endPoint:{x:0,y:0}})
+  const [ measurePoints_redux, set_measurePoints_redux ] = useState({startPoints:{x:0,y:0},endPoint:{x:0,y:0}})
+  const [prevCanvasData, set_prevCanvasData] = useState()
+  const isMeasuring = useSelector(
+    (state)=>state.is_canvas_visible
+  )
+  const samplePoints = useSelector(
+    (state)=>state.measure_sample_points
+  )
+  const measurePoints = useSelector(
+    (state)=>state.measure_points
+  )
+    
+  
+  
+  useEffect(()=>{
+    console.log(samplePoints)
+    console.log(measurePoints)
+    const canvas = appCanvasRef.current;
+    const size = new THREE.Vector2();
+    sceneTree.metadata.renderer.getSize(size);
+    canvas.width = size.x
+    canvas.height = size.y
+    const context = canvas.getContext("2d");
+
+    const drawPoint=(x,y)=>{
+      context.beginPath();
+      context.arc(x,y,5,0,Math.PI*2);
+      context.fillStyle='blue';
+      context.fill();
+      context.closePath();
+      context.stroke()
+    }
+    const drawLine = (startX, startY, endX, endY) => {
+      context.beginPath();
+      context.moveTo(startX, startY);
+      context.lineTo(endX,endY);
+      context.strokeStyle='blue'
+      context.lineWidth=3
+      context.closePath();
+      context.stroke();
+      console.log('line drawed')
+    }
+    const savePrevCanvas= ()=>{
+      const prevCanvas = context.getImageData(0,0,size.x,size.y);
+      set_prevCanvasData(prevCanvas)
+    }
+    const restorePrevCanvas=()=>{
+      context.putImageData(prevCanvasData,0,0)
+    }
+    const clearCanvas=()=>{
+      context.clearRect(0,0,size.x,size.y)
+    }
+    
+    if(isMeasuring==true && isMeasureCanvasVisible == false){
+      setIsMeasureCanvasVisible(isMeasuring)
+    }else if (isMeasuring==false) {
+      clearCanvas()
+      console.log('clean')
+      return
+    }else if(samplePoints.length==2 && measurePoints.length==0){
+      console.log('450')
+      drawPoint(samplePoints[0]*size.x,samplePoints[1]*size.y)
+      // savePrevCanvas()
+    }else if(samplePoints.length==4 && measurePoints.length==0) {
+      // restorePrevCanvas()
+      console.log('500')
+      drawPoint(samplePoints[0]*size.x,samplePoints[1]*size.y)
+      drawPoint(samplePoints[2]*size.x,samplePoints[3]*size.y)
+      drawLine(samplePoints[0]*size.x,samplePoints[1]*size.y,samplePoints[2]*size.x,samplePoints[3]*size.y)
+    }else if (measurePoints.length==2 && samplePoints.length==4){
+      console.log('550')
+      drawPoint(samplePoints[0]*size.x,samplePoints[1]*size.y)
+      drawPoint(samplePoints[2]*size.x,samplePoints[3]*size.y)
+      drawLine(samplePoints[0]*size.x,samplePoints[1]*size.y,samplePoints[2]*size.x,samplePoints[3]*size.y)
+      drawPoint(measurePoints[0].size.x,measurePoints[1]*size.y)
+    }else if(measurePoints.length==4 && samplePoints.length==4) {
+      console.log('600')
+      drawPoint(samplePoints[0]*size.x,samplePoints[1]*size.y)
+      drawPoint(samplePoints[2]*size.x,samplePoints[3]*size.y)
+      drawLine(samplePoints[0]*size.x,samplePoints[1]*size.y,samplePoints[2]*size.x,samplePoints[3]*size.y)
+      drawPoint(measurePoints[0].size.x,measurePoints[1]*size.y)
+      drawPoint(measurePoints[2].size.x,measurePoints[3]*size.y)
+      drawLine(measurePoints[0]*size.x,measurePoints[1]*size.y,measurePoints[2]*size.x,measurePoints[3]*size.y)
+    }
+
+    
+    
+
+
+    
+    
+  },[appCanvasRef,isMeasuring,samplePoints,measurePoints])
+
   
 
   return (
@@ -389,7 +523,7 @@ export default function ViewerWindow(props) {
         z-index="1"
         hidden
       />
-      {/* viewer窗口高度固定 */}
+      <canvas className='canvas-container-main' style={{background:'rgba(255,255,255,0)',zIndex:'4',display:isMeasureCanvasVisible?"block":"none"}} ref={appCanvasRef} ></canvas>
       <div className="canvas-container-main" ref={myRef} > 
         <div className="ViewerWindow-camera-toggle">
           {/* {<CameraToggle />} */}
