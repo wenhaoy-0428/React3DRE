@@ -115,11 +115,14 @@ class MeasurePanel extends React.Component{
         is_moving,
         timestamp: +new Date(),
       });
-      this.props.dispatch({
-        type: 'write',
-        path: 'is_canvas_visible',
-        data: false,
-      });
+      setTimeout(()=>{
+        this.props.dispatch({
+          type: 'write',
+          path: 'is_canvas_visible',
+          data: false,
+        });
+      },500)
+      
       
       message.success('测量结束');
     }
@@ -163,11 +166,14 @@ class MeasurePanel extends React.Component{
       timestamp: +new Date(),
     });
     console.log(this.state.isMeasuring)
-    this.props.dispatch({
-      type: 'write',
-      path: 'is_canvas_visible',
-      data: false,
-    });
+    setTimeout(()=>{
+      this.props.dispatch({
+        type: 'write',
+        path: 'is_canvas_visible',
+        data: false,
+      });
+    },500)
+    
     
     message.success('采样结束');
   }
@@ -228,6 +234,12 @@ class MeasurePanel extends React.Component{
           type: 'sample',
           data: this.sample_points_sequence,
         });
+        this.sample_points_sequence = []
+        this.setState(()=>{Object.assign(this.state.samplePoints,{startPoint:{x:0,y:0},endPoint:{x:0,y:0}})});
+        console.log(3)
+        console.log(this.state.samplePoints)
+        this.calculateScale()
+        window.removeEventListener('dblclick',this.sampleLine,false);
         return;
       } else {
           // dispatch({
@@ -235,12 +247,12 @@ class MeasurePanel extends React.Component{
           //   data: samplePoints,
           // });
         
-        this.sample_points_sequence = []
-        this.setState(()=>{Object.assign(this.state.samplePoints,{startPoint:{x:0,y:0},endPoint:{x:0,y:0}})});
-        console.log(3)
-        console.log(this.state.samplePoints)
-        this.calculateScale()
-        window.removeEventListener('dblclick',this.sampleLine,false);
+        // this.sample_points_sequence = []
+        // this.setState(()=>{Object.assign(this.state.samplePoints,{startPoint:{x:0,y:0},endPoint:{x:0,y:0}})});
+        // console.log(3)
+        // console.log(this.state.samplePoints)
+        // this.calculateScale()
+        // window.removeEventListener('dblclick',this.sampleLine,false);
         
       }
     }
@@ -294,6 +306,11 @@ class MeasurePanel extends React.Component{
             type: 'measure',
             data: this.measure_points_sequence,
           });
+          this.setState(()=>{Object.assign(this.state.measurePoints,{startPoint:{x:0,y:0},endPoint:{x:0,y:0}})});
+          this.measure_points_sequence = []
+  
+          this.calculateLength()
+          window.removeEventListener('dblclick',this.measureLine,false);
           return;
         } else {
             // dispatch({
@@ -302,11 +319,11 @@ class MeasurePanel extends React.Component{
             // });
           
           // setSamplePoints({...initialSamplePoints.startPoint,x:0,y:0 })
-          this.setState(()=>{Object.assign(this.state.measurePoints,{startPoint:{x:0,y:0},endPoint:{x:0,y:0}})});
-          this.measure_points_sequence = []
+          // this.setState(()=>{Object.assign(this.state.measurePoints,{startPoint:{x:0,y:0},endPoint:{x:0,y:0}})});
+          // this.measure_points_sequence = []
   
-          this.calculateLength()
-          window.removeEventListener('dblclick',this.measureLine,false);
+          // this.calculateLength()
+          // window.removeEventListener('dblclick',this.measureLine,false);
           // setStep(()=>0);
           // setOpenMeasureSample(!openMeasureSample)
         }

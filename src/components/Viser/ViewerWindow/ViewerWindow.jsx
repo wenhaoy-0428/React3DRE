@@ -484,19 +484,24 @@ export default function ViewerWindow(props) {
       drawPoint(samplePoints[0]*size.x,samplePoints[1]*size.y)
       drawPoint(samplePoints[2]*size.x,samplePoints[3]*size.y)
       drawLine(samplePoints[0]*size.x,samplePoints[1]*size.y,samplePoints[2]*size.x,samplePoints[3]*size.y)
+    }else if (samplePoints.length==2 && measurePoints.length==4){
+      drawPoint(samplePoints[0]*size.x,samplePoints[1]*size.y)
+      drawPoint(measurePoints[0]*size.x,measurePoints[1]*size.y)
+      drawPoint(measurePoints[2]*size.x,measurePoints[3]*size.y)
+      drawLine(measurePoints[0]*size.x,measurePoints[1]*size.y,measurePoints[2]*size.x,measurePoints[3]*size.y)
     }else if (measurePoints.length==2 && samplePoints.length==4){
       console.log('550')
       drawPoint(samplePoints[0]*size.x,samplePoints[1]*size.y)
       drawPoint(samplePoints[2]*size.x,samplePoints[3]*size.y)
       drawLine(samplePoints[0]*size.x,samplePoints[1]*size.y,samplePoints[2]*size.x,samplePoints[3]*size.y)
-      drawPoint(measurePoints[0].size.x,measurePoints[1]*size.y)
+      drawPoint(measurePoints[0]*size.x,measurePoints[1]*size.y)
     }else if(measurePoints.length==4 && samplePoints.length==4) {
       console.log('600')
       drawPoint(samplePoints[0]*size.x,samplePoints[1]*size.y)
       drawPoint(samplePoints[2]*size.x,samplePoints[3]*size.y)
       drawLine(samplePoints[0]*size.x,samplePoints[1]*size.y,samplePoints[2]*size.x,samplePoints[3]*size.y)
-      drawPoint(measurePoints[0].size.x,measurePoints[1]*size.y)
-      drawPoint(measurePoints[2].size.x,measurePoints[3]*size.y)
+      drawPoint(measurePoints[0]*size.x,measurePoints[1]*size.y)
+      drawPoint(measurePoints[2]*size.x,measurePoints[3]*size.y)
       drawLine(measurePoints[0]*size.x,measurePoints[1]*size.y,measurePoints[2]*size.x,measurePoints[3]*size.y)
     }
 
