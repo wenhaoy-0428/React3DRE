@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { UploadOutlined } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
-import { createProject, createProject_N2M, uploadImages, uploadImages_N2M } from '@/services/ant-design-pro/api';
+import { createProject, createProject_GS, createProject_N2M, uploadImages, uploadImages_N2M, uploadImages_GS } from '@/services/ant-design-pro/api';
 import type { FormInstance } from 'antd/es/form';
 import { Category } from '@mui/icons-material';
 
@@ -31,30 +31,7 @@ const MyForm: React.FC = () => {
     setImageFile(imageFile);
   };
 
-  const [category, setCategory] = useState('')
-  const [method, setMethod] = useState<Number>()
-
-  const handleCategoryChange = (e) => {
-    setCategory(e.target.value)
-    const currentCategory = form.getFieldValue('category')
-    // console.log(currentCategory)
-    if (currentCategory === 'render') {
-      form.setFieldsValue({method:'0'});
-      setMethod(0)
-    }
-    if (currentCategory === 'mesh') {
-      form.setFieldsValue({method:'1'});
-      setMethod(1)
-    }
-    
-    // console.log(method) 
-  }
-  const handleMethodChange = (value) => {
-    setMethod(value)
-    
-  }
   
-
   const onPreview = async (file : UploadFile) => {
     let src = file.url as string;
     if (!src){
@@ -73,14 +50,13 @@ const MyForm: React.FC = () => {
   
 
   const onFinish = (values) => {
-    
 
-    let value = values as API.UploadCreateProjectParams;
+
+    let value = values as API.CreateProjectParams;
     value.datetime = form.getFieldValue('datetime').format('YYYY-MM-DD');
     value.avatar = (avatarFile as RcFile).originFileObj
-
     // 分批上传图片函数
-    function uploadImage() {
+    function uploadImage(id) {
       const chunkSize = 30;
         const chunks = [];
         for (let i = 0; i < ImageFile.length; i += chunkSize) {
@@ -89,7 +65,9 @@ const MyForm: React.FC = () => {
         const uploadChunk = (chunkIndex = 0) => {
           if(chunkIndex >= chunks.length) {
             message.success('上传成功');
+            
             setImageFile([]);
+            form.resetFields();
             return;
           }
           let newPercent = (chunkIndex+1) / chunks.length
@@ -97,55 +75,32 @@ const MyForm: React.FC = () => {
             newPercent = 1;
           }
           setPercent(newPercent) 
-          let value2:API.UploadImageParams = {'title': values.title,'imageFiles':chunks[chunkIndex]}
+          let value2:API.UploadImageParams = {'id': id,'imageFiles':chunks[chunkIndex]}
           // console.log(value2)
-          
-          if (method == 0) {
-            uploadImages(value2)
-              .then((response) => {
-                uploadChunk(chunkIndex + 1)
-                
-              })
-              .catch((error) => {
-                console.error( error);
-                message.error('上传失败')
-                
-              });
-          }
-          if (method == 1) {
-            uploadImages_N2M(value2)
-              .then((response) => {
-                uploadChunk(chunkIndex + 1)
-                
-              })
-              .catch((error) => {
-                console.error( error);
-                message.error('上传失败')
-                
-              });
-          }
-          
+           
+          uploadImages(value2)
+            .then((response) => {
+              uploadChunk(chunkIndex + 1)
+              
+            })
+            .catch((error) => {
+              console.error( error);
+              message.error('上传失败')
+              
+            }); 
         }
         uploadChunk();
     }
 
     // 先建项目，再分批传图片
     // 根据不同method分类
-    if (method == 0) {
-      createProject(value).then(() => {
-        uploadImage()
+  
+      createProject(value).then((response) => {
+        uploadImage(response.id)
       }).catch((error) => {
         // console.error('Form submission error:', error);
         message.error('工程创建失败')
       })
-    } else if (method == 1) {
-      createProject_N2M(value).then(() => {
-        uploadImage()
-      }).catch((error) => {
-        message.error('工程创建失败')
-      })
-    }
-
   };
 
   
@@ -198,41 +153,14 @@ const MyForm: React.FC = () => {
       </Form.Item> */}
 
       <Form.Item
-        name='category'
-        label="选择方法"  
-        rules={[{ required: true, message: '渲染或生成表面' }]}
-      >
-
-        <Radio.Group value={category} onChange={handleCategoryChange} >
-          <Radio.Button value="render">渲染</Radio.Button>
-          <Radio.Button value="mesh">网格</Radio.Button>
-        </Radio.Group> 
-
-      </Form.Item>
-      <Form.Item
-        name='method'
+        name='pano'
         >
-        {category === 'render' && (
-          
-          <Select value={method} 
-            onChange={handleMethodChange} 
-            defaultValue={0}
-            options={[
-              { value: 0, label: 'NerfStudio' },
-              
-            ]}/>
+          <Radio.Group name="radiogroup" defaultValue={0}>
+            <Radio value={0}>透视图</Radio>
+            <Radio value={1}>全景图</Radio>
             
-        )}
-        {category === 'mesh' && (
-          <Select value={method} 
-          onChange={handleMethodChange} 
-          defaultValue={1}
-          options={[
-            { value: 1, label: 'Nerf2Mesh' }
-          ]}/>
-        )
-        }
-       
+          </Radio.Group>
+
         
       </Form.Item>
 

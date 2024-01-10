@@ -1,4 +1,4 @@
-import { getAllNerfProjects, openViewer, runColmapAndTrain_NerfStudio } from '@/services/ant-design-pro/api';
+import { getAllProjects, openViewer, runColmapAndTrain_3DGS, runColmapAndTrain_NerfStudio } from '@/services/ant-design-pro/api';
 import { PageContainer, ModalForm, ProFormText, ProFormUploadButton } from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { SyncOutlined, CheckSquareTwoTone, UploadOutlined, PlayCircleTwoTone, ClockCircleTwoTone } from '@ant-design/icons';
@@ -252,31 +252,32 @@ const Welcome: React.FC = () => {
     }
 
     //发送打开渲染请求
-    function handleRender (title: API.OpenViewerParams) {
+    function handleRender (title: API.openViewerParams_3DGS) {
       setLoading(true)
-      openViewer(title)
-        .then((response) => {
-          console.log(response);
-          const status = response.status;
-          console.log(status)
-          if (status == 'success') {
-            setLoading(false);
-            // {showMessage();}
-            // debugger;
-            window.location.href = '/show_model?id='+title+'&websocket_url='+response.websocket_url;
-          }
+      window.location.href = '/viewer_3dgs?title='+title+'&url=http://10.177.35.49:8083/gs/viewer';
+      // openViewer(title)
+      //   .then((response) => {
+      //     console.log(response);
+      //     const status = response.status;
+      //     console.log(status)
+      //     if (status == 'success') {
+      //       setLoading(false);
+      //       // {showMessage();}
+      //       // debugger;
+      //       window.location.href = '/show_model?title='+title+'&url='+response.url;
+      //     }
 
-        })
-        .catch((error) => {
-          console.error('Open Viewer error:', error);
-          // {showModal();}
+      //   })
+      //   .catch((error) => {
+      //     console.error('Open Viewer error:', error);
+      //     // {showModal();}
 
-        });
+      //   });
     }
     
     //发送runCOLMAP请求
-    function runColmapAndTrain(params : API.runColmapAndTrainParams_NerfStudio) {
-      runColmapAndTrain_NerfStudio(params)
+    function runColmapAndTrain(params : API.runColmapAndTrainParams_3DGS) {
+      runColmapAndTrain_3DGS(params)
         .then((response) => {
           console.log(response.status);
           setState(1)
@@ -308,7 +309,7 @@ const Welcome: React.FC = () => {
 
     //根据请求返回的state改变按钮状态
     if (state == 2) {
-      return <Button type='link' onClick={() => handleRender(props.title as API.OpenViewerParams)} block>
+      return <Button type='link' onClick={() => handleRender(props.title as API.OpenViewerParams_3DGS)} block>
                 <PlayCircleTwoTone key="start" twoToneColor="#52c41a" />
               </Button>
     } else if(state ==1) {
@@ -334,7 +335,7 @@ const Welcome: React.FC = () => {
 
   //得到所有project
   useEffect(() => {
-    getAllNerfProjects().then(response => {
+    getAllProjects().then(response => {
       console.log(response.projects[0].method);
       //如果是空的话，就不要setData了
       if (response.projects.length == 0) {
@@ -344,7 +345,7 @@ const Welcome: React.FC = () => {
       } else {
         const projectData = response.projects;
         
-        const filteredProjects = projectData.filter((project)=>project.method==0)
+        const filteredProjects = projectData.filter((project)=>project.method==2)
         setData(filteredProjects);
       }
       //console.log(data[0]);

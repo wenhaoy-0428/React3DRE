@@ -1,7 +1,7 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from '@umijs/max';
-const host = 'http://10.177.35.76:8081';
+const host = 'http://10.177.35.49:8081';
 /** 获取当前的用户 GET /api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
@@ -96,11 +96,20 @@ export async function getProjectsInfo(options?: { [key: string]: any }) {
 export async function getAllProjects(options?: { [key: string]: any }) {
   return request<{
     projects: API.Projects;
+  }>(host + '/common/getAllProjects', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+export async function getAllNerfProjects(options?: { [key: string]: any }) {
+  return request<{
+    projects: API.NerfProjects;
   }>(host + '/api/getAllProjects', {
     method: 'GET',
     ...(options || {}),
   });
 }
+
 export async function viewer(options?: { [key: string]: any }) {
   return request<API.RuleListItem>(host + '/api/viewer', {
     method: 'POST',
@@ -140,6 +149,25 @@ export async function openViewer(params: API.OpenViewerParams, options?: { [key:
   });
 }
 
+//12/27
+export async function openNerfViewer(params: API.OpenNerfViewerParams, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  //console.log(params)
+  const id = params;
+  if (id !== undefined) {
+    formdata.append('id', <string>id);
+  }
+  // console.log(formdata)
+  return request<API.OpenNerfViewerResult>(host + '/common/viewer', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+
 export async function closeViewer(params: string, flag: number) {
   const formdata = new FormData();
   formdata.append('title', params);
@@ -157,7 +185,7 @@ export async function closeViewer(params: string, flag: number) {
 }
 
 export async function createProject(
-  params: API.UploadCreateProjectParams,
+  params: API.CreateProjectParams,
   options?: { [key: string]: any },
 ) {
   console.log(params);
@@ -165,7 +193,8 @@ export async function createProject(
   formData.append('title', params.title as string);
   formData.append('datetime', params.datetime as string);
   formData.append('avatar', params.avatar as File);
-  return request<API.OpenViewerResult>(host + '/api/createProject', {
+  formData.append('pano', params.pano as string)
+  return request<API.CreateProjectResult>(host + '/common/createProject', {
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -181,13 +210,13 @@ export async function uploadImages(
 ) {
   console.log(params);
   const formData = new FormData();
-  formData.append('title', params.title as string);
+  formData.append('id', params.id as string);
   if (params.imageFiles !== undefined) {
     for (let file of params.imageFiles) {
       formData.append('imageFiles', file);
     }
   }
-  return request<API.UploadImageResult>(host + '/api/uploadImgs', {
+  return request<API.UploadImageResult>(host + '/common/uploadImgs', {
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -302,3 +331,146 @@ export async function closeViewer_N2M(params: string, flag: number) {
   });
 }
 */
+
+// export async function openViewer_3dgs(params: API.SplatFileParams, options?: { [key: string]: any }) {
+//   const formdata = new FormData();
+//   const title = params;
+//   if (title !== undefined) {
+//     formdata.append('title', <string>title);
+//   }
+//   return request<API.SplatFileResponse>(host + '/gs/viewer', {
+//     method: 'GET',
+//     headers: {
+//       'Content-Type': 'multipart/form-data',
+//     },
+//     data: formdata,
+//     ...(options || {}),
+//   });
+// }
+
+export async function createProject_GS(
+  params: API.UploadCreateProjectParams,
+  options?: { [key: string]: any },
+) {
+  console.log(params);
+  const formData = new FormData();
+  formData.append('title', params.title as string);
+  formData.append('datetime', params.datetime as string);
+  formData.append('avatar', params.avatar as File);
+  return request<API.OpenViewerResult>(host + '/gs/createProject', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formData,
+    ...(options || {}),
+  });
+}
+
+export async function uploadImages_GS(
+  params: API.UploadImageParams,
+  options?: { [key: string]: any },
+) {
+  console.log(params);
+  const formData = new FormData();
+  formData.append('title', params.title as string);
+  if (params.imageFiles !== undefined) {
+    for (let file of params.imageFiles) {
+      formData.append('imageFiles', file);
+    }
+  }
+  return request<API.UploadImageResult>(host + '/gs/uploadImgs', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formData,
+    ...(options || {}),
+  });
+}
+
+export async function runColmapAndTrain_3DGS(params: API.runColmapAndTrainParams_3DGS, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  formdata.append('title', params.title as string);
+  formdata.append('pano', params.pano as string);
+  return request<API.runColmapAndTrainResponse_3DGS>(host + '/gs/runColmapAndTrain', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+
+export async function openViewer_3DGS(params: API.Open3DGSViewerParams, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  //console.log(params)
+  const id = params;
+  if (id !== undefined) {
+    formdata.append('title', <string>id);
+  }
+  // console.log(formdata)
+  return request<API.Open3DGSViewerResult>(host + '/common/GSviewer', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+
+export async function runColmap_Common(params: API.runColmapParams, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  //console.log(params)
+  const id = params;
+  if (id !== undefined) {
+    formdata.append('id', <string>id);
+  }
+  // formdata.append('pano', params.pano as string);
+  return request<API.runColmapResult>(host + '/common/runColmap', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+export async function runTrain_NS(params: API.runTrainParams_NS, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  //console.log(params)
+  const id = params;
+  if (id !== undefined) {
+    formdata.append('id', <string>id);
+  }
+  // formdata.append('pano', params.pano as string);
+  return request<API.runTrainResult_NS>(host + '/common/runNSTrain', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+
+export async function runTrain_3DGS(params: API.runTrainParams_3DGS, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  //console.log(params)
+  const id = params;
+  if (id !== undefined) {
+    formdata.append('id', <string>id);
+  }
+  // formdata.append('pano', params.pano as string);
+  return request<API.runTrainResult_3DGS>(host + '/common/runGSTrain', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+

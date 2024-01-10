@@ -16,7 +16,7 @@ window.addEventListener("beforeunload", function(event) {
   closeViewer(id, 2)
   .then((response)=>{
     console.log(response)
-    debugger;
+    // debugger;
   }).catch((err)=>{
     console.log(err)
   })

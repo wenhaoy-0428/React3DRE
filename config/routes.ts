@@ -29,18 +29,28 @@ export default [
     routes: [
       {
         path: '/workspace',
-        redirect: '/workspace/render'
+        redirect: '/workspace/projects'
       },
       {
-        path: '/workspace/render',
-        name: 'Render',
-        component: './Welcome'
+        path: '/workspace/projects',
+        name: 'Projects',
+        component: './WorkSpace/Projects'
       },
-      {
-        path: '/workspace/mesh',
-        name: 'Mesh',
-        component: './Project/MeshProject'
-      },
+      // {
+      //   path: '/workspace/render',
+      //   name: 'Render',
+      //   component: './Welcome'
+      // },
+      // {
+      //   path: '/workspace/mesh',
+      //   name: 'Mesh',
+      //   component: './WorkSpace/MeshProject'
+      // },
+      // {
+      //   path: '/workspace/guassian',
+      //   name: 'Guassian',
+      //   component: './WorkSpace/GuassianProject'
+      // }
     ]
   },
   // {
@@ -94,5 +104,10 @@ export default [
     layout: false,
     component: './ShowModel/Viewer_N2M',
   },
+  {
+    path: 'viewer_3dgs',
+    layout: false,
+    component: './ShowModel/Viewer_3DGS',
+  }
   
 ];

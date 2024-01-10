@@ -63,6 +63,7 @@
     "await-lock": "^2.2.2",
     "axios": "^1.4.0",
     "classnames": "^2.3.2",
+    "gsplat": "^0.2.12",
     "hold-event": "^0.2.0",
     "leva": "^0.9.34",
     "lodash": "^4.17.21",
