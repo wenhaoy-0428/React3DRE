@@ -307,7 +307,7 @@ const Projects: React.FC = () => {
         const status = response.status;
         if (status == 'success') {
           message.success('已开始训练');
-          location.reload();
+          // location.reload();
         }
       }).catch((error) => {
         message.error('请求发生错误')

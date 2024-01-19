@@ -150,6 +150,23 @@ export default defineConfig({
   ],
   
   requestRecord: {},
+  
+  // chainWebpack(config:any) {
+  //   config.module
+  //     .rule('worker')
+  //     .test(/\.worker\.ts$/)
+  //     .use('worker-loader')
+  //     .loader('worker-loader')
+  //     .options({ inline: 'no-fallback' });
+  // },
+  // module:{
+  //   rules:[
+  //     {
+  //       test: /\.worker\.ts$/,
+  //       use:{ loader:"worker-loader"},
+  //     }
+  //   ]
+  // }
 });
 // mfsu: {
 //   strategy: 'normal',

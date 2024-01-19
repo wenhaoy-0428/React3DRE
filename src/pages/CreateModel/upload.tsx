@@ -155,7 +155,7 @@ const MyForm: React.FC = () => {
       <Form.Item
         name='pano'
         >
-          <Radio.Group name="radiogroup" defaultValue={0}>
+          <Radio.Group name="radiogroup" >
             <Radio value={0}>透视图</Radio>
             <Radio value={1}>全景图</Radio>
             

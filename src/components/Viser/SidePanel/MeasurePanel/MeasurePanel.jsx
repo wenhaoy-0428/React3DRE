@@ -16,7 +16,7 @@ import {
   sendWebsocketMessage,
 } from '../../WebSocket/ViserWebSocket';
 // import type { ColumnsType, TableProps } from 'antd/es/table';
-import { AppContext } from '../../../../pages/ShowModel/App'
+import { AppContext } from '../../../../pages/ModelViewer/App'
 
 
 // type MyProps = {

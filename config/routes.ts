@@ -97,17 +97,17 @@ export default [
   {
     path: '/show_model',
     layout: false,
-    component: './ShowModel/ShowModel',
+    component: './ModelViewer/ShowModel',
   },
   {
     path: '/viewer_n2m',
     layout: false,
-    component: './ShowModel/Viewer_N2M',
+    component: './ModelViewer/Viewer_N2M',
   },
   {
     path: 'viewer_3dgs',
     layout: false,
-    component: './ShowModel/Viewer_3DGS',
+    component: './ModelViewer/Viewer_3DGS',
   }
   
 ];

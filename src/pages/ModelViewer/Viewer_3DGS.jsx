@@ -3,9 +3,11 @@ import { useEffect } from 'react';
 
 import { closeViewer, openViewer, openViewer_3dgs } from '../../services/ant-design-pro/api';
 import { Divider } from 'antd';
-import * as SPLAT from "gsplat";
+// import * as SPLAT from "gsplat";
+// console.log(SPLAT)
 import './gsviewer.css';
-
+import * as SPLAT from '../../components/gsplat/src/index'
+// console.log(SPLAT)
 
 
 export default function Viewer_3DGS(){
@@ -17,7 +19,7 @@ export default function Viewer_3DGS(){
         const progressDialog = document.getElementById("progress-dialog");
         const progressIndicator = document.getElementById("progress-indicator");
         console.log(canvas,progressDialog,progressIndicator)
-
+        console.log(SPLAT)
         const renderer = new SPLAT.WebGLRenderer(canvas);
         const scene = new SPLAT.Scene();
         const camera = new SPLAT.Camera();
@@ -35,6 +37,7 @@ export default function Viewer_3DGS(){
             // const url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/bonsai/bonsai-7k-mini.splat";
             // const url = 'http://10.177.35.49:8083/gs/viewer';
             const url = "http://10.177.35.49:8081/common/GSviewer"+'?id='+id
+            // const url = "./point_cloud.ply"
             // await SPLAT.PLYLoader.LoadAsync(url, scene, (progress) => progressIndicator.value = progress * 100, format);
             await SPLAT.Loader.LoadAsync(url, scene, (progress) => {
                 progressIndicator.value = progress * 100;

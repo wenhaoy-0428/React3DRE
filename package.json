@@ -84,6 +84,7 @@
     "react-router-dom": "^5.3.4",
     "react-scripts": "^5.0.1",
     "three": "^0.152.2",
+    "worker-loader": "^3.0.8",
     "zustand": "^4.3.8"
   },
   "devDependencies": {
