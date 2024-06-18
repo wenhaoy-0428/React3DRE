@@ -127,12 +127,13 @@ export default function Viewer_GS() {
     return(
             <>
                 <div id='rootDiv' style={{position:'absolute',width:"100%",height:'100%'}}>
+                    <div id='topPanel' style={{position:'fixed',top:'0px',height:'60px',width:'100%',backgroundColor:'gray'}}></div>
+                    {isSceneReady && <SidePanel  viewerRef={viewerRef} /> }
                     
-                    
-                    <div id='renderWindow' style={{position:'absolute',width:"100%",height:'100%'}}  ref={myRef}>
+                    <div id='renderWindow' style={{position:'fixed',left:'320px', top:'60px',right:'0px',bottom:'0px'}} ref={myRef}>
                         
                     </div>
-                </div>     
+                </div>      
             </>
     )
 
