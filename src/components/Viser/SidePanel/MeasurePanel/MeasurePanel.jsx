@@ -115,6 +115,7 @@ class MeasurePanel extends React.Component{
         is_moving,
         timestamp: +new Date(),
       });
+      
       setTimeout(()=>{
         this.props.dispatch({
           type: 'write',
@@ -311,6 +312,7 @@ class MeasurePanel extends React.Component{
   
           this.calculateLength()
           window.removeEventListener('dblclick',this.measureLine,false);
+          
           return;
         } else {
             // dispatch({

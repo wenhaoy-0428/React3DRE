@@ -2684,6 +2684,11 @@
     semver "^7.3.5"
     tar "^6.1.11"
 
+"@mkkellogg/gaussian-splats-3d@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.npmjs.org/@mkkellogg/gaussian-splats-3d/-/gaussian-splats-3d-0.4.1.tgz"
+  integrity sha512-i4reHqKaGDMi8XDJ/531IrVO7ifH8R3+prmeRZg0FAr3IX0EBEGouTnzxKPiqhb2NVkdKhY2jJcLL00Ljfb09Q==
+
 "@msgpackr-extract/msgpackr-extract-win32-x64@3.0.2":
   version "3.0.2"
   resolved "https://registry.npmjs.org/@msgpackr-extract/msgpackr-extract-win32-x64/-/msgpackr-extract-win32-x64-3.0.2.tgz"
@@ -9986,10 +9991,10 @@ grapheme-splitter@^1.0.4:
   resolved "https://registry.npmjs.org/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
 
-gsplat@^0.2.12:
-  version "0.2.12"
-  resolved "https://registry.npmmirror.com/gsplat/-/gsplat-0.2.12.tgz"
-  integrity sha512-skNpYcV6WVBHfyX1CbrHnHbQYpLbv47/8OavhKpns1QMP090Psh8GN062ZePWosgcuGH4iX0WdNBCs4BaeDO0w==
+gsplat@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.npmjs.org/gsplat/-/gsplat-1.2.4.tgz"
+  integrity sha512-YW/qc1KxmkI8VGfVY0avZ6wpcjOijHdXvNkLSy8KniY3R326bYYbePMBlI1VrGQ60dkj4dWnW2k779jKTWNXyQ==
 
 gzip-size@^6.0.0:
   version "6.0.0"
@@ -18525,10 +18530,10 @@ three-stdlib@^2.21.8:
     potpack "^1.0.1"
     zstddec "^0.0.2"
 
-three@^0.152.2, "three@>= 0.123.0", three@>=0.122.0, three@>=0.125.0, three@>=0.126, three@>=0.126.1, three@>=0.133, three@>=0.137, three@>=0.144.0:
-  version "0.152.2"
-  resolved "https://registry.npmjs.org/three/-/three-0.152.2.tgz"
-  integrity sha512-Ff9zIpSfkkqcBcpdiFo2f35vA9ZucO+N8TNacJOqaEE6DrB0eufItVMib8bK8Pcju/ZNT6a7blE1GhTpkdsILw==
+three@^0.164.0, "three@>= 0.123.0", three@>=0.122.0, three@>=0.125.0, three@>=0.126, three@>=0.126.1, three@>=0.133, three@>=0.137, three@>=0.144.0, three@>=0.160.0:
+  version "0.164.1"
+  resolved "https://registry.npmjs.org/three/-/three-0.164.1.tgz"
+  integrity sha512-iC/hUBbl1vzFny7f5GtqzVXYjMJKaTPxiCxXfrvVdBi1Sf+jhd1CAkitiFwC7mIBFCo3MrDLJG97yisoaWig0w==
 
 throat@^6.0.1:
   version "6.0.2"

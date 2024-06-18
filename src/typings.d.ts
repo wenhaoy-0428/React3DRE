@@ -24,4 +24,8 @@ declare module "web-worker:*" {
     export default WorkerConstructor;
 };
 
+declare module "@mkkellogg/gaussian-splats-3d" {
+
+};
+
 declare const REACT_APP_ENV: 'test' | 'dev' | 'pre' | false;

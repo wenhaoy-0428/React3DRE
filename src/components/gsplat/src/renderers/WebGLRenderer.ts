@@ -42,6 +42,7 @@ export class WebGLRenderer {
 
         this._renderProgram = new RenderProgram(this, renderPasses);
         const programs = [this._renderProgram] as ShaderProgram[];
+        
 
         this.resize = () => {
             const width = canvas.clientWidth;
@@ -63,6 +64,7 @@ export class WebGLRenderer {
         this.render = (scene: Scene, camera: Camera) => {
             for (const program of programs) {
                 program.render(scene, camera);
+                
             }
         };
 

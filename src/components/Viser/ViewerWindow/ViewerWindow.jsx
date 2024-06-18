@@ -15,7 +15,7 @@ import { isEqual, sample } from 'lodash';
 import {
   makeThrottledMessageSender,
   ViserWebSocketContext,
-} from '../WebSocket/ViserWebSocket';
+} from '../WebSocket/ViserWebSocket';dispatch
 import { Button } from 'antd';
 
 
@@ -472,6 +472,7 @@ export default function ViewerWindow(props) {
       setIsMeasureCanvasVisible(isMeasuring)
     }else if (isMeasuring==false) {
       clearCanvas()
+      setIsMeasureCanvasVisible(isMeasuring)
       console.log('clean')
       return
     }else if(samplePoints.length==2 && measurePoints.length==0){

@@ -1,4 +1,5 @@
-// import sortWorker from "../utils/SortWorker.worker.ts";
+// import SortWorker from "web-worker:../utils/SortWorker.ts";
+
 import { ShaderProgram } from "./ShaderProgram";
 import { ShaderPass } from "../passes/ShaderPass";
 import { RenderData } from "../utils/RenderData";
@@ -6,8 +7,7 @@ import { Color32 } from "../../../math/Color32";
 import { ObjectAddedEvent, ObjectChangedEvent, ObjectRemovedEvent } from "../../../events/Events";
 import { Splat } from "../../../splats/Splat";
 import { WebGLRenderer } from "../../WebGLRenderer";
-
-const SortWorker = new Worker(new URL("../utils/SortWorker.worker.ts", import.meta.url))
+import { Scene } from "../../../core/Scene"
 
 const vertexShaderSource = /* glsl */ `#version 300 es
 precision highp float;
@@ -16,6 +16,8 @@ precision highp int;
 uniform highp usampler2D u_texture;
 uniform highp sampler2D u_transforms;
 uniform highp usampler2D u_transformIndices;
+uniform highp sampler2D u_colorTransforms;
+uniform highp usampler2D u_colorTransformIndices;
 uniform mat4 projection, view;
 uniform vec2 focal;
 uniform vec2 viewport;
@@ -53,7 +55,7 @@ void main () {
     vec4 pos2d = projection * cam;
 
     float clip = 1.2 * pos2d.w;
-    if (pos2d.z < -pos2d.w || pos2d.x < -clip || pos2d.x > clip || pos2d.y < -clip || pos2d.y > clip) {
+    if (pos2d.z < -pos2d.w || pos2d.z > pos2d.w || pos2d.x < -clip || pos2d.x > clip || pos2d.y < -clip || pos2d.y > clip) {
         gl_Position = vec4(0.0, 0.0, 2.0, 1.0);
         return;
     }
@@ -71,6 +73,10 @@ void main () {
     mat3 T = transpose(mat3(viewTransform)) * J;
     mat3 cov2d = transpose(T) * Vrk * T;
 
+    //ref: https://github.com/graphdeco-inria/diff-gaussian-rasterization/blob/main/cuda_rasterizer/forward.cu#L110-L111
+    cov2d[0][0] += 0.3;
+    cov2d[1][1] += 0.3;
+
     float mid = (cov2d[0][0] + cov2d[1][1]) / 2.0;
     float radius = length(vec2((cov2d[0][0] - cov2d[1][1]) / 2.0, cov2d[0][1]));
     float lambda1 = mid + radius, lambda2 = mid - radius;
@@ -80,7 +86,19 @@ void main () {
     vec2 majorAxis = min(sqrt(2.0 * lambda1), 1024.0) * diagonalVector;
     vec2 minorAxis = min(sqrt(2.0 * lambda2), 1024.0) * vec2(diagonalVector.y, -diagonalVector.x);
 
-    vColor = vec4((cov.w) & 0xffu, (cov.w >> 8) & 0xffu, (cov.w >> 16) & 0xffu, (cov.w >> 24) & 0xffu) / 255.0;
+    uint colorTransformIndex = texelFetch(u_colorTransformIndices, ivec2(uint(index) & 0x3ffu, uint(index) >> 10), 0).x;
+    mat4 colorTransform = mat4(
+        texelFetch(u_colorTransforms, ivec2(0, colorTransformIndex), 0),
+        texelFetch(u_colorTransforms, ivec2(1, colorTransformIndex), 0),
+        texelFetch(u_colorTransforms, ivec2(2, colorTransformIndex), 0),
+        texelFetch(u_colorTransforms, ivec2(3, colorTransformIndex), 0)
+    );
+
+    vec4 color = vec4((cov.w) & 0xffu, (cov.w >> 8) & 0xffu, (cov.w >> 16) & 0xffu, (cov.w >> 24) & 0xffu) / 255.0;
+    // vec4 color = vec4((cov.w) & 0xffu, (cov.w >> 8) & 0xffu, (cov.w >> 16) & 0xffu, (cov.w >> 24) & 0xffu) / 255.0;
+    // color = vec4(color.r,color.r,color.r,color.a*255.0 );
+    vColor = colorTransform * color;
+
     vPosition = position;
     vSize = length(majorAxis);
     vSelected = selected;
@@ -145,8 +163,8 @@ class RenderProgram extends ShaderProgram {
     private _outlineColor: Color32 = new Color32(255, 165, 0, 255);
     private _renderData: RenderData | null = null;
     private _depthIndex: Uint32Array = new Uint32Array();
-    private _chunks: Uint8Array | null = null;
     private _splatTexture: WebGLTexture | null = null;
+    private _worker: Worker | null = null;
 
     protected _initialize: () => void;
     protected _resize: () => void;
@@ -162,8 +180,6 @@ class RenderProgram extends ShaderProgram {
         const canvas = renderer.canvas;
         const gl = renderer.gl;
 
-        let worker: Worker;
-
         let u_projection: WebGLUniformLocation;
         let u_viewport: WebGLUniformLocation;
         let u_focal: WebGLUniformLocation;
@@ -171,6 +187,8 @@ class RenderProgram extends ShaderProgram {
         let u_texture: WebGLUniformLocation;
         let u_transforms: WebGLUniformLocation;
         let u_transformIndices: WebGLUniformLocation;
+        let u_colorTransforms: WebGLUniformLocation;
+        let u_colorTransformIndices: WebGLUniformLocation;
 
         let u_outlineThickness: WebGLUniformLocation;
         let u_outlineColor: WebGLUniformLocation;
@@ -180,6 +198,9 @@ class RenderProgram extends ShaderProgram {
 
         let transformsTexture: WebGLTexture;
         let transformIndicesTexture: WebGLTexture;
+
+        let colorTransformsTexture: WebGLTexture;
+        let colorTransformIndicesTexture: WebGLTexture;
 
         let vertexBuffer: WebGLBuffer;
         let indexBuffer: WebGLBuffer;
@@ -198,12 +219,13 @@ class RenderProgram extends ShaderProgram {
         };
 
         const createWorker = () => {
-            worker = SortWorker;
-            worker.onmessage = (e) => {
+            // this._worker = new SortWorker();
+            this._worker = new Worker(new URL('../utils/SortWorker.ts', import.meta.url));
+            
+            this._worker.onmessage = (e) => {
                 if (e.data.depthIndex) {
-                    const { depthIndex, chunks } = e.data;
+                    const { depthIndex } = e.data;
                     this._depthIndex = depthIndex;
-                    this._chunks = chunks;
                     gl.bindBuffer(gl.ARRAY_BUFFER, indexBuffer);
                     gl.bufferData(gl.ARRAY_BUFFER, depthIndex, gl.STATIC_DRAW);
                 }
@@ -252,6 +274,17 @@ class RenderProgram extends ShaderProgram {
             u_transformIndices = gl.getUniformLocation(this.program, "u_transformIndices") as WebGLUniformLocation;
             gl.uniform1i(u_transformIndices, 2);
 
+            colorTransformsTexture = gl.createTexture() as WebGLTexture;
+            u_colorTransforms = gl.getUniformLocation(this.program, "u_colorTransforms") as WebGLUniformLocation;
+            gl.uniform1i(u_colorTransforms, 3);
+
+            colorTransformIndicesTexture = gl.createTexture() as WebGLTexture;
+            u_colorTransformIndices = gl.getUniformLocation(
+                this.program,
+                "u_colorTransformIndices",
+            ) as WebGLUniformLocation;
+            gl.uniform1i(u_colorTransformIndices, 4);
+
             vertexBuffer = gl.createBuffer() as WebGLBuffer;
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-2, -2, 2, -2, 2, 2, -2, 2]), gl.STATIC_DRAW);
@@ -275,7 +308,7 @@ class RenderProgram extends ShaderProgram {
                 e.object.addEventListener("objectChanged", handleObjectChanged);
             }
 
-            this.dispose();
+            resetSplatData();
         };
 
         const handleObjectRemoved = (event: Event) => {
@@ -285,7 +318,7 @@ class RenderProgram extends ShaderProgram {
                 e.object.removeEventListener("objectChanged", handleObjectChanged);
             }
 
-            this.dispose();
+            resetSplatData();
         };
 
         const handleObjectChanged = (event: Event) => {
@@ -294,6 +327,14 @@ class RenderProgram extends ShaderProgram {
             if (e.object instanceof Splat && this._renderData) {
                 this._renderData.markDirty(e.object);
             }
+        };
+
+        const resetSplatData = () => {
+            this._renderData?.dispose();
+            this._renderData = new RenderData(this._scene as Scene);
+
+            this._worker?.terminate();
+            createWorker();
         };
 
         this._render = () => {
@@ -306,7 +347,11 @@ class RenderProgram extends ShaderProgram {
                 this.renderData.rebuild();
             }
 
-            if (this.renderData.dataChanged || this.renderData.transformsChanged) {
+            if (
+                this.renderData.dataChanged ||
+                this.renderData.transformsChanged ||
+                this.renderData.colorTransformsChanged
+            ) {
                 if (this.renderData.dataChanged) {
                     gl.activeTexture(gl.TEXTURE0);
                     gl.bindTexture(gl.TEXTURE_2D, this.splatTexture);
@@ -365,10 +410,48 @@ class RenderProgram extends ShaderProgram {
                     );
                 }
 
+                if (this.renderData.colorTransformsChanged) {
+                    gl.activeTexture(gl.TEXTURE3);
+                    gl.bindTexture(gl.TEXTURE_2D, colorTransformsTexture);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                    gl.texImage2D(
+                        gl.TEXTURE_2D,
+                        0,
+                        gl.RGBA32F,
+                        this.renderData.colorTransformsWidth,
+                        this.renderData.colorTransformsHeight,
+                        0,
+                        gl.RGBA,
+                        gl.FLOAT,
+                        this.renderData.colorTransforms,
+                    );
+
+                    gl.activeTexture(gl.TEXTURE4);
+                    gl.bindTexture(gl.TEXTURE_2D, colorTransformIndicesTexture);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                    gl.texImage2D(
+                        gl.TEXTURE_2D,
+                        0,
+                        gl.R32UI,
+                        this.renderData.colorTransformIndicesWidth,
+                        this.renderData.colorTransformIndicesHeight,
+                        0,
+                        gl.RED_INTEGER,
+                        gl.UNSIGNED_INT,
+                        this.renderData.colorTransformIndices,
+                    );
+                }
+
                 const detachedPositions = new Float32Array(this.renderData.positions.slice().buffer);
                 const detachedTransforms = new Float32Array(this.renderData.transforms.slice().buffer);
                 const detachedTransformIndices = new Uint32Array(this.renderData.transformIndices.slice().buffer);
-                worker.postMessage(
+                this._worker?.postMessage(
                     {
                         sortData: {
                             positions: detachedPositions,
@@ -382,10 +465,11 @@ class RenderProgram extends ShaderProgram {
 
                 this.renderData.dataChanged = false;
                 this.renderData.transformsChanged = false;
+                this.renderData.colorTransformsChanged = false;
             }
 
             this._camera.update();
-            worker.postMessage({ viewProj: this._camera.data.viewProj.buffer });
+            this._worker?.postMessage({ viewProj: this._camera.data.viewProj.buffer });
 
             gl.viewport(0, 0, canvas.width, canvas.height);
             gl.clearColor(0, 0, 0, 0);
@@ -407,7 +491,10 @@ class RenderProgram extends ShaderProgram {
             gl.vertexAttribIPointer(indexAttribute, 1, gl.INT, 0, 0);
             gl.vertexAttribDivisor(indexAttribute, 1);
 
-            gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, this.renderData.vertexCount);
+            gl.drawArraysInstanced(gl.TRIANGLE_FAN, 0, 4, this.depthIndex.length);
+
+            // let  colorAttribute = gl.getAttribLocation(this.program, "Color");
+            // console.log(colorAttribute)
         };
 
         this._dispose = () => {
@@ -424,7 +511,7 @@ class RenderProgram extends ShaderProgram {
                 }
             }
 
-            worker.terminate();
+            this._worker?.terminate();
             this.renderData.dispose();
 
             gl.deleteTexture(this.splatTexture);
@@ -458,10 +545,6 @@ class RenderProgram extends ShaderProgram {
         return this._depthIndex;
     }
 
-    get chunks() {
-        return this._chunks;
-    }
-
     get splatTexture() {
         return this._splatTexture;
     }
@@ -480,6 +563,10 @@ class RenderProgram extends ShaderProgram {
 
     set outlineColor(value: Color32) {
         this._setOutlineColor(value);
+    }
+
+    get worker() {
+        return this._worker;
     }
 
     protected _getVertexSource() {

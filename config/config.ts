@@ -4,10 +4,14 @@ import { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
+import fs from 'fs';
 
 const { REACT_APP_ENV = 'dev' } = process.env;
 
 export default defineConfig({
+
+  
+
   /**
    * @name 开启 hash 模式
    * @description 让 build 之后的产物包含 hash 后缀。通常用于增量发布和避免浏览器加载缓存。
@@ -150,6 +154,18 @@ export default defineConfig({
   ],
   
   requestRecord: {},
+
+  
+  // https: {
+  //   key: './mkcert/server.key',
+  //   cert: './mkcert/server.crt'
+  // },
+  
+  // devServer: {
+  //   https: true,
+  //   key: fs.readFileSync('./mkcert/server.key'),
+  //   cert: fs.readFileSync('./mkcert/server.crt')
+  // },
   
   // chainWebpack(config:any) {
   //   config.module
@@ -171,3 +187,4 @@ export default defineConfig({
 // mfsu: {
 //   strategy: 'normal',
 // },
+

@@ -18,7 +18,6 @@ let viewProjPtr: number;
 let transformsPtr: number;
 let transformIndicesPtr: number;
 let positionsPtr: number;
-let chunksPtr: number;
 let depthBufferPtr: number;
 let depthIndexPtr: number;
 let startsPtr: number;
@@ -26,14 +25,20 @@ let countsPtr: number;
 
 let allocatedVertexCount: number = 0;
 let allocatedTransformCount: number = 0;
-let viewProj: Float32Array = new Float32Array(16);
-let lastViewProj: Float32Array = new Float32Array(16);
+let viewProj: number[] = [];
 
-let running = false;
-let allocating = false;
+let dirty = true;
+let lock = false;
+let allocationPending = false;
+let sorting = false;
 
 const allocateBuffers = async () => {
-    allocating = true;
+    if (lock) {
+        allocationPending = true;
+        return;
+    }
+    lock = true;
+    allocationPending = false;
 
     if (!wasmModule) await initWasm();
 
@@ -43,7 +48,6 @@ const allocateBuffers = async () => {
             wasmModule._free(viewProjPtr);
             wasmModule._free(transformIndicesPtr);
             wasmModule._free(positionsPtr);
-            wasmModule._free(chunksPtr);
             wasmModule._free(depthBufferPtr);
             wasmModule._free(depthIndexPtr);
             wasmModule._free(startsPtr);
@@ -55,7 +59,6 @@ const allocateBuffers = async () => {
         viewProjPtr = wasmModule._malloc(16 * 4);
         transformIndicesPtr = wasmModule._malloc(allocatedVertexCount * 4);
         positionsPtr = wasmModule._malloc(3 * allocatedVertexCount * 4);
-        chunksPtr = wasmModule._malloc(allocatedVertexCount);
         depthBufferPtr = wasmModule._malloc(allocatedVertexCount * 4);
         depthIndexPtr = wasmModule._malloc(allocatedVertexCount * 4);
         startsPtr = wasmModule._malloc(allocatedVertexCount * 4);
@@ -72,15 +75,21 @@ const allocateBuffers = async () => {
         transformsPtr = wasmModule._malloc(allocatedTransformCount * 4);
     }
 
-    allocating = false;
-    lastViewProj = new Float32Array(16);
+    lock = false;
+    if (allocationPending) {
+        allocationPending = false;
+        await allocateBuffers();
+    }
 };
 
 const runSort = () => {
+    if (lock || allocationPending || !wasmModule) return;
+    lock = true;
+
     wasmModule.HEAPF32.set(sortData.positions, positionsPtr / 4);
     wasmModule.HEAPF32.set(sortData.transforms, transformsPtr / 4);
     wasmModule.HEAPU32.set(sortData.transformIndices, transformIndicesPtr / 4);
-    wasmModule.HEAPF32.set(viewProj, viewProjPtr / 4);
+    wasmModule.HEAPF32.set(new Float32Array(viewProj), viewProjPtr / 4);
 
     wasmModule._sort(
         viewProjPtr,
@@ -88,7 +97,6 @@ const runSort = () => {
         transformIndicesPtr,
         sortData.vertexCount,
         positionsPtr,
-        chunksPtr,
         depthBufferPtr,
         depthIndexPtr,
         startsPtr,
@@ -98,43 +106,50 @@ const runSort = () => {
     const depthIndex = new Uint32Array(wasmModule.HEAPU32.buffer, depthIndexPtr, sortData.vertexCount);
     const detachedDepthIndex = new Uint32Array(depthIndex.slice().buffer);
 
-    const chunks = new Uint8Array(wasmModule.HEAPU8.buffer, chunksPtr, sortData.vertexCount);
-    const detachedChunks = new Uint8Array(chunks.slice().buffer);
+    self.postMessage({ depthIndex: detachedDepthIndex }, [detachedDepthIndex.buffer]);
 
-    self.postMessage({ depthIndex: detachedDepthIndex, chunks: detachedChunks }, [
-        detachedDepthIndex.buffer,
-        detachedChunks.buffer,
-    ]);
-};
-
-const isEqual = (a: Float32Array, b: Float32Array) => {
-    for (let i = 0; i < 16; i++) {
-        if (a[i] !== b[i]) return false;
-    }
-    return true;
+    lock = false;
+    dirty = false;
 };
 
 const throttledSort = () => {
-    if (!running) {
-        running = true;
-        if (wasmModule && !allocating && !isEqual(viewProj, lastViewProj)) {
-            lastViewProj = viewProj;
-            runSort();
-        }
+    if (!sorting) {
+        sorting = true;
+        if (dirty) runSort();
+
         setTimeout(() => {
-            running = false;
+            sorting = false;
             throttledSort();
-        }, 0);
+        });
     }
 };
 
 self.onmessage = (e) => {
     if (e.data.sortData) {
-        sortData = e.data.sortData;
+        //Recreating the typed arrays every time, will cause firefox to leak memory
+        if (!sortData) {
+            sortData = {
+                positions: new Float32Array(e.data.sortData.positions),
+                transforms: new Float32Array(e.data.sortData.transforms),
+                transformIndices: new Uint32Array(e.data.sortData.transformIndices),
+                vertexCount: e.data.sortData.vertexCount,
+            };
+        } else {
+            sortData.positions.set(e.data.sortData.positions);
+            sortData.transforms.set(e.data.sortData.transforms);
+            sortData.transformIndices.set(e.data.sortData.transformIndices);
+            sortData.vertexCount = e.data.sortData.vertexCount;
+        }
+
+        dirty = true;
         allocateBuffers();
     }
     if (e.data.viewProj) {
-        viewProj = e.data.viewProj;
+        if ((e.data.viewProj as number[]).every((item) => viewProj.includes(item)) === false) {
+            viewProj = e.data.viewProj;
+            dirty = true;
+        }
+
         throttledSort();
     }
 };

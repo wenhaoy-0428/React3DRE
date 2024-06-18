@@ -254,7 +254,7 @@ const Welcome: React.FC = () => {
     //发送打开渲染请求
     function handleRender (title: API.openViewerParams_3DGS) {
       setLoading(true)
-      window.location.href = '/viewer_3dgs?title='+title+'&url=http://10.177.35.49:8083/gs/viewer';
+      window.location.href = '/viewer_3dgs?title='+title+'&url=http://10.177.35.181:8081/gs/viewer';
       // openViewer(title)
       //   .then((response) => {
       //     console.log(response);

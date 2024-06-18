@@ -16,10 +16,6 @@ export default function Viewer_GS() {
     const viewerRef = useRef(null);
     const [isSceneReady,setIsSceneReady] = useState(false);
 
-    const searchParams = new URLSearchParams(window.location.search);
-    const id = searchParams.get('id');
-    const url = "http://10.177.35.181:8081/common/GSviewer/splat"+'?id='+id
-
     useEffect(()=>{
         // const rootElement = document.getElementById('renderWindow');
         // rootElement.style.width = renderWidth + 'px';
@@ -45,16 +41,14 @@ export default function Viewer_GS() {
             // 'sphericalHarmonicsDegree': 3
             // 'focalAdjustment':1
             // 'SceneRevealMode': 2
-            // 'rootElement': myRef.current,
-            "streamView":true
+            'rootElement': myRef.current,
         });
 
         
-        viewer.addSplatScene(url,
+        viewer.addSplatScene('./point_cloud_x2.cleaned (1).ply',
             {
                 'streamView': true,
                 'splatAlphaRemovalThreshold': 20,
-                'format': GaussianSplats3D.SceneFormat.Splat,
             },
         ).then(()=>{
             viewer.start();
@@ -127,9 +121,10 @@ export default function Viewer_GS() {
     return(
             <>
                 <div id='rootDiv' style={{position:'absolute',width:"100%",height:'100%'}}>
+                    <div id='topPanel' style={{position:'fixed',top:'0px',height:'60px',width:'100%',backgroundColor:'gray'}}></div>
+                    {isSceneReady && <SidePanel  viewerRef={viewerRef} /> }
                     
-                    
-                    <div id='renderWindow' style={{position:'absolute',width:"100%",height:'100%'}}  ref={myRef}>
+                    <div id='renderWindow' style={{position:'fixed',left:'320px', top:'60px',right:'0px',bottom:'0px'}} ref={myRef}>
                         
                     </div>
                 </div>     

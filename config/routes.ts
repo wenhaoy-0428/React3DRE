@@ -36,21 +36,21 @@ export default [
         name: 'Projects',
         component: './WorkSpace/Projects'
       },
-      // {
-      //   path: '/workspace/render',
-      //   name: 'Render',
-      //   component: './Welcome'
-      // },
-      // {
-      //   path: '/workspace/mesh',
-      //   name: 'Mesh',
-      //   component: './WorkSpace/MeshProject'
-      // },
-      // {
-      //   path: '/workspace/guassian',
-      //   name: 'Guassian',
-      //   component: './WorkSpace/GuassianProject'
-      // }
+      {
+        path: '/workspace/render',
+        name: 'Render',
+        component: './Welcome'
+      },
+      {
+        path: '/workspace/mesh',
+        name: 'Mesh',
+        component: './WorkSpace/MeshProject'
+      },
+      {
+        path: '/workspace/guassian',
+        name: 'Guassian',
+        component: './WorkSpace/GuassianProject'
+      }
     ]
   },
   // {
@@ -108,6 +108,11 @@ export default [
     path: 'viewer_3dgs',
     layout: false,
     component: './ModelViewer/Viewer_3DGS',
+  },
+  {
+    path: 'viewer_gs',
+    layout: false,
+    component: './ModelViewer/Viewer_GS',
   }
   
 ];

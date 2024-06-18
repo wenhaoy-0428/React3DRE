@@ -3,6 +3,7 @@ import { SplatData } from "../splats/SplatData";
 import { Splat } from "../splats/Splat";
 import { EventDispatcher } from "../events/EventDispatcher";
 import { ObjectAddedEvent, ObjectRemovedEvent } from "../events/Events";
+import { Converter } from "../utils/Converter";
 
 class Scene extends EventDispatcher {
     private _objects: Object3D[] = [];
@@ -58,36 +59,50 @@ class Scene extends EventDispatcher {
         this.reset();
     }
 
-    saveToFile(name: string | null = null) {
-        if (!document) return;
-
-        if (!name) {
-            const now = new Date();
-            name = `scene-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.splat`;
-        }
-
+    getMergedSceneDataBuffer(format: "splat" | "ply" = "splat"): ArrayBuffer {
         const buffers: Uint8Array[] = [];
         let vertexCount = 0;
 
         for (const object of this.objects) {
-            object.applyRotation();
-            object.applyScale();
-            object.applyPosition();
             if (object instanceof Splat) {
-                const buffer = object.data.serialize();
+                const splatClone = object.clone() as Splat;
+
+                splatClone.applyRotation();
+                splatClone.applyScale();
+                splatClone.applyPosition();
+                const buffer = splatClone.data.serialize();
+
                 buffers.push(buffer);
-                vertexCount += object.data.vertexCount;
+                vertexCount += splatClone.data.vertexCount;
             }
         }
 
-        const data = new Uint8Array(vertexCount * SplatData.RowLength);
+        const mergedSplatData = new Uint8Array(vertexCount * SplatData.RowLength);
         let offset = 0;
         for (const buffer of buffers) {
-            data.set(buffer, offset);
+            mergedSplatData.set(buffer, offset);
             offset += buffer.length;
         }
 
-        const blob = new Blob([data.buffer], { type: "application/octet-stream" });
+        if (format === "ply") {
+            return Converter.SplatToPLY(mergedSplatData.buffer, vertexCount);
+        }
+
+        return mergedSplatData.buffer;
+    }
+
+    saveToFile(name: string | null = null, format: "splat" | "ply" = "splat") {
+        if (!document) return;
+
+        if (!name) {
+            const now = new Date();
+            name = `scene-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.${format}`;
+        }
+
+        const mergedData = this.getMergedSceneDataBuffer(format);
+
+        const blob = new Blob([mergedData], { type: "application/octet-stream" });
+
         const link = document.createElement("a");
         link.download = name;
         link.href = URL.createObjectURL(blob);

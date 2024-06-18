@@ -1,6 +1,7 @@
 import type { Scene } from "../core/Scene";
 import { Splat } from "../splats/Splat";
 import { SplatData } from "../splats/SplatData";
+import { initiateFetchRequest, loadRequestDataIntoBuffer } from "../utils/LoaderUtils";
 
 class Loader {
     static async LoadAsync(
@@ -9,47 +10,17 @@ class Loader {
         onProgress?: (progress: number) => void,
         useCache: boolean = false,
     ): Promise<Splat> {
-        const req = await fetch(url, {
-            mode: "cors",
-            credentials: "omit",
-            cache: useCache ? "force-cache" : "default",
-        });
+        const res: Response = await initiateFetchRequest(url, useCache);
 
-        if (req.status != 200) {
-            throw new Error(req.status + " Unable to load " + req.url);
-        }
-
-        const reader = req.body!.getReader();
-        const contentLength = parseInt(req.headers.get("content-length") as string);
-        const buffer = new Uint8Array(contentLength);
-
-        let bytesRead = 0;
-
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            buffer.set(value, bytesRead);
-            bytesRead += value.length;
-
-            onProgress?.(bytesRead / contentLength);
-        }
-
-        const data = SplatData.Deserialize(buffer);
-        const splat = new Splat(data);
-        scene.addObject(splat);
-        return splat;
+        const buffer = await loadRequestDataIntoBuffer(res, onProgress);
+        return this.LoadFromArrayBuffer(buffer, scene);
     }
 
     static async LoadFromFileAsync(file: File, scene: Scene, onProgress?: (progress: number) => void): Promise<Splat> {
         const reader = new FileReader();
         let splat = new Splat();
         reader.onload = (e) => {
-            const buffer = new Uint8Array(e.target!.result as ArrayBuffer);
-            const data = SplatData.Deserialize(buffer);
-            splat = new Splat(data);
-            scene.addObject(splat);
+            splat = this.LoadFromArrayBuffer(e.target!.result as ArrayBuffer, scene);
         };
         reader.onprogress = (e) => {
             onProgress?.(e.loaded / e.total);
@@ -60,6 +31,14 @@ class Loader {
                 resolve();
             };
         });
+        return splat;
+    }
+
+    static LoadFromArrayBuffer(arrayBuffer: ArrayBufferLike, scene: Scene): Splat {
+        const buffer = new Uint8Array(arrayBuffer);
+        const data = SplatData.Deserialize(buffer);
+        const splat = new Splat(data);
+        scene.addObject(splat);
         return splat;
     }
 }
