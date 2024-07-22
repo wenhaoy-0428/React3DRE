@@ -45,28 +45,6 @@ const ActionIcons = () => {
   );
 };
 
-const Lang = () => {
-  const langClassName = useEmotionCss(({ token }) => {
-    return {
-      width: 42,
-      height: 42,
-      lineHeight: '42px',
-      position: 'fixed',
-      right: 16,
-      borderRadius: token.borderRadius,
-      ':hover': {
-        backgroundColor: token.colorBgTextHover,
-      },
-    };
-  });
-
-  return (
-    <div className={langClassName} data-lang>
-      {SelectLang && <SelectLang />}
-    </div>
-  );
-};
-
 const LoginMessage: React.FC<{
   content: string;
 }> = ({ content }) => {
@@ -86,18 +64,6 @@ const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
-
-  const containerClassName = useEmotionCss(() => {
-    return {
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100vh',
-      overflow: 'auto',
-      backgroundImage:
-        "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
-      backgroundSize: '100% 100%',
-    };
-  });
 
   const intl = useIntl();
 
@@ -143,7 +109,7 @@ const Login: React.FC = () => {
   const { status, type: loginType } = userLoginState;
 
   return (
-    <div className={containerClassName}>
+    <div className="login-page flex justify-center items-center bg-cover h-full  bg-[url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')]">
       <Helmet>
         <title>
           {intl.formatMessage({
@@ -153,19 +119,16 @@ const Login: React.FC = () => {
           - {Settings.title}
         </title>
       </Helmet>
-      <Lang />
-      <div
-        style={{
-          flex: '1',
-          padding: '32px 0',
-        }}
-      >
+      <div className="form-container flex justify-center items-center h-[500px] bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div className="form-logo h-full w-[400px] bg-[url('/login-bg-h-sm.png')] bg-cover bg-center flex flex-col justify-center items-center relative">
+          <img className="w-[200px] translate-x-[-40px]" alt="logo" src="/logo.svg" />
+          <SelectLang className="absolute top-0 left-0 text-white bg-slate-300 rounded-br-3xl" />
+        </div>
         <LoginForm
           contentStyle={{
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src="/logo.svg" />}
           title="复旦云博"
           subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
           initialValues={{
@@ -362,6 +325,7 @@ const Login: React.FC = () => {
           </div>
         </LoginForm>
       </div>
+
       {/* <Footer /> */}
     </div>
   );
