@@ -119,11 +119,16 @@ const Login: React.FC = () => {
           - {Settings.title}
         </title>
       </Helmet>
-      <div className="form-container flex justify-center items-center h-[500px] bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <div className="form-logo h-full w-[400px] bg-[url('/login-bg-h-sm.png')] bg-cover bg-center flex flex-col justify-center items-center relative">
-          <img className="w-[200px] translate-x-[-40px]" alt="logo" src="/logo.svg" />
+      <div className="form-container flex flex-col  justify-center items-center  bg-white rounded-3xl shadow-2xl overflow-hidden md:flex-row md:h-[500px]">
+        <div className="form-logo h-[200px]  bg-[url('/login-bg-sm.png')] w-[400px] bg-cover bg-center flex flex-col justify-center items-center relative  md:h-full md:bg-[url('/login-bg-h-sm.png')]">
+          <img
+            className="w-[100px] translate-y-[-30px] md:w-[200px] md:translate-x-[-40px]"
+            alt="logo"
+            src="/logo.svg"
+          />
           <SelectLang className="absolute top-0 left-0 text-white bg-slate-300 rounded-br-3xl" />
         </div>
+
         <LoginForm
           contentStyle={{
             minWidth: 280,
