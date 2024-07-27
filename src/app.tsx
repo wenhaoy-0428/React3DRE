@@ -1,4 +1,3 @@
-import Footer from '@/components/Footer';
 import { SelectLang } from '@/components/RightContent';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
