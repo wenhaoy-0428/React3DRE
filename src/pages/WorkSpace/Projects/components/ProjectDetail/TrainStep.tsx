@@ -20,18 +20,17 @@ export default function TrainStep({ id, state, onStart }: TrainStepProps) {
   console.log('TrainStep', id, state);
   // Function to start the training
   const startTraining = () => {
-    setStatus(TrainStatus.TRAINING);
-    // onStart(id)
-    //   .then((response: any) => {
-    //     console.log(response);
-    //     const status = response.status;
-    //     if (status === 'success') {
-    //       setStatus(TrainStatus.TRAINING);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     alert('请求发生错误');
-    //   });
+    onStart(id)
+      .then((response: any) => {
+        console.log(response);
+        const status = response.status;
+        if (status === 'success') {
+          setStatus(TrainStatus.TRAINING);
+        }
+      })
+      .catch((error) => {
+        alert('请求发生错误');
+      });
   };
 
   return (

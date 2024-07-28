@@ -1,26 +1,11 @@
 import { getAllProjects } from '@/services/ant-design-pro/api';
-import type { ProFormInstance } from '@ant-design/pro-components';
 import { PageContainer } from '@ant-design/pro-components';
 import { Spin } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import ProjectsCard from './ProjectCard';
-import UploadPanel from './UploadPanel';
-
-const handleTrain_N2M = () => {
-  console.log('1');
-};
-
-const AvatarConvert = ({ imageData }) => {
-  const dataUrl = `data:image/png;base64,${imageData}`;
-  return <img src={dataUrl} alt="Base64 Image" width="260" height="160" />;
-};
+import { ProjectCard, UploadPanel } from './components';
 
 const Projects: React.FC = () => {
-  //ModalForm
-  const restFormRef = useRef<ProFormInstance>();
-
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
   // const { message, modal, notification } = App.useApp();
   const [projects, setProjects] = useState<Array<API.ProjectsAttribute>>([]); // project数据
 
@@ -54,7 +39,7 @@ const Projects: React.FC = () => {
             {!projects.length ? (
               <UploadPanel />
             ) : (
-              projects.map((project) => <ProjectsCard project={project} />)
+              projects.map((project) => <ProjectCard project={project} />)
             )}
           </div>
         </Spin>

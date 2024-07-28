@@ -18,8 +18,6 @@ export default function DataProcessStep({
 }) {
   const [state, setState] = useState<number>(colmap_state);
 
-  console.log('DataProcessStep', id, state);
-
   const processData = (id: API.runColmapParams) => {
     runColmap_Common(id)
       .then((response) => {

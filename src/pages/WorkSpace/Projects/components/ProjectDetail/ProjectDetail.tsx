@@ -1,10 +1,11 @@
 import { runTrain_3DGS, runTrain_NS } from '@/services/ant-design-pro/api';
 import { Step, StepLabel, Stepper } from '@mui/material';
 import { useMemo } from 'react';
-import DataProcessStep from './ProjectDetail/DataProcessStep';
-import PreviewStep from './ProjectDetail/PreviewStep';
-import TrainStep from './ProjectDetail/TrainStep';
+import DataProcessStep from './DataProcessStep';
+import PreviewStep from './PreviewStep';
+import TrainStep from './TrainStep';
 
+// TODO (YWH): Integrate the following functions
 // const openRender_NS = (id: API.OpenNerfViewerParams) => {
 //   console.log(id);
 //   setLoading(true);
@@ -46,9 +47,10 @@ export default function ProjectDetail({
 }: ProjectDetailProps) {
   const nerfSteps = ['数据处理', '训练', '预览'];
 
-  ns_state = 0;
-  colmap_state = 2;
-  gs_state = 2;
+  // TODO (YWH): delete this when the data is ready
+  // ns_state = 0;
+  // colmap_state = 2;
+  // gs_state = 2;
 
   // Function to calculate the step based on dataState and trainState
   const calStep = (dataState: number, trainState: number) => {
@@ -86,7 +88,7 @@ export default function ProjectDetail({
   };
 
   const display3DGStep = () => {
-    switch (nerfStep) {
+    switch (gsStep) {
       case 0:
         return <DataProcessStep id={id} colmap_state={colmap_state} />;
       case 1:
