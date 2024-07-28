@@ -64,6 +64,7 @@
     "await-lock": "^2.2.2",
     "axios": "^1.4.0",
     "classnames": "^2.3.2",
+    "framer-motion": "^11.3.19",
     "gsplat": "^1.2.4",
     "hold-event": "^0.2.0",
     "leva": "^0.9.34",
