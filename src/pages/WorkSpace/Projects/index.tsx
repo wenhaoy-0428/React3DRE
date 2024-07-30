@@ -16,10 +16,10 @@ const Projects: React.FC = () => {
       .then((response) => {
         console.log(response);
         //TODO: YWH reverse back
-        if (response.data.length === 0) {
+        if (response.projects.length === 0) {
           return;
         } else {
-          setProjects(response.data);
+          setProjects(response.projects);
         }
         console.log('success');
       })

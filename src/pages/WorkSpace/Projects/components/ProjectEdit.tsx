@@ -1,10 +1,14 @@
+import { deleteProject_Common } from '@/services/ant-design-pro/api';
 import { waitTime } from '@/utils';
 import { FileImageOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Upload, UploadFile } from 'antd';
+import { Button, Form, Input, Upload, UploadFile, message } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { useState } from 'react';
 
-export default function ProjectEdit() {
+type ProjectEditProps = {
+  id: number;
+};
+export default function ProjectEdit({id}: ProjectEditProps) {
   const [form] = Form.useForm();
   const [cover, setCover] = useState<UploadFile | null>(null);
 
@@ -21,9 +25,22 @@ export default function ProjectEdit() {
     alert('提交成功');
   };
 
+  const handleDeleteProject=(id:API.DeleteProjectParams)=>{
+    const confirmed = window.confirm('确定删除？')
+    if (confirmed) {
+      deleteProject_Common(id)
+      .then(()=>{
+        location.reload();
+      }).catch((error)=>{
+        message.error(error)
+      })
+    }
+  }
+
   return (
     <div className="bg-white   rounded-xl shadow-xl flex justify-center">
-      <Form form={form} onFinish={onFinish}>
+      <Button className='flex justify-center' type="text" onClick={()=>handleDeleteProject(id)} >删除</Button>
+      {/* <Form form={form} onFinish={onFinish}>
         <div className="grid grid-cols-1 justify-items-start p-10">
           <Form.Item
             label="模型名称"
@@ -58,7 +75,7 @@ export default function ProjectEdit() {
             提交
           </Button>
         </Form.Item>
-      </Form>
+      </Form> */}
     </div>
   );
 }

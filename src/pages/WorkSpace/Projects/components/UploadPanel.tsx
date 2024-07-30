@@ -1,4 +1,4 @@
-import { createProject, uploadImages } from '@/services/ant-design-pro/api';
+import { createProject, uploadImages, uploadVideo } from '@/services/ant-design-pro/api';
 import { CheckCircleTwoTone, FileImageOutlined, InboxOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd';
 import { Button, DatePicker, Form, Input, message, Progress, Radio, Upload } from 'antd';
@@ -11,7 +11,8 @@ export default function UploadPanel() {
   const [avatarFile, setAvatarFile] = useState<UploadFile | null>(null);
   const [imageFiles, setImageFiles] = useState<UploadFile[]>([]);
   const [percent, setPercent] = useState<number>(0);
-
+  const [videoFile, setVideoFile] = useState<File>();
+  const [uploadType, setUploadType] = useState<Number>(0);
   const handleAvatarChange = (info: UploadChangeParam) => {
     if (info.fileList.length === 1) {
       setAvatarFile(info.file);
@@ -22,6 +23,13 @@ export default function UploadPanel() {
   const handleImageChange = (info: UploadChangeParam) => {
     setImageFiles(info.fileList);
   };
+  const handleUploadTypeChange = (e) => {
+    setUploadType(e.target.value);
+  };
+
+  const handleVideoFileChange = ( e) => {
+    setVideoFile(e.target.files[0]);
+  }
 
   const onPreview = async (file: UploadFile) => {
     let src = file.url as string;
@@ -42,12 +50,31 @@ export default function UploadPanel() {
     let value = values as API.CreateProjectParams;
     value.datetime = form.getFieldValue('datetime').format('YYYY-MM-DD');
     value.avatar = avatarFile?.originFileObj;
+
+
+    if (value.uploadType == 0) {
+      createProject(value).then((response) => {
+        uploadImage(response.id)
+      }).catch((error) => {
+        // console.error('Form submission error:', error);
+        message.error('工程创建失败')
+      })
+    } else if (value.uploadType == 1) {
+      createProject(value).then((response) => {
+        uploadVideoFile(response.id)
+      }).catch((error) => {
+        message.error('工程创建失败')
+      })
+    }
+
     // 分批上传图片函数
     function uploadImage(id: any) {
       const chunkSize = 30;
       const chunks: any[] = [];
       for (let i = 0; i < imageFiles.length; i += chunkSize) {
-        chunks.push(imageFiles.slice(i, i + chunkSize));
+        const chunk = imageFiles.slice(i, i + chunkSize).map((file:any)=>file.originFileObj);
+        // chunks.push(imageFiles.slice(i, i + chunkSize));
+        chunks.push(chunk);
       }
       const uploadChunk = (chunkIndex = 0) => {
         if (chunkIndex >= chunks.length) {
@@ -57,28 +84,40 @@ export default function UploadPanel() {
           form.resetFields();
           return;
         }
+        
+        let value2: API.UploadImageParams = { id: id, imageFiles: chunks[chunkIndex] };
+        // console.log(value2)
+
+        uploadImages(value2)
+        .then(() => {
+          uploadChunk(chunkIndex + 1);
+        })
+        .catch((error) => {
+          console.error(error);
+          message.error('上传失败');
+        });
+
         let newPercent = (chunkIndex + 1) / chunks.length;
         if (newPercent > 1) {
           newPercent = 1;
         }
         setPercent(newPercent);
-        let value2: API.UploadImageParams = { id: id, imageFiles: chunks[chunkIndex] };
-        // console.log(value2)
-
-        uploadImages(value2)
-          .then(() => {
-            uploadChunk(chunkIndex + 1);
-          })
-          .catch((error) => {
-            console.error(error);
-            message.error('上传失败');
-          });
       };
       uploadChunk();
     }
 
-    // 先建项目，再分批传图片
-    // 根据不同method分类
+    
+    function uploadVideoFile (id) {
+      let value2:API.UploadVideoParams = {'id': id,'videoFile': videoFile};
+      uploadVideo(value2)
+      .then((response) => {
+        if (response.status=='success') {
+          message.success('上传成功');
+        }
+      }).catch((error)=>{
+        message.error('上传失败');
+      })
+    }
 
     createProject(value)
       .then((response) => {
@@ -144,8 +183,20 @@ export default function UploadPanel() {
               </ImgCrop>
             </Form.Item>
           </div>
+          <div>
+            <Form.Item
+              name='uploadType'
+              >
+                <Radio.Group name="radiogroup" onChange={handleUploadTypeChange} value={uploadType} >
+                  <Radio value={0}>图片</Radio>
+                  <Radio value={1}>视频</Radio>
+                </Radio.Group>
+            </Form.Item>
+          </div>
+          
 
           {/* {input速度快，不会卡死} */}
+          {uploadType == 0 ?
           <div className="col-span-2 justify-self-center">
             <Form.Item label="">
               <Upload
@@ -172,6 +223,16 @@ export default function UploadPanel() {
               </Upload>
             </Form.Item>
           </div>
+          :
+          <div className="col-span-2 justify-self-center">
+            <Form.Item label="上传视频">
+              <Input type='file' 
+                    onChange={e => handleVideoFileChange(e)}
+                >
+              </Input>
+            </Form.Item>
+          </div>
+          }
         </div>
         <Form.Item className="flex justify-center">
           {percent > 0 && (

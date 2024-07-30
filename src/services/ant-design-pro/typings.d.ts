@@ -238,6 +238,8 @@ declare namespace API {
     ns_state:  number;
     n2m_state: number;
     gs_state:  number;
+    abs_state: number;
+    gsobject_state: number;
 
   };
   // 项目集合
@@ -250,6 +252,7 @@ declare namespace API {
     datetime?: string;
     avatar?: File;
     pano?:  string;
+    uploadType?:  number;
   };
 
   type CreateProjectResult={
@@ -264,6 +267,22 @@ declare namespace API {
   type UploadImageResult={
     status?: string;
   }
+
+  type UploadVideoParams={
+    id?: string;
+    videoFile?: File;
+  }
+  type UploadVideoResult={
+    status?: string;
+  }
+
+  type DeleteProjectParams={
+    id?: string;
+  }
+  type DeleteProjectResult={
+    status?: string;
+  }
+
 
   type runColmapParams={
     id?: string;

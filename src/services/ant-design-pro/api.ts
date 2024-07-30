@@ -438,6 +438,47 @@ export async function runColmap_Common(params: API.runColmapParams, options?: { 
     ...(options || {}),
   });
 }
+
+export async function uploadVideo(
+  params: API.UploadVideoParams,
+  options?: { [key: string]: any },
+) {
+  console.log(params);
+  const formData = new FormData();
+  formData.append('id', params.id as string);
+  if (params.videoFile !== undefined) {
+    formData.append('videoFile', params.videoFile);
+  }
+  return request<API.UploadVideoResult>(host + '/common/uploadVideo', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formData,
+    ...(options || {}),
+  });
+
+}
+
+
+export async function deleteProject_Common(params: API.DeleteProjectParams, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  //console.log(params)
+  const id = params;
+  if (id !== undefined) {
+    formdata.append('id', <string>id);
+  }
+  // formdata.append('pano', params.pano as string);
+  return request<API.DeleteProjectResult>(host + '/common/deleteProject', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+
 export async function runTrain_NS(params: API.runTrainParams_NS, options?: { [key: string]: any }) {
   const formdata = new FormData();
   //console.log(params)
@@ -474,3 +515,38 @@ export async function runTrain_3DGS(params: API.runTrainParams_3DGS, options?: {
   });
 }
 
+export async function runTrain_AbsGS(params: API.runTrainParams_3DGS, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  //console.log(params)
+  const id = params;
+  if (id !== undefined) {
+    formdata.append('id', <string>id);
+  }
+  // formdata.append('pano', params.pano as string);
+  return request<API.runTrainResult_3DGS>(host + '/common/runAbsGSTrain', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}
+
+export async function runTrain_GSObj(params: API.runTrainParams_3DGS, options?: { [key: string]: any }) {
+  const formdata = new FormData();
+  //console.log(params)
+  const id = params;
+  if (id !== undefined) {
+    formdata.append('id', <string>id);
+  }
+  // formdata.append('pano', params.pano as string);
+  return request<API.runTrainResult_3DGS>(host + '/common//runObjGSTrain', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formdata,
+    ...(options || {}),
+  });
+}

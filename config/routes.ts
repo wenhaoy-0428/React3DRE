@@ -36,21 +36,21 @@ export default [
         name: 'Projects',
         component: './WorkSpace/Projects'
       },
-      {
-        path: '/workspace/render',
-        name: 'Render',
-        component: './Welcome'
-      },
-      {
-        path: '/workspace/mesh',
-        name: 'Mesh',
-        component: './WorkSpace/MeshProject'
-      },
-      {
-        path: '/workspace/guassian',
-        name: 'Guassian',
-        component: './WorkSpace/GuassianProject'
-      }
+      // {
+      //   path: '/workspace/render',
+      //   name: 'Render',
+      //   component: './Welcome'
+      // },
+      // {
+      //   path: '/workspace/mesh',
+      //   name: 'Mesh',
+      //   component: './WorkSpace/MeshProject'
+      // },
+      // {
+      //   path: '/workspace/guassian',
+      //   name: 'Guassian',
+      //   component: './WorkSpace/GuassianProject'
+      // }
     ]
   },
   // {

@@ -64,7 +64,7 @@ export default function ProjectsCard({ project }: ProjectsCardProps) {
         whileHover={{ scale: 1.1, transition: { duration: 0.1 } }}
       >
         <Card className="w-[300px] rounded-2xl" onClick={handleClick}>
-          <CardMedia image={project.avatar} className="h-[180px] shadow-md" />
+          <CardMedia image={`data:image/png;base64,${project.avatar}`} className="h-[180px] shadow-md" />
           <CardContent className="flex justify-between">
             <div>
               <div className="italic text-gray-400 text-[10px]">{project.datetime.toString()}</div>
@@ -89,7 +89,7 @@ export default function ProjectsCard({ project }: ProjectsCardProps) {
                 console.log('Nerf2Mesh');
               }}
             >
-              Nerf2Mesh
+              3D GS
             </div>
           </CardActions>
         </Card>
@@ -116,12 +116,14 @@ export default function ProjectsCard({ project }: ProjectsCardProps) {
           ns_state={project.ns_state}
           n2m_state={project.n2m_state}
           gs_state={project.gs_state}
+          abs_state={project.abs_state}
+          gsobject_state={project.gsobject_state}
         />
       </Popover>
 
       {/* Modal for project edit */}
       <Modal open={openEdit} onClose={handleEditClose} className="flex justify-center items-center">
-        <ProjectEdit />
+        <ProjectEdit  id={project.id} />
       </Modal>
     </div>
   );

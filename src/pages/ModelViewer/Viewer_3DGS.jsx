@@ -18,7 +18,20 @@ export default function Viewer_GS() {
 
     const searchParams = new URLSearchParams(window.location.search);
     const id = searchParams.get('id');
-    const url = "http://10.177.35.181:8081/common/GSviewer/splat"+'?id='+id
+    const method = searchParams.get('method');
+    
+    const urlRef = useRef(null);
+
+    if (method == 0){
+        urlRef.current = "http://10.177.35.181:8081/common/GSviewer/splat"+'?id='+id;
+    
+    }else if (method == 1){
+        urlRef.current = "http://10.177.35.181:8081/common/absGSviewer/splat"+'?id='+id;
+
+    }else if (method == 2){
+        urlRef.current = "http://10.177.35.181:8081/common/absGSviewer/splat"+'?id='+id;
+    }
+    
 
     useEffect(()=>{
         // const rootElement = document.getElementById('renderWindow');
@@ -50,7 +63,7 @@ export default function Viewer_GS() {
         });
 
         
-        viewer.addSplatScene(url,
+        viewer.addSplatScene(urlRef.current,
             {
                 'streamView': true,
                 'splatAlphaRemovalThreshold': 20,
