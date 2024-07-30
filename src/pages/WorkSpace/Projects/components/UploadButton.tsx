@@ -31,7 +31,6 @@ export default function UploadButton() {
           Upload
         </Button>
       </motion.div>
-      <div id="YWH"></div>
       <Modal
         open={open}
         onClose={handleClose}

@@ -63,19 +63,6 @@ body {
   $SidePanel-width: 400px;
   $custom-border: solid 1px $base-color1;
   
-  .SidePanel {
-    position: absolute;
-    background-color: $base-color2;
-    color: $highlight-color2;
-    top: 0;
-    width: $SidePanel-width;
-    right: 0;
-    bottom: 0;
-    border: $custom-border;
-    z-index: 999;
-    text-align: center;
-    overflow-y: scroll;
-  }
   
   .Leva-container > div {
     position: relative;
