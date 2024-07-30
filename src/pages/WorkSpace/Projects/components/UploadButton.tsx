@@ -20,7 +20,7 @@ export default function UploadButton() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
         whileHover={{ translateY: -10 }}
-        className="fixed bottom-0 justify-center w-[300px] h-[60px]  rounded-lg bg-blue-500"
+        className="fixed bottom-0 justify-center w-[300px] h-[60px] rounded-lg bg-blue-500"
       >
         <Button
           variant="contained"
@@ -31,12 +31,13 @@ export default function UploadButton() {
           Upload
         </Button>
       </motion.div>
+      <div id="YWH"></div>
       <Modal
         open={open}
         onClose={handleClose}
         aria-labelledby="parent-modal-title"
         aria-describedby="parent-modal-description"
-        className="flex justify-center items-center"
+        className="flex justify-center items-center z-[98]"
       >
         <UploadPanel />
       </Modal>
