@@ -153,7 +153,7 @@ function MeasurementPanel(props) {
     const onClickSample =(event)=> {
         
         const hit = raycastSplatMesh(event.offsetX, event.offsetY, viewer);
-        if (hit !== null) {
+        if (hit !== undefined) {
             const point = new THREE.Vector3(hit.origin.x,hit.origin.y,hit.origin.z)
             const threePoint = createPoint(point, 0);
             viewer.threeScene.add(threePoint);
@@ -267,7 +267,8 @@ function MeasurementPanel(props) {
         measureRelativeDistance.current = 0;
 
         const hit = raycastSplatMesh(event.offsetX, event.offsetY, viewer);
-        if (hit !== null) {
+        console.log(hit);
+        if (hit !== undefined) {
             const point = new THREE.Vector3(hit.origin.x,hit.origin.y,hit.origin.z);
             const threePoint = createPoint(point, 1);
             viewer.threeScene.add(threePoint);

@@ -20,6 +20,7 @@ export default function TrainStep({ id, state, onStart }: TrainStepProps) {
   console.log('TrainStep', id, state);
   // Function to start the training
   const startTraining = () => {
+    setStatus(TrainStatus.TRAINING);
     onStart(id)
       .then((response: any) => {
         console.log(response);

@@ -119,14 +119,14 @@ export default function UploadPanel() {
       })
     }
 
-    createProject(value)
-      .then((response) => {
-        uploadImage(response.id);
-      })
-      .catch((error) => {
-        console.error('Form submission error:', error);
-        message.error('工程创建失败');
-      });
+    // createProject(value)
+    //   .then((response) => {
+    //     uploadImage(response.id);
+    //   })
+    //   .catch((error) => {
+    //     console.error('Form submission error:', error);
+    //     message.error('工程创建失败');
+    //   });
   };
 
   return (
