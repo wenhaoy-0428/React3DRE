@@ -14,12 +14,11 @@ import {
   Popover,
 } from '@mui/material';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ProjectDetail from './ProjectDetail';
 import ProjectEdit from './ProjectEdit';
 export default function ProjectsCard({ project }: ProjectsCardProps) {
   // State variables
-  const [mounted, setMounted] = useState(false);
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
   const [openEdit, setOpenEdit] = useState(false);
   const openDetail = Boolean(anchorEl);
@@ -43,16 +42,12 @@ export default function ProjectsCard({ project }: ProjectsCardProps) {
     visible: {
       scale: 1,
       transition: {
-        duration: mounted ? 0.2 : project.id * 0.1,
-        delay: mounted ? 0 : project.id * 0.1,
+        duration: 0.2,
+        delay: 0.2,
       },
     },
     exit: { scale: 0 },
   };
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <div className="max-h-[500px] ">
@@ -64,7 +59,10 @@ export default function ProjectsCard({ project }: ProjectsCardProps) {
         whileHover={{ scale: 1.1, transition: { duration: 0.1 } }}
       >
         <Card className="w-[300px] rounded-2xl" onClick={handleClick}>
-          <CardMedia image={`data:image/png;base64,${project.avatar}`} className="h-[180px] shadow-md" />
+          <CardMedia
+            image={`data:image/png;base64,${project.avatar}`}
+            className="h-[180px] shadow-md"
+          />
           <CardContent className="flex justify-between">
             <div>
               <div className="italic text-gray-400 text-[10px]">{project.datetime.toString()}</div>
@@ -123,7 +121,7 @@ export default function ProjectsCard({ project }: ProjectsCardProps) {
 
       {/* Modal for project edit */}
       <Modal open={openEdit} onClose={handleEditClose} className="flex justify-center items-center">
-        <ProjectEdit  id={project.id} />
+        <ProjectEdit id={project.id} />
       </Modal>
     </div>
   );
