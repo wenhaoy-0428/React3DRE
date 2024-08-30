@@ -1,37 +1,48 @@
-import React, { useState } from 'react';
-import './sidepanel.css';
+import PublicIcon from '@mui/icons-material/Public';
+import StraightenIcon from '@mui/icons-material/Straighten';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import { useState } from 'react';
+
 import MeasurementPanel from './MeasurementPanel';
 
+function Panel({ children, value, index }) {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tabpanel-${index}`}
+      aria-labelledby={`tab-${index}`}
+    >
+      {index === value && children}
+    </div>
+  );
+}
+
 const SidePanel = (props) => {
-    const [activePanel, setActivePanel] = useState('measurement');
+  const [tabValue, setTabValue] = useState(0);
 
+  const handleTabChange = (_, newValue) => {
+    setTabValue(newValue);
+  };
 
-    function ScenePanel(){
-        return (<i>scene panel</i>);
-    }
-    // function MeasurementsPanel() {
-    //     return (
-    //     <div style={{padding: '20px'}}>
-    //         <h2>测量功能</h2>
-    //         <p>这里是测量功能的具体内容。</p>
-    //     </div>
-    //     );
-    // }
+  return (
+    <div className="side-panel w-full h-full border-r-black/30 border border-solid">
+      <Tabs variant="fullWidth" value={tabValue} onChange={handleTabChange}>
+        <Tab icon={<PublicIcon />} />
 
-    return (
-        <div className='sidePanel' style={{position:'fixed', top: '60px', left: '0px', width:'320px', height: 'calc(100% - 60px)', backgroundColor:'#fff'}}>
-            <div className='Tabs'>
-                <ul className='Functions'>
-                    <li className={`Function ${activePanel === 'scene' ? 'active' : ''}`} id='scene' onClick={() => setActivePanel('scene')}>场景</li>
-                    <li className={`Function ${activePanel === 'measurement' ? 'active' : ''}`} id='measurement' onClick={() => setActivePanel('measurement')}><img src='/icons/measurement.svg' alt='测量' style={{width:'30px', height:'30px'}}></img>测量</li>
-                </ul>
-            </div>
-            <div className='Panel'>
-                {activePanel === 'scene' && <ScenePanel />}
-                {activePanel === 'measurement' && <MeasurementPanel  viewerRef={props.viewerRef}></MeasurementPanel> }
-            </div>
-        </div>
-    );
+        <Tab icon={<StraightenIcon />} />
+      </Tabs>
+      <div className="">
+        <Panel index={0} value={tabValue}>
+          <div>scene panel</div>
+        </Panel>
+        <Panel index={1} value={tabValue}>
+          <MeasurementPanel viewerRef={props.viewerRef} />
+        </Panel>
+      </div>
+    </div>
+  );
 };
 
 export default SidePanel;
