@@ -138,7 +138,7 @@ export default function Viewer_GS() {
   return (
     <>
       <div id="rootDiv" className="w-[100vw] h-[100vh] flex">
-        <IconButton onClick={handleDrawerOpen} className="fixed">
+        <IconButton onClick={handleDrawerOpen} className="fixed bg-white">
           <ChevronRightIcon />
         </IconButton>
         <Drawer open={openSidePanel} variant="persistent" className="h-full">
