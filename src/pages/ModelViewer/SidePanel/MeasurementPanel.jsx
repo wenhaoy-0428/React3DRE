@@ -1,7 +1,16 @@
-import { Button, Chip, Divider } from '@mui/material';
+import {
+  Button,
+  Chip,
+  Divider,
+  FilledInput,
+  FormControl,
+  FormHelperText,
+  InputAdornment,
+} from '@mui/material';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
+import Dialog from '@mui/material/Dialog';
 import DropDownSection from './DropDownSection';
 import PointSet from './PointSet';
 
@@ -184,7 +193,6 @@ function MeasurementPanel(props) {
 
         samplePointsRef.current.endPoint = { point: point, threePoint: threePoint };
         console.log(samplePointsRef.current);
-        setShowInput(true);
 
         const threeLine = createLine(
           samplePointsRef.current.startPoint.point,
@@ -208,67 +216,10 @@ function MeasurementPanel(props) {
         sampleRelativeDistance.current = Math.sqrt(dx * dx + dy * dy + dz * dz);
         console.log(sampleRelativeDistance.current);
 
-        const popup = sampleLengthInput();
-        document.body.appendChild(popup);
-
-        // sampleLengthInput()
+        setShowInput(true);
       }
       console.log(samplePoints);
     }
-  };
-
-  // const sampleLengthInput = () => {
-  //     const dom1 = document.getElementById("rootDiv");
-  //     var length = dom1.prompt("请输入采样线段真实长度（以米为单位）", 0);
-  //     if (length !== null) {
-  //         sampleLength.current = length;
-  //         setShowInput(false);
-  //         setSampling(2);
-  //         calculateScale();
-  //     }
-
-  // }
-  const sampleLengthInput = () => {
-    const popup = document.createElement('div');
-    popup.style.position = 'fixed';
-    popup.style.left = '50%';
-    popup.style.top = '50%';
-    popup.style.transform = 'translate(-50%, -50%)';
-    popup.style.backgroundColor = 'white';
-    popup.style.padding = '20px';
-    popup.style.boxShadow = '0px 0px 10px rgba(0,0,0,0.1)';
-    popup.style.zIndex = '1000';
-
-    const label = document.createElement('label');
-    label.innerText = '请输入采样线段真实长度（以米为单位）: ';
-    popup.appendChild(label);
-
-    const input = document.createElement('input');
-    input.type = 'number';
-    input.id = 'sample-length';
-    input.style.marginLeft = '10px';
-    popup.appendChild(input);
-
-    const button = document.createElement('button');
-    button.innerText = 'Submit';
-    button.style.marginLeft = '10px';
-    button.onclick = () => {
-      const length = parseFloat(document.getElementById('sample-length').value);
-      if (!isNaN(length)) {
-        // Use the sampleLength value as needed
-        console.log(`Sample Length: ${length}`);
-        sampleLength.current = length;
-        setShowInput(false);
-        setSampling(2);
-        calculateScale();
-        document.body.removeChild(popup);
-      } else {
-        alert('Please enter a valid number.');
-      }
-    };
-    popup.appendChild(button);
-
-    return popup;
   };
 
   const onClickMeasure = (event) => {
@@ -422,13 +373,24 @@ function MeasurementPanel(props) {
     sampleLength.current = e.target.value;
   };
 
-  const handleButtonClick = () => {
-    // setRatioInput(sampleLength);
-    // setSampleLength(inputValue);
-    setShowInput(false);
-    setSampling(2);
-    calculateScale();
+  // value of the input
+  const [sampleInput, setSampleInput] = useState(undefined);
+  const [sampleInputError, setSampleInputError] = useState(false);
+
+  const handleSampleSubmit = () => {
+    const length = parseFloat(sampleInput);
+    if (!isNaN(length)) {
+      // Use the sampleLength value as needed
+      console.log(`Sample Length: ${length}`);
+      sampleLength.current = length;
+      setShowInput(false);
+      setSampling(2);
+      calculateScale();
+    } else {
+      setSampleInputError(true);
+    }
   };
+
   const calculateScale = () => {
     console.log(sampleLength.current);
     let tempscale = 0;
@@ -552,6 +514,25 @@ function MeasurementPanel(props) {
             ))}
         </div>
       </DropDownSection>
+
+      <Dialog open={showInput}>
+        <div className="w-[500px] h-[200px] flex flex-col justify-center gap-3 px-[80px]">
+          <div className="text-center text-xl font-bold">请输入采样线段真实长度</div>
+          <FormControl error={sampleInputError}>
+            <FilledInput
+              endAdornment={<InputAdornment position="end">米</InputAdornment>}
+              value={sampleInput}
+              onChange={(e) => {
+                setSampleInput(e.target.value);
+              }}
+            />
+
+            {sampleInputError && <FormHelperText>Please enter a valid number</FormHelperText>}
+          </FormControl>
+
+          <Button onClick={handleSampleSubmit}>Submit</Button>
+        </div>
+      </Dialog>
     </div>
   );
 }
